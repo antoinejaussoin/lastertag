@@ -9,7 +9,7 @@ network without internet access.
 The first playable version consists of:
 
 - two handheld guns;
-- two wearable receiver hubs;
+- one Raspberry Pi Pico W controller per player;
 - four receiver zones per player (front, back, left shoulder, right shoulder);
 - a 128×64 OLED on each gun showing health, ammunition, score, and status;
 - a local server with an operator dashboard, live scoreboard, and persistent
@@ -23,22 +23,20 @@ Laser diodes are unnecessary and create avoidable eye-safety risk.
 
 ### Per-player hardware
 
-Each player has two Raspberry Pi Pico W devices:
+Each player has one Raspberry Pi Pico W. It:
 
-1. **Gun controller**
-   - reads trigger, reload, and menu buttons;
-   - emits a short encoded shot through a 940 nm IR LED at a 38 kHz carrier;
-   - controls the OLED;
-   - receives authoritative game state over Wi-Fi.
-2. **Wearable receiver hub**
-   - connects to at least four TSOP38438 receiver modules;
-   - decodes shots and records the body zone;
-   - sends hit events to the server over Wi-Fi;
-   - provides a future connection point for vibration, light, or sound feedback.
+- reads trigger, reload, and menu buttons;
+- emits a short encoded shot through a 940 nm IR LED at a 38 kHz carrier;
+- connects to at least four separately wired TSOP38438 receiver modules;
+- decodes shots, rejects its own player ID, and records the body zone;
+- controls the OLED;
+- exchanges hit events and authoritative game state with the server over Wi-Fi;
+- provides future connection points for vibration, light, or sound feedback.
 
-The receiver hub prevents every body sensor from needing its own Pico W. Add
-zones by adding sensor inputs, subject to GPIO, cabling, power, and interrupt
-handling limits.
+Each receiver has a dedicated GPIO, preserving zone information while avoiding
+a microcontroller in every sensor pod. Receiver and control cables converge on
+the Pico W, which can be mounted in the gun or in a wearable enclosure. Add
+zones subject to GPIO, cabling, power, and interrupt-handling limits.
 
 ### Game server
 
@@ -59,10 +57,12 @@ gameplay must not depend on cloud services.
 ### Event flow
 
 1. The operator assigns stable device IDs to players and starts a match.
-2. The server distributes the match configuration to guns and receiver hubs.
+2. The server distributes the match configuration to each player controller.
 3. A gun checks local fire-rate/ammunition rules and emits an IR packet.
-4. One or more body sensors receive it; the hub validates and deduplicates it.
-5. The hub submits `shot ID + shooter + victim + zone + local sequence/time`.
+4. One or more body sensors receive it; the target Pico validates and
+   deduplicates it.
+5. The target Pico submits
+   `shot ID + shooter + victim + zone + local sequence/time`.
 6. The server applies authoritative rules, persists the event, and broadcasts
    updated state.
 7. The victim and shooter screens are refreshed.
@@ -85,7 +85,7 @@ Start with a compact binary packet containing:
 
 Use a 38 kHz carrier compatible with the TSOP38438. Define timings and publish
 test vectors before optimizing range. A packet must be validated completely
-before it becomes a hit. The receiver hub must collapse the same packet seen by
+before it becomes a hit. The player controller must collapse the same packet seen by
 adjacent body zones into one hit while preserving the strongest/first zone.
 
 ### Network
@@ -110,6 +110,8 @@ Before soldering permanent assemblies:
 - verify that simultaneous receiver-zone signals do not overwhelm firmware;
 - measure peak and average current for each node;
 - run a full battery-duration test;
+- verify USB charging, low-voltage cutoff, connector polarity, and enclosure
+  protection for the LiPo battery;
 - confirm that Wi-Fi loss cannot create extra hits or corrupt match history.
 
 The IR emitter requires a transistor driver and current-limiting resistor.
@@ -167,18 +169,19 @@ test event with a development server.
 Exit: at least 100 consecutive valid shots at target range with no duplicate
 hits and no unsafe component temperature/current.
 
-### Milestone 2 — one complete player pair
+### Milestone 2 — one complete player unit
 
 - finish gun controls and display;
-- connect four wearable zones to one hub;
+- connect four wearable zones to the same Pico W;
 - implement zone deduplication and local feedback;
 - test battery life and disconnect handling.
 
-Exit: a shot from one prototype gun reliably updates the target player state.
+Exit: the complete unit transmits valid packets and detects test packets on all
+four body zones.
 
 ### Milestone 3 — two-player game
 
-- assemble the second gun and receiver set;
+- assemble the second one-Pico player unit;
 - implement match lifecycle, score rules, and live dashboard;
 - persist complete match history in SQLite;
 - test crossed shots, rapid fire, retries, and reboots.
@@ -188,8 +191,9 @@ the server reconnect.
 
 ### Milestone 4 — enclosures and field hardening
 
-- design printable gun, screen, receiver-pod, hub, and battery enclosures;
-- add connectors, cable strain relief, padding, and protected power switches;
+- design printable gun, screen, receiver-pod, controller, and battery enclosures;
+- add connectors, cable strain relief, battery padding, and protected access to
+  the power button and USB charging port;
 - perform drop, snag, heat, endurance, and eye-safety reviews.
 
 Exit: wearable prototypes survive normal play without exposed conductors,
@@ -207,7 +211,7 @@ sharp edges, loose batteries, or pointing hazards.
 
 - firmware language and RTOS choice;
 - final gun optics and practical maximum range;
-- battery chemistry and custom charging circuits;
+- final battery capacity and any future custom charging PCB;
 - PCB design;
 - enclosure ergonomics and printer/material choice;
 - exact game modes, sound, lighting, haptics, and cloud hosting.

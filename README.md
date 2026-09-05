@@ -8,9 +8,8 @@ An open, custom-built laser-tag system based on the Raspberry Pi Pico W.
 The initial reference build supports two players and is designed to scale to
 `N` players. Each player has:
 
-- one Pico W-based gun with a display;
-- one Pico W-based wearable receiver hub;
-- four body-mounted infrared receiver zones.
+- one Pico W controlling the gun, display, and all body sensors;
+- four wired, body-mounted infrared receiver zones.
 
 A local web application coordinates games, displays live statistics, and
 persists match history.

@@ -4,8 +4,7 @@ This directory will contain all executable project code.
 
 ## Intended structure
 
-- `firmware/gun/` — trigger input, IR transmission, screen UI, and networking
-- `firmware/receiver/` — body-zone receivers, hit validation, and networking
+- `firmware/player/` — gun controls, IR transmission/reception, screen UI, and networking
 - `shared/` — shot packet format, game events, IDs, and common test vectors
 - `web/` — game server, browser UI, API, and persistent storage
 

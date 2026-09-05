@@ -7,7 +7,7 @@ editable CAD sources, drawings, and exported print files for:
 - IR emitter/optics mount and protective muzzle;
 - OLED bezel and control-button mounts;
 - body receiver pods with a clear IR field of view;
-- wearable receiver-hub and battery enclosures;
+- Pico W controller and battery enclosures;
 - cable routing, strain relief, and harness clips.
 
 ## Requirements to capture before CAD
@@ -17,6 +17,8 @@ editable CAD sources, drawings, and exported print files for:
 - receiver visibility and protection from direct impacts;
 - hand sizes, ambidextrous use, mass, balance, and glove clearance;
 - rounded edges, recessed fasteners, ventilation, and service access;
+- rigid LiPo protection against bending, puncture, crushing, and direct impact;
+- access to the power button and Micro-USB charging port without exposing the battery;
 - cable snag prevention and breakaway behavior;
 - printer tolerances, wall thickness, material, and assembly method.
 

@@ -13,7 +13,7 @@ must record the source revision, units, tolerances, and generation settings.
 
 The first electrical artifact should be a reviewed breadboard schematic for:
 
-- Pico W power from three NiMH AA cells through `VSYS`;
+- Pico W power and USB charging through a Pimoroni PIM557 LiPo SHIM;
 - transistor-driven 940 nm IR emitter;
 - four separately addressable 38 kHz receiver inputs;
 - 3.3 V I²C OLED and buttons;
