@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120">
+  <defs>
+    <style>
+      .bg{fill:#fff}.wire{fill:none;stroke:#17212b;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+      .power{fill:none;stroke:#b42318;stroke-width:3}.signal{fill:none;stroke:#175cd3;stroke-width:3}
+      .box{fill:#f8fafc;stroke:#344054;stroke-width:2}.module{fill:#eff8ff;stroke:#175cd3;stroke-width:2}
+      .battery{fill:#fff6ed;stroke:#c4320a;stroke-width:2}.note{fill:#fffaeb;stroke:#dc6803;stroke-width:2}
+      .net{fill:#eaf2ff;stroke:#175cd3;stroke-width:1.5}.pnet{fill:#fef3f2;stroke:#b42318;stroke-width:1.5}
+      .title{font:700 30px system-ui,sans-serif;fill:#101828}.head{font:700 20px system-ui,sans-serif;fill:#101828}
+      .txt{font:16px system-ui,sans-serif;fill:#101828}.small{font:14px system-ui,sans-serif;fill:#344054}
+      .pin{font:13px ui-monospace,SFMono-Regular,monospace;fill:#101828}.ref{font:700 15px ui-monospace,SFMono-Regular,monospace;fill:#101828}
+      .label{font:700 14px ui-monospace,SFMono-Regular,monospace;fill:#175cd3}.plabel{font:700 14px ui-monospace,SFMono-Regular,monospace;fill:#b42318}
+      .ground{fill:none;stroke:#17212b;stroke-width:2}.junction{fill:#17212b}
+    </style>
+    <g id="gnd">
+      <path class="ground" d="M0 0v8M-12 8h24M-8 13h16M-4 18h8"/>
+    </g>
+    <g id="vcc">
+      <path class="power" d="M0 18V4M-7 10L0 2l7 8"/>
+      <text class="plabel" x="12" y="9">+3V3</text>
+    </g>
+  </defs>
+  <rect class="bg" width="1600" height="1120"/>
+  <text class="title" x="50" y="52">One-player laser-tag breadboard schematic  -  revision A</text>
+  <text class="small" x="50" y="80">Build twice for two players | Regulated 3.3 V logic and emitter supply | Common ground</text>
+
+  <!-- Power and controller -->
+  <rect class="box" x="45" y="115" width="560" height="400" rx="12"/>
+  <text class="head" x="70" y="150">Power and controller</text>
+  <rect class="battery" x="75" y="185" width="150" height="80" rx="8"/>
+  <text class="ref" x="92" y="213">BT1</text>
+  <text class="txt" x="92" y="238">LiPo 3.7 V</text>
+  <text class="small" x="92" y="258">500 mAh JST-PH</text>
+  <path class="power" d="M225 225h40"/>
+  <text class="plabel" x="234" y="216">BAT</text>
+
+  <rect class="module" x="265" y="170" width="165" height="115" rx="8"/>
+  <text class="ref" x="283" y="198">A1</text>
+  <text class="txt" x="283" y="222">Proto Doubler</text>
+  <text class="txt" x="283" y="244">PiCowbell</text>
+  <text class="small" x="283" y="267">5906 charger + switch</text>
+  <path class="wire" d="M347 140v30"/>
+  <text class="small" x="295" y="132">Micro-USB 5 V</text>
+  <path class="power" d="M430 215h50"/>
+  <text class="plabel" x="437" y="205">VSYS</text>
+  <path class="signal" d="M430 260h50"/>
+  <text class="label" x="438" y="251">3V3_EN</text>
+
+  <rect class="module" x="480" y="165" width="100" height="270" rx="8"/>
+  <text class="ref" x="500" y="195">U1</text>
+  <text class="txt" x="496" y="220">Pico WH</text>
+  <text class="small" x="493" y="242">RP2040</text>
+  <text class="small" x="493" y="261">+ Wi-Fi</text>
+  <text class="pin" x="491" y="302">36 3V3</text>
+  <text class="pin" x="491" y="328">38 GND</text>
+  <text class="pin" x="491" y="354">39 VSYS</text>
+  <text class="pin" x="491" y="380">40 VBUS</text>
+  <text class="pin" x="491" y="406">37 EN</text>
+
+  <path class="power" d="M580 300h25"/>
+  <rect class="pnet" x="605" y="283" width="85" height="28" rx="5"/>
+  <text class="plabel" x="615" y="302">+3V3</text>
+  <path class="wire" d="M580 326h25"/>
+  <rect class="net" x="605" y="316" width="70" height="28" rx="5"/>
+  <text class="label" x="617" y="335">GND</text>
+  <text class="small" x="75" y="330">PiCowbell internally routes BAT/USB to Pico VSYS.</text>
+  <text class="small" x="75" y="355">The slide switch controls 3V3_EN.</text>
+  <rect class="note" x="75" y="382" width="370" height="105" rx="8"/>
+  <text class="txt" x="92" y="409">Breadboard rail rule</text>
+  <text class="small" x="92" y="434">Positive rail = Pico pin 36 (+3V3)</text>
+  <text class="small" x="92" y="458">Negative rail = Pico pin 38 (GND)</text>
+  <text class="small" x="92" y="480">Do not put VSYS or VBUS on the rail.</text>
+
+  <!-- GPIO allocation -->
+  <rect class="box" x="630" y="115" width="370" height="400" rx="12"/>
+  <text class="head" x="655" y="150">Pico GPIO allocation</text>
+  <text class="pin" x="660" y="190">pin  1  GP0   IR_TX</text>
+  <text class="pin" x="660" y="220">pin  4  GP2   BTN_TRIGGER</text>
+  <text class="pin" x="660" y="250">pin  5  GP3   BTN_RELOAD</text>
+  <text class="pin" x="660" y="280">pin  6  GP4   OLED_SDA (I2C0)</text>
+  <text class="pin" x="660" y="310">pin  7  GP5   OLED_SCL (I2C0)</text>
+  <text class="pin" x="660" y="340">pin  9  GP6   BTN_MENU</text>
+  <text class="pin" x="660" y="380">pin 14  GP10  RX_FRONT</text>
+  <text class="pin" x="660" y="410">pin 15  GP11  RX_BACK</text>
+  <text class="pin" x="660" y="440">pin 16  GP12  RX_LEFT</text>
+  <text class="pin" x="660" y="470">pin 17  GP13  RX_RIGHT</text>
+  <text class="small" x="655" y="500">Receiver and button signals are active-low.</text>
+
+  <!-- IR transmitter -->
+  <rect class="box" x="1025" y="115" width="530" height="400" rx="12"/>
+  <text class="head" x="1050" y="150">IR transmitter</text>
+  <use href="#vcc" x="1105" y="175"/>
+  <path class="power" d="M1105 193v14"/>
+  <rect class="box" x="1075" y="207" width="60" height="38"/>
+  <text class="small" x="1083" y="224">R1</text>
+  <text class="small" x="1080" y="240">15 ohm</text>
+  <path class="power" d="M1105 245v10"/>
+  <rect class="box" x="1075" y="255" width="60" height="38"/>
+  <text class="small" x="1083" y="272">R4</text>
+  <text class="small" x="1080" y="288">15 ohm</text>
+  <path class="power" d="M1105 293v18"/>
+  <!-- LED symbol -->
+  <path class="wire" d="M1078 325h54M1090 311l30 14-30 14zM1120 309v32"/>
+  <path class="signal" d="M1124 302l18-16m-11 1l11-1-1 11M1132 316l18-16m-11 1l11-1-1 11"/>
+  <text class="ref" x="1055" y="328">D1</text>
+  <text class="small" x="1052" y="351">TSAL6200</text>
+  <path class="wire" d="M1105 341v44h95"/>
+  <text class="small" x="1120" y="375">cathode -></text>
+  <!-- NPN -->
+  <circle class="box" cx="1245" cy="385" r="46"/>
+  <path class="wire" d="M1200 385h35M1235 356v58M1235 364l32-28v-28M1235 405l32 28v25M1251 418l15 15-2-13"/>
+  <text class="pin" x="1275" y="313">C</text>
+  <text class="pin" x="1275" y="465">E</text>
+  <text class="pin" x="1208" y="376">B</text>
+  <text class="ref" x="1300" y="478">Q1 BC337-40</text>
+  <text class="small" x="1300" y="498">Diotec: verify C-B-E</text>
+  <use href="#gnd" x="1267" y="458"/>
+  <!-- Base network -->
+  <rect class="net" x="1048" y="402" width="92" height="28" rx="5"/>
+  <text class="label" x="1060" y="421">IR_TX</text>
+  <path class="signal" d="M1140 416h8"/>
+  <rect class="box" x="1148" y="392" width="42" height="48"/>
+  <text class="small" x="1155" y="412">R2</text>
+  <text class="small" x="1151" y="431">220</text>
+  <path class="signal" d="M1190 416h2"/>
+  <rect class="box" x="1192" y="392" width="42" height="48"/>
+  <text class="small" x="1199" y="412">R5</text>
+  <text class="small" x="1195" y="431">220</text>
+  <path class="signal" d="M1234 416h1"/>
+  <circle class="junction" cx="1235" cy="416" r="5"/>
+  <path class="wire" d="M1235 416v58"/>
+  <rect class="box" x="1205" y="474" width="60" height="40"/>
+  <text class="small" x="1214" y="499">R3 10 k ohm</text>
+  <use href="#gnd" x="1235" y="514"/>
+  <!-- Local transmitter decoupling -->
+  <use href="#vcc" x="1420" y="200"/>
+  <path class="power" d="M1420 218v20h-40v22M1420 238h40v22"/>
+  <path class="wire" d="M1358 260h44M1364 270h32"/>
+  <text class="ref" x="1290" y="267">C2 100 nF</text>
+  <path class="wire" d="M1380 270v36"/>
+  <use href="#gnd" x="1380" y="306"/>
+  <path class="wire" d="M1438 260h44M1444 270h32"/>
+  <text class="ref" x="1490" y="267">C1 4.7 uF</text>
+  <text class="small" x="1490" y="287">+ at top</text>
+  <path class="wire" d="M1460 270v36"/>
+  <use href="#gnd" x="1460" y="306"/>
+  <rect class="note" x="1340" y="330" width="185" height="120" rx="8"/>
+  <text class="small" x="1355" y="354">Approx. pulse current:</text>
+  <text class="small" x="1355" y="378">(3.3-1.35-0.2)/30</text>
+  <text class="txt" x="1355" y="404">~58 mA</text>
+  <text class="small" x="1355" y="430">Safe if IR_TX sticks high.</text>
+
+  <!-- OLED and buttons -->
+  <rect class="box" x="45" y="545" width="610" height="260" rx="12"/>
+  <text class="head" x="70" y="580">Display and controls</text>
+  <rect class="module" x="75" y="620" width="180" height="125" rx="8"/>
+  <text class="ref" x="92" y="647">DS1 SSD1306 OLED</text>
+  <text class="pin" x="93" y="675">VCC  -> +3V3</text>
+  <text class="pin" x="93" y="699">GND  -> GND</text>
+  <text class="pin" x="93" y="723">SDA  -> GP4</text>
+  <text class="pin" x="93" y="747">SCL  -> GP5</text>
+  <text class="small" x="75" y="777">Confirm labels: module pin order varies.</text>
+
+  <!-- Button symbols -->
+  <g transform="translate(300 615)">
+    <rect class="net" x="0" y="0" width="125" height="28" rx="5"/><text class="label" x="10" y="19">BTN_TRIGGER</text>
+    <path class="signal" d="M62 28v25"/><circle class="wire" cx="62" cy="63" r="3"/>
+    <path class="wire" d="M35 78h20M69 78h20M55 78l14-10"/>
+    <path class="wire" d="M62 78v20"/><use href="#gnd" x="62" y="98"/>
+    <text class="ref" x="95" y="82">SW1</text>
+  </g>
+  <g transform="translate(440 615)">
+    <rect class="net" x="0" y="0" width="115" height="28" rx="5"/><text class="label" x="10" y="19">BTN_RELOAD</text>
+    <path class="signal" d="M58 28v25"/><circle class="wire" cx="58" cy="63" r="3"/>
+    <path class="wire" d="M31 78h20M65 78h20M51 78l14-10"/>
+    <path class="wire" d="M58 78v20"/><use href="#gnd" x="58" y="98"/>
+    <text class="ref" x="90" y="82">SW2</text>
+  </g>
+  <g transform="translate(565 615)">
+    <rect class="net" x="0" y="0" width="75" height="28" rx="5"/><text class="label" x="10" y="19">MENU</text>
+    <path class="signal" d="M38 28v25"/><circle class="wire" cx="38" cy="63" r="3"/>
+    <path class="wire" d="M11 78h20M45 78h20M31 78l14-10"/>
+    <path class="wire" d="M38 78v20"/><use href="#gnd" x="38" y="98"/>
+    <text class="ref" x="67" y="82">SW3</text>
+  </g>
+
+  <!-- Receiver detail helper boxes, repeated manually -->
+  <rect class="box" x="680" y="545" width="875" height="520" rx="12"/>
+  <text class="head" x="705" y="580">Four independent TSOP38238 receiver zones</text>
+  <text class="small" x="705" y="605">Each zone has its own 100  ohm supply resistor, 100 nF + 4.7 uF local filtering, and GPIO.</text>
+
+  <!-- Zone 1 -->
+  <g transform="translate(710 635)">
+    <rect class="module" x="0" y="0" width="390" height="175" rx="8"/>
+    <text class="ref" x="15" y="27">FRONT  -  U2</text>
+    <use href="#vcc" x="40" y="38"/>
+    <path class="power" d="M40 56v18h30"/><rect class="box" x="70" y="55" width="85" height="38"/>
+    <text class="small" x="78" y="79">R10 100  ohm</text>
+    <path class="power" d="M155 74h58"/><circle class="junction" cx="213" cy="74" r="5"/>
+    <text class="plabel" x="170" y="65">VS_LOCAL</text>
+    <rect class="box" x="265" y="45" width="105" height="75"/>
+    <text class="small" x="278" y="67">TSOP38238</text><text class="pin" x="278" y="88">3 VS</text>
+    <text class="pin" x="278" y="106">2 GND</text><text class="pin" x="278" y="124">1 OUT</text>
+    <path class="power" d="M213 74h52"/>
+    <path class="wire" d="M318 120v23"/><use href="#gnd" x="318" y="143"/>
+    <path class="signal" d="M370 117v20"/><rect class="net" x="285" y="137" width="98" height="25" rx="4"/>
+    <text class="label" x="293" y="155">RX_FRONT</text>
+    <path class="wire" d="M213 74v22M188 96h50M188 96v16M168 112h40M173 121h30M188 121v22M238 96v16M218 112h40M223 121h30M238 121v22"/>
+    <use href="#gnd" x="188" y="143"/><use href="#gnd" x="238" y="143"/>
+    <text class="small" x="142" y="105">C10</text><text class="small" x="137" y="132">100 nF</text>
+    <text class="small" x="218" y="105">C11</text><text class="small" x="210" y="132">4.7 uF</text>
+  </g>
+  <!-- Zone 2 -->
+  <g transform="translate(1125 635)">
+    <rect class="module" x="0" y="0" width="390" height="175" rx="8"/>
+    <text class="ref" x="15" y="27">BACK  -  U3</text>
+    <use href="#vcc" x="40" y="38"/>
+    <path class="power" d="M40 56v18h30"/><rect class="box" x="70" y="55" width="85" height="38"/>
+    <text class="small" x="78" y="79">R11 100  ohm</text>
+    <path class="power" d="M155 74h58"/><circle class="junction" cx="213" cy="74" r="5"/>
+    <text class="plabel" x="170" y="65">VS_LOCAL</text>
+    <rect class="box" x="265" y="45" width="105" height="75"/>
+    <text class="small" x="278" y="67">TSOP38238</text><text class="pin" x="278" y="88">3 VS</text>
+    <text class="pin" x="278" y="106">2 GND</text><text class="pin" x="278" y="124">1 OUT</text>
+    <path class="power" d="M213 74h52"/>
+    <path class="wire" d="M318 120v23"/><use href="#gnd" x="318" y="143"/>
+    <path class="signal" d="M370 117v20"/><rect class="net" x="295" y="137" width="78" height="25" rx="4"/><text class="label" x="302" y="155">RX_BACK</text>
+    <path class="wire" d="M213 74v22M188 96h50M188 96v16M168 112h40M173 121h30M188 121v22M238 96v16M218 112h40M223 121h30M238 121v22"/>
+    <use href="#gnd" x="188" y="143"/><use href="#gnd" x="238" y="143"/>
+    <text class="small" x="142" y="105">C12</text><text class="small" x="137" y="132">100 nF</text>
+    <text class="small" x="218" y="105">C13</text><text class="small" x="210" y="132">4.7 uF</text>
+  </g>
+  <!-- Zone 3 -->
+  <g transform="translate(710 835)">
+    <rect class="module" x="0" y="0" width="390" height="175" rx="8"/>
+    <text class="ref" x="15" y="27">LEFT  -  U4</text>
+    <use href="#vcc" x="40" y="38"/>
+    <path class="power" d="M40 56v18h30"/><rect class="box" x="70" y="55" width="85" height="38"/>
+    <text class="small" x="78" y="79">R12 100  ohm</text>
+    <path class="power" d="M155 74h58"/><circle class="junction" cx="213" cy="74" r="5"/>
+    <text class="plabel" x="170" y="65">VS_LOCAL</text>
+    <rect class="box" x="265" y="45" width="105" height="75"/>
+    <text class="small" x="278" y="67">TSOP38238</text><text class="pin" x="278" y="88">3 VS</text>
+    <text class="pin" x="278" y="106">2 GND</text><text class="pin" x="278" y="124">1 OUT</text>
+    <path class="power" d="M213 74h52"/>
+    <path class="wire" d="M318 120v23"/><use href="#gnd" x="318" y="143"/>
+    <path class="signal" d="M370 117v20"/><rect class="net" x="295" y="137" width="78" height="25" rx="4"/><text class="label" x="302" y="155">RX_LEFT</text>
+    <path class="wire" d="M213 74v22M188 96h50M188 96v16M168 112h40M173 121h30M188 121v22M238 96v16M218 112h40M223 121h30M238 121v22"/>
+    <use href="#gnd" x="188" y="143"/><use href="#gnd" x="238" y="143"/>
+    <text class="small" x="142" y="105">C14</text><text class="small" x="137" y="132">100 nF</text>
+    <text class="small" x="218" y="105">C15</text><text class="small" x="210" y="132">4.7 uF</text>
+  </g>
+  <!-- Zone 4 -->
+  <g transform="translate(1125 835)">
+    <rect class="module" x="0" y="0" width="390" height="175" rx="8"/>
+    <text class="ref" x="15" y="27">RIGHT  -  U5</text>
+    <use href="#vcc" x="40" y="38"/>
+    <path class="power" d="M40 56v18h30"/><rect class="box" x="70" y="55" width="85" height="38"/>
+    <text class="small" x="78" y="79">R13 100  ohm</text>
+    <path class="power" d="M155 74h58"/><circle class="junction" cx="213" cy="74" r="5"/>
+    <text class="plabel" x="170" y="65">VS_LOCAL</text>
+    <rect class="box" x="265" y="45" width="105" height="75"/>
+    <text class="small" x="278" y="67">TSOP38238</text><text class="pin" x="278" y="88">3 VS</text>
+    <text class="pin" x="278" y="106">2 GND</text><text class="pin" x="278" y="124">1 OUT</text>
+    <path class="power" d="M213 74h52"/>
+    <path class="wire" d="M318 120v23"/><use href="#gnd" x="318" y="143"/>
+    <path class="signal" d="M370 117v20"/><rect class="net" x="285" y="137" width="90" height="25" rx="4"/><text class="label" x="292" y="155">RX_RIGHT</text>
+    <path class="wire" d="M213 74v22M188 96h50M188 96v16M168 112h40M173 121h30M188 121v22M238 96v16M218 112h40M223 121h30M238 121v22"/>
+    <use href="#gnd" x="188" y="143"/><use href="#gnd" x="238" y="143"/>
+    <text class="small" x="142" y="105">C16</text><text class="small" x="137" y="132">100 nF</text>
+    <text class="small" x="218" y="105">C17</text><text class="small" x="210" y="132">4.7 uF</text>
+  </g>
+
+  <text class="small" x="50" y="1095">Net labels with the same name are electrically connected. See README.md for the authoritative connection schedule and safety constraints.</text>
+</svg>

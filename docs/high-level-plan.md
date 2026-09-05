@@ -27,7 +27,7 @@ Each player has one Raspberry Pi Pico W. It:
 
 - reads trigger, reload, and menu buttons;
 - emits a short encoded shot through a 940 nm IR LED at a 38 kHz carrier;
-- connects to at least four separately wired TSOP38438 receiver modules;
+- connects to at least four separately wired TSOP38238 receiver modules;
 - decodes shots, rejects its own player ID, and records the body zone;
 - controls the OLED;
 - exchanges hit events and authoritative game state with the server over Wi-Fi;
@@ -83,7 +83,7 @@ Start with a compact binary packet containing:
 - weapon/damage type;
 - checksum or CRC.
 
-Use a 38 kHz carrier compatible with the TSOP38438. Define timings and publish
+Use a 38 kHz carrier compatible with the TSOP38238. Define timings and publish
 test vectors before optimizing range. A packet must be validated completely
 before it becomes a hit. The player controller must collapse the same packet seen by
 adjacent body zones into one hit while preserving the strongest/first zone.
