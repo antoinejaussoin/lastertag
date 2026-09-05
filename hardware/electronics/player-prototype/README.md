@@ -6,6 +6,11 @@ wearable harness or permanent PCB.
 
 ![Complete player schematic](player-prototype.svg)
 
+For a hole-by-hole assembly drawing and beginner instructions, use
+[`breadboard-layout.md`](breadboard-layout.md):
+
+![Breadboard placement map](breadboard-layout.svg)
+
 The SVG is the visual schematic. `pin-map.csv` records the GPIO allocation and
 `connections.csv` is the machine-readable component netlist. The connection
 schedule below is authoritative if a label in the drawing is difficult to

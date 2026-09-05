@@ -1,0 +1,267 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1160" viewBox="0 0 1600 1160">
+  <defs>
+    <style>
+      .bg{fill:#ffffff}.board{fill:#f7f7f5;stroke:#667085;stroke-width:3}
+      .trench{fill:#d0d5dd}.hole{fill:#475467}.railred{stroke:#d92d20;stroke-width:4}.railblue{stroke:#175cd3;stroke-width:4}
+      .wire-red{fill:none;stroke:#d92d20;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+      .wire-black{fill:none;stroke:#101828;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+      .wire-blue{fill:none;stroke:#1570ef;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+      .part{fill:#fffaeb;stroke:#b54708;stroke-width:2}.module{fill:#eff8ff;stroke:#175cd3;stroke-width:2}
+      .chip{fill:#344054;stroke:#101828;stroke-width:2}.cap{fill:#fef3f2;stroke:#b42318;stroke-width:2}
+      .title{font:700 30px system-ui,sans-serif;fill:#101828}.head{font:700 21px system-ui,sans-serif;fill:#101828}
+      .text{font:16px system-ui,sans-serif;fill:#101828}.small{font:13px system-ui,sans-serif;fill:#344054}
+      .tiny{font:11px system-ui,sans-serif;fill:#344054}.mono{font:700 13px ui-monospace,SFMono-Regular,monospace;fill:#101828}
+      .white{font:700 13px system-ui,sans-serif;fill:#ffffff}.blue{font:700 13px ui-monospace,SFMono-Regular,monospace;fill:#175cd3}
+      .red{font:700 13px ui-monospace,SFMono-Regular,monospace;fill:#b42318}
+    </style>
+    <pattern id="terminal-holes" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle class="hole" cx="10" cy="10" r="3.2"/>
+    </pattern>
+    <pattern id="rail-holes" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle class="hole" cx="10" cy="10" r="3.2"/>
+    </pattern>
+    <g id="resistor-h">
+      <path d="M0 0h8l5-7 9 14 9-14 9 14 5-7h8" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    </g>
+    <g id="resistor-v">
+      <path d="M0 0v8l-7 5 14 9-14 9 14 9-7 5v8" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    </g>
+    <g id="capacitor-h">
+      <path d="M0 0h8M8-8v16M12-8v16M12 0h8" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    </g>
+  </defs>
+
+  <rect class="bg" width="1600" height="1160"/>
+  <text class="title" x="55" y="48">One-player breadboard placement map</text>
+  <text class="text" x="55" y="76">Hold the board with column 1 on the left. Build with USB and battery disconnected.</text>
+
+  <!-- Breadboard -->
+  <rect class="board" x="85" y="95" width="1430" height="500" rx="20"/>
+  <text class="red" x="105" y="135">TOP +3V3</text>
+  <line class="railred" x1="170" y1="130" x2="795" y2="130"/>
+  <line class="railred" x1="815" y1="130" x2="1440" y2="130"/>
+  <rect x="170" y="120" width="1260" height="20" fill="url(#rail-holes)"/>
+  <text class="blue" x="105" y="160">TOP GND</text>
+  <line class="railblue" x1="170" y1="155" x2="795" y2="155"/>
+  <line class="railblue" x1="815" y1="155" x2="1440" y2="155"/>
+  <rect x="170" y="145" width="1260" height="20" fill="url(#rail-holes)"/>
+
+  <rect x="170" y="210" width="1260" height="100" fill="url(#terminal-holes)"/>
+  <rect class="trench" x="170" y="318" width="1260" height="24" rx="5"/>
+  <rect x="170" y="350" width="1260" height="100" fill="url(#terminal-holes)"/>
+
+  <text class="blue" x="100" y="530">BOTTOM GND</text>
+  <line class="railblue" x1="170" y1="525" x2="795" y2="525"/>
+  <line class="railblue" x1="815" y1="525" x2="1440" y2="525"/>
+  <rect x="170" y="515" width="1260" height="20" fill="url(#rail-holes)"/>
+  <text class="red" x="100" y="555">BOTTOM +3V3</text>
+  <line class="railred" x1="170" y1="550" x2="795" y2="550"/>
+  <line class="railred" x1="815" y1="550" x2="1440" y2="550"/>
+  <rect x="170" y="540" width="1260" height="20" fill="url(#rail-holes)"/>
+
+  <!-- Row labels -->
+  <text class="mono" x="145" y="224">a</text><text class="mono" x="145" y="244">b</text>
+  <text class="mono" x="145" y="264">c</text><text class="mono" x="145" y="284">d</text>
+  <text class="mono" x="145" y="304">e</text><text class="mono" x="145" y="364">f</text>
+  <text class="mono" x="145" y="384">g</text><text class="mono" x="145" y="404">h</text>
+  <text class="mono" x="145" y="424">i</text><text class="mono" x="145" y="444">j</text>
+
+  <!-- Column labels -->
+  <text class="tiny" x="176" y="190">1</text><text class="tiny" x="254" y="190">5</text>
+  <text class="tiny" x="351" y="190">10</text><text class="tiny" x="451" y="190">15</text>
+  <text class="tiny" x="551" y="190">20</text><text class="tiny" x="651" y="190">25</text>
+  <text class="tiny" x="751" y="190">30</text><text class="tiny" x="851" y="190">35</text>
+  <text class="tiny" x="951" y="190">40</text><text class="tiny" x="1051" y="190">45</text>
+  <text class="tiny" x="1151" y="190">50</text><text class="tiny" x="1251" y="190">55</text>
+  <text class="tiny" x="1351" y="190">60</text><text class="tiny" x="1411" y="190">63</text>
+
+  <!-- Rail bridges -->
+  <path class="wire-red" d="M790 130q10-25 20 0"/>
+  <path class="wire-black" d="M790 155q10-25 20 0"/>
+  <path class="wire-red" d="M1440 130h30v420h-30"/>
+  <path class="wire-black" d="M1455 155h25v370h-40"/>
+  <text class="small" x="830" y="112">bridge any centre split</text>
+  <text class="small" x="1360" y="580">join top and bottom rails</text>
+
+  <!-- OLED -->
+  <rect class="module" x="202" y="172" width="96" height="50" rx="6"/>
+  <text class="mono" x="216" y="192">OLED DS1</text>
+  <text class="tiny" x="211" y="210">read PCB labels</text>
+  <path class="wire-black" d="M220 222v10M240 222v10M260 222v10M280 222v10"/>
+  <text class="tiny" x="214" y="250">P1</text><text class="tiny" x="234" y="250">P2</text>
+  <text class="tiny" x="254" y="250">P3</text><text class="tiny" x="274" y="250">P4</text>
+  <text class="blue" x="190" y="275">a3-a6: connect by VCC/GND/SCL/SDA labels</text>
+
+  <!-- Buttons across trench -->
+  <g>
+    <rect class="chip" x="309" y="292" width="62" height="78" rx="7"/>
+    <circle fill="#98a2b3" cx="340" cy="331" r="15"/>
+    <circle fill="#fdb022" cx="320" cy="300" r="5"/><circle fill="#fdb022" cx="360" cy="300" r="5"/>
+    <circle fill="#fdb022" cx="320" cy="360" r="5"/><circle fill="#fdb022" cx="360" cy="360" r="5"/>
+    <text class="white" x="322" y="390">SW1</text><text class="blue" x="300" y="410">GP2 at j8</text>
+    <text class="small" x="300" y="428">GND at j10</text>
+  </g>
+  <g>
+    <rect class="chip" x="409" y="292" width="62" height="78" rx="7"/>
+    <circle fill="#98a2b3" cx="440" cy="331" r="15"/>
+    <circle fill="#fdb022" cx="420" cy="300" r="5"/><circle fill="#fdb022" cx="460" cy="300" r="5"/>
+    <circle fill="#fdb022" cx="420" cy="360" r="5"/><circle fill="#fdb022" cx="460" cy="360" r="5"/>
+    <text class="white" x="422" y="390">SW2</text><text class="blue" x="400" y="410">GP3 at j13</text>
+    <text class="small" x="400" y="428">GND at j15</text>
+  </g>
+  <g>
+    <rect class="chip" x="489" y="292" width="62" height="78" rx="7"/>
+    <circle fill="#98a2b3" cx="520" cy="331" r="15"/>
+    <circle fill="#fdb022" cx="500" cy="300" r="5"/><circle fill="#fdb022" cx="540" cy="300" r="5"/>
+    <circle fill="#fdb022" cx="500" cy="360" r="5"/><circle fill="#fdb022" cx="540" cy="360" r="5"/>
+    <text class="white" x="502" y="390">SW3</text><text class="blue" x="482" y="410">GP6 at j17</text>
+    <text class="small" x="482" y="428">GND at j19</text>
+  </g>
+
+  <!-- Receiver groups -->
+  <g>
+    <rect class="chip" x="546" y="196" width="68" height="58" rx="13"/>
+    <path d="M552 248q28 20 56 0" fill="#475467" stroke="#101828" stroke-width="2"/>
+    <text class="white" x="560" y="218">FRONT</text><text class="white" x="568" y="237">U2</text>
+    <path class="wire-black" d="M560 254v6M580 254v6M600 254v6"/>
+    <text class="tiny" x="552" y="275">OUT</text><text class="tiny" x="570" y="275">G</text><text class="tiny" x="594" y="275">V</text>
+    <path class="wire-red" d="M600 130v7M600 190v30"/><use href="#resistor-v" x="600" y="137"/><text class="tiny" x="608" y="180">R10 100</text>
+    <use href="#capacitor-h" x="600" y="280"/><text class="tiny" x="603" y="295">C10 100n</text>
+    <path d="M600 300h17M617 292v16M623 294v12M623 300h17" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    <text class="tiny" x="604" y="291">+</text><text class="tiny" x="610" y="316">C11 4.7u</text>
+    <path class="wire-black" d="M580 210V155M620 280V155M640 300V155"/>
+    <text class="blue" x="548" y="294">GP10 e20</text>
+  </g>
+  <g>
+    <rect class="chip" x="726" y="196" width="68" height="58" rx="13"/>
+    <path d="M732 248q28 20 56 0" fill="#475467" stroke="#101828" stroke-width="2"/>
+    <text class="white" x="742" y="218">BACK</text><text class="white" x="748" y="237">U3</text>
+    <path class="wire-black" d="M740 254v6M760 254v6M780 254v6"/>
+    <text class="tiny" x="732" y="275">OUT</text><text class="tiny" x="750" y="275">G</text><text class="tiny" x="774" y="275">V</text>
+    <path class="wire-red" d="M780 130v7M780 190v30"/><use href="#resistor-v" x="780" y="137"/><text class="tiny" x="788" y="180">R11 100</text>
+    <use href="#capacitor-h" x="780" y="280"/><text class="tiny" x="783" y="295">C12 100n</text>
+    <path d="M780 300h17M797 292v16M803 294v12M803 300h17" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    <text class="tiny" x="784" y="291">+</text><text class="tiny" x="790" y="316">C13 4.7u</text>
+    <path class="wire-black" d="M760 210V155M800 280V155M820 300V155"/>
+    <text class="blue" x="728" y="294">GP11 e29</text>
+  </g>
+  <g>
+    <rect class="chip" x="906" y="196" width="68" height="58" rx="13"/>
+    <path d="M912 248q28 20 56 0" fill="#475467" stroke="#101828" stroke-width="2"/>
+    <text class="white" x="924" y="218">LEFT</text><text class="white" x="928" y="237">U4</text>
+    <path class="wire-black" d="M920 254v6M940 254v6M960 254v6"/>
+    <text class="tiny" x="912" y="275">OUT</text><text class="tiny" x="930" y="275">G</text><text class="tiny" x="954" y="275">V</text>
+    <path class="wire-red" d="M960 130v7M960 190v30"/><use href="#resistor-v" x="960" y="137"/><text class="tiny" x="968" y="180">R12 100</text>
+    <use href="#capacitor-h" x="960" y="280"/><text class="tiny" x="963" y="295">C14 100n</text>
+    <path d="M960 300h17M977 292v16M983 294v12M983 300h17" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    <text class="tiny" x="964" y="291">+</text><text class="tiny" x="970" y="316">C15 4.7u</text>
+    <path class="wire-black" d="M940 210V155M980 280V155M1000 300V155"/>
+    <text class="blue" x="908" y="294">GP12 e38</text>
+  </g>
+  <g>
+    <rect class="chip" x="1086" y="196" width="68" height="58" rx="13"/>
+    <path d="M1092 248q28 20 56 0" fill="#475467" stroke="#101828" stroke-width="2"/>
+    <text class="white" x="1097" y="218">RIGHT</text><text class="white" x="1108" y="237">U5</text>
+    <path class="wire-black" d="M1100 254v6M1120 254v6M1140 254v6"/>
+    <text class="tiny" x="1092" y="275">OUT</text><text class="tiny" x="1110" y="275">G</text><text class="tiny" x="1134" y="275">V</text>
+    <path class="wire-red" d="M1140 130v7M1140 190v30"/><use href="#resistor-v" x="1140" y="137"/><text class="tiny" x="1148" y="180">R13 100</text>
+    <use href="#capacitor-h" x="1140" y="280"/><text class="tiny" x="1143" y="295">C16 100n</text>
+    <path d="M1140 300h17M1157 292v16M1163 294v12M1163 300h17" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+    <text class="tiny" x="1144" y="291">+</text><text class="tiny" x="1150" y="316">C17 4.7u</text>
+    <path class="wire-black" d="M1120 210V155M1160 280V155M1180 300V155"/>
+    <text class="blue" x="1088" y="294">GP13 e47</text>
+  </g>
+
+  <!-- IR transmitter on lower strip -->
+  <path class="wire-red" d="M1060 440v7M1060 500v50"/>
+  <use href="#resistor-v" x="1060" y="447"/>
+  <text class="tiny" x="1020" y="487">R1 15 ohm</text>
+  <path d="M1113 420h87" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+  <use href="#resistor-h" x="1060" y="420"/>
+  <text class="tiny" x="1080" y="413">R4 15 ohm: i45-i52</text>
+  <path d="M1200 400h12l16-10v20l-16-10h48" fill="none" stroke="#7a2e0e" stroke-width="3"/>
+  <path class="wire-blue" d="M1222 385l14-12m-5 1l5-1-1 6M1231 391l14-12m-5 1l5-1-1 6"/>
+  <text class="tiny" x="1190" y="375">D1: long leg h52, short leg h55</text>
+  <path class="chip" d="M1252 370q48 0 48 60h-48z"/>
+  <path class="wire-black" d="M1260 400h0M1280 400h0M1300 400h0"/>
+  <text class="white" x="1261" y="390">Q1</text>
+  <text class="tiny" x="1255" y="446">h55 C</text><text class="tiny" x="1275" y="460">h56 B</text><text class="tiny" x="1300" y="446">h57 E</text>
+  <path d="M1393 360h27" stroke="#7a2e0e" stroke-width="3"/><use href="#resistor-h" x="1340" y="360"/><text class="tiny" x="1340" y="350">R2 220: f59-f63</text>
+  <path d="M1293 380h47" stroke="#7a2e0e" stroke-width="3"/><use href="#resistor-h" x="1240" y="380"/><text class="tiny" x="1240" y="370">R5 220: g54-g59</text>
+  <path class="wire-blue" d="M1240 420h40"/><text class="tiny" x="1215" y="438">jumper i54-i56</text>
+  <path class="wire-black" d="M1280 440v7M1280 500v25"/><use href="#resistor-v" x="1280" y="447"/><text class="tiny" x="1220" y="495">R3 10k</text>
+  <path class="wire-black" d="M1300 440v85"/>
+  <text class="blue" x="1342" y="452">GP0 at j63</text>
+  <circle class="cap" cx="1100" cy="537" r="9"/><text class="tiny" x="1070" y="510">C1 4.7u, + to red</text>
+  <circle class="cap" cx="1160" cy="537" r="7"/><text class="tiny" x="1135" y="510">C2 100n</text>
+  <text class="head" x="1190" y="575">IR TRANSMITTER</text>
+
+  <!-- External PiCowbell / Pico map -->
+  <rect class="module" x="85" y="635" width="680" height="455" rx="14"/>
+  <text class="head" x="110" y="672">PiCowbell and Pico jumper endpoints</text>
+  <rect class="chip" x="110" y="700" width="195" height="320" rx="12"/>
+  <text class="white" x="145" y="730">PICO WH on A1</text>
+  <text class="small" x="130" y="758">USB end points toward</text>
+  <text class="small" x="130" y="778">PiCowbell USB marking</text>
+  <text class="white" x="135" y="815">Use printed pin labels</text>
+  <text class="small" x="130" y="850">Battery plugs into JST-PH</text>
+  <text class="small" x="130" y="875">Red battery wire to +</text>
+  <text class="small" x="130" y="910">Switch OFF while wiring</text>
+  <text class="small" x="130" y="955">Never use VBUS or VSYS</text>
+  <text class="small" x="130" y="975">as a breadboard rail</text>
+
+  <text class="mono" x="340" y="720">Pico pin</text><text class="mono" x="455" y="720">connect to</text>
+  <text class="blue" x="340" y="750">1  GP0</text><text class="text" x="455" y="750">j63 - IR base chain</text>
+  <text class="blue" x="340" y="780">4  GP2</text><text class="text" x="455" y="780">j8 - trigger</text>
+  <text class="blue" x="340" y="810">5  GP3</text><text class="text" x="455" y="810">j13 - reload</text>
+  <text class="blue" x="340" y="840">6  GP4</text><text class="text" x="455" y="840">OLED SDA-labelled pin</text>
+  <text class="blue" x="340" y="870">7  GP5</text><text class="text" x="455" y="870">OLED SCL-labelled pin</text>
+  <text class="blue" x="340" y="900">9  GP6</text><text class="text" x="455" y="900">j17 - menu</text>
+  <text class="blue" x="340" y="930">14 GP10</text><text class="text" x="455" y="930">e20 - front receiver</text>
+  <text class="blue" x="340" y="960">15 GP11</text><text class="text" x="455" y="960">e29 - back receiver</text>
+  <text class="blue" x="340" y="990">16 GP12</text><text class="text" x="455" y="990">e38 - left receiver</text>
+  <text class="blue" x="340" y="1020">17 GP13</text><text class="text" x="455" y="1020">e47 - right receiver</text>
+  <text class="red" x="340" y="1050">36 3V3</text><text class="text" x="455" y="1050">top red rail</text>
+  <text class="mono" x="340" y="1080">38 GND</text><text class="text" x="455" y="1080">top blue rail</text>
+
+  <!-- Beginner component key -->
+  <rect class="part" x="790" y="635" width="725" height="455" rx="14"/>
+  <text class="head" x="815" y="672">Orientation key - polarity mistakes can damage parts</text>
+  <rect class="chip" x="820" y="710" width="100" height="70" rx="18"/>
+  <text class="white" x="834" y="738">TSOP38238</text><text class="white" x="838" y="760">lens faces you</text>
+  <path class="wire-black" d="M840 780v35M870 780v35M900 780v35"/>
+  <text class="mono" x="825" y="835">OUT</text><text class="mono" x="855" y="835">GND</text><text class="mono" x="895" y="835">VS</text>
+  <text class="small" x="820" y="860">Lenses face the board bottom.</text>
+
+  <path class="chip" d="M1020 710q100 0 100 75h-100z"/>
+  <path class="wire-black" d="M1040 785v35M1070 785v35M1100 785v35"/>
+  <text class="white" x="1043" y="745">BC337-40</text><text class="white" x="1046" y="766">flat face</text>
+  <text class="mono" x="1034" y="840">C</text><text class="mono" x="1064" y="840">B</text><text class="mono" x="1094" y="840">E</text>
+  <text class="small" x="1000" y="865">Diotec part; other pinouts differ.</text>
+
+  <circle class="cap" cx="1245" cy="745" r="34"/><rect fill="#475467" x="1220" y="720" width="12" height="50"/>
+  <path class="wire-black" d="M1235 779v40M1255 779v40"/>
+  <text class="mono" x="1205" y="840">stripe = negative</text>
+  <text class="small" x="1198" y="865">Positive red; stripe blue.</text>
+
+  <path d="M1390 745h25l20-15v30l-20-15h35" fill="none" stroke="#7a2e0e" stroke-width="4"/>
+  <path class="wire-black" d="M1390 745h-25M1450 745h25"/>
+  <text class="mono" x="1350" y="800">TSAL6200</text>
+  <text class="small" x="1335" y="825">long leg = anode (+)</text>
+  <text class="small" x="1335" y="847">short/flat side = cathode</text>
+
+  <rect class="chip" x="830" y="915" width="90" height="90" rx="8"/>
+  <circle fill="#98a2b3" cx="875" cy="960" r="20"/>
+  <circle fill="#fdb022" cx="840" cy="925" r="6"/><circle fill="#fdb022" cx="910" cy="925" r="6"/>
+  <circle fill="#fdb022" cx="840" cy="995" r="6"/><circle fill="#fdb022" cx="910" cy="995" r="6"/>
+  <text class="small" x="820" y="1030">Button crosses centre trench.</text>
+  <text class="small" x="820" y="1052">Opposite sides connect only when pressed.</text>
+
+  <circle fill="#1570ef" cx="1100" cy="940" r="8"/><text class="text" x="1120" y="946">Blue line/tag = GPIO signal</text>
+  <circle fill="#d92d20" cx="1100" cy="975" r="8"/><text class="text" x="1120" y="981">Red line = regulated 3V3 only</text>
+  <circle fill="#101828" cx="1100" cy="1010" r="8"/><text class="text" x="1120" y="1016">Black line = common ground</text>
+  <text class="small" x="1060" y="1060">Read breadboard-layout.md step by step before inserting anything.</text>
+
+  <rect fill="#fef3f2" stroke="#d92d20" stroke-width="2" x="85" y="1110" width="1430" height="36" rx="7"/>
+  <text class="mono" x="110" y="1134">STOP: no USB and no battery while building. Verify every striped, flat-sided, long-leg and short-leg orientation.</text>
+</svg>

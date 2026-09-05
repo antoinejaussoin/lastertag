@@ -21,4 +21,6 @@ persists match history.
 - [`hardware/`](hardware/) — electronics notes and future 3D-printable parts
 
 Start with the [high-level plan](docs/high-level-plan.md), then use the
-[shopping list](docs/shopping-list.md) for the two-player prototype.
+[shopping list](docs/shopping-list.md) for the two-player prototype. The
+[Pico W capabilities guide](docs/pico-w-capabilities.md) explains what runs on
+each player controller, its memory, storage, networking, and limitations.
