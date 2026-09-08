@@ -182,10 +182,10 @@ screen /dev/cu.usbmodem* 115200
 If several `usbmodem` devices appear, try each until you see a `>` prompt.
 Type `help`. Leave `screen` with `Ctrl-A` then `K`, then `Y`.
 
-On this computer, start a listener (binds all interfaces, port 8080):
+On this computer, start a listener (binds all interfaces, port 8090):
 
 ```bash
-python3 listen_post.py
+bun listen_post.ts
 ```
 
 It prints this machine’s LAN IP. On the Pico console, using that IP:
@@ -193,12 +193,12 @@ It prints this machine’s LAN IP. On the Pico console, using that IP:
 ```text
 wifi YourNetworkName
 psk YourPassword
-server 192.168.1.23:8080/temp
+server 192.168.1.23:8090/temp
 save
 ```
 
 `psk` with no password means an open network. `server` can also be a hostname
-(`nas.local:8080/temp`). The Pico is 2.4 GHz only.
+(`nas.local:8090/temp`). The Pico is 2.4 GHz only.
 
 `save` writes flash and starts joining. `show` prints the current RAM copy.
 `clear` wipes the saved settings. After `save`, you can unplug USB and power
