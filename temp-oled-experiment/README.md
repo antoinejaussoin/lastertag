@@ -2,14 +2,15 @@
 
 A standalone first hardware test, separate from the laser-tag firmware. It
 reads the temperature sensor **inside** the Raspberry Pi Pico 2 and shows it
-on the SSD1306 OLED.
+on the 0.96" I²C OLED.
 
 You do not need to know Rust or electronics already. Follow the steps in order.
 
 ## What you need
 
 - Raspberry Pi Pico 2 (this experiment targets the RP2350 chip)
-- 0.96" SSD1306 OLED (the Pi Hut four-pin module)
+- 0.96" four-pin I²C OLED (often sold as SSD1306; many yellow/blue 128×64
+  modules are actually SH1106)
 - the full-size breadboard and jumper wires from the shopping list
 - a **data** USB cable (charge-only cables will not work)
 
@@ -142,7 +143,7 @@ make uf2     # ELF plus temp-oled-experiment.uf2
 
 ## What you should see
 
-White text on a black OLED, updating about once a second, similar to:
+Text updating about once a second, similar to:
 
 ```text
 Pico chip temp
@@ -150,7 +151,27 @@ Pico chip temp
 updates every 1s
 ```
 
+On a dual-colour 0.96" panel the top band is yellow and the rest is blue.
+The title sits in the yellow band; the temperature number is blue. That is
+the glass, not a wiring fault.
+
 A value between about 20 °C and 45 °C at a desk is typical.
+
+SH1106 panels have 132 columns of RAM and 128 visible. This firmware starts
+the write window at column 0 so the left edge is not leftover RAM. If a 2-pixel
+bar appears on the **right** instead, change `with_column_offset(0)` in
+`src/main.rs` to `with_column_offset(2)` and flash again.
+
+## If the title is readable but the rest is noise
+
+The firmware talks to the panel as an **SH1106** (132-column RAM). Cheap
+yellow/blue 0.96" modules are often SH1106 even when the listing says
+SSD1306. Driving SH1106 as SSD1306 commonly leaves the first rows readable
+and fills the blue area with random pixels.
+
+Reflash this folder with BOOTSEL + `make`. If the temperature is still
+garbage, in `src/main.rs` change `OledConfig::sh1106_128x64()` to
+`OledConfig::ssd1306_128x64()` and flash again.
 
 ## If the screen stays black
 
@@ -161,9 +182,8 @@ A value between about 20 °C and 45 °C at a desk is typical.
 - You counted pins from the USB end. `GP16`/`GP17` are on the **right** side,
   at the end opposite the USB plug.
 - You actually copied a UF2 (the `RP2350` drive vanished after the copy).
-- Some SSD1306 modules use I²C address `0x3D` instead of `0x3C`. In
-  `src/main.rs`, replace `I2CDisplayInterface::new(i2c)` with
-  `I2CDisplayInterface::new_alternate_address(i2c)`.
+- Some modules use I²C address `0x3D` instead of `0x3C`. In `src/main.rs`,
+  change the `0x3C` passed to `Oled::new` to `0x3D`.
 - The plastic film on a new OLED can make it look dim; peel it off.
 
 ## Changing the program

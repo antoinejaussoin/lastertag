@@ -12,9 +12,8 @@ use embedded_graphics::pixelcolor::BinaryColor;
 use embedded_graphics::prelude::*;
 use embedded_graphics::text::{Baseline, Text};
 use heapless::String;
+use oled_i2c::{Oled, OledConfig};
 use panic_halt as _;
-use ssd1306::prelude::*;
-use ssd1306::{I2CDisplayInterface, Ssd1306};
 
 #[unsafe(link_section = ".bi_entries")]
 #[used]
@@ -39,14 +38,21 @@ async fn main(_spawner: Spawner) {
     let mut temp_sensor = Channel::new_temp_sensor(p.ADC_TEMP_SENSOR);
 
     // I2C0 on GP17 = SCL (physical pin 22) and GP16 = SDA (physical pin 21).
+    // 100 kHz is more reliable on jumper-wire buses than 400 kHz.
     let mut i2c_config = I2cConfig::default();
-    i2c_config.frequency = 400_000;
+    i2c_config.frequency = 100_000;
     let i2c = I2c::new_blocking(p.I2C0, p.PIN_17, p.PIN_16, i2c_config);
 
-    let interface = I2CDisplayInterface::new(i2c);
-    let mut display = Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
-        .into_buffered_graphics_mode();
-    display.init().unwrap();
+    // Many 0.96" yellow/blue modules use SH1106 (132-column RAM), not SSD1306.
+    // Driving them as SSD1306 leaves the first rows readable and the rest noise.
+    // Default SH1106 offset is 2; with this panel's segment remap that leaves
+    // two unwritten RAM columns visible as junk on the left edge.
+    let mut display = Oled::new(
+        i2c,
+        0x3C,
+        OledConfig::sh1106_128x64().with_column_offset(0),
+    )
+    .unwrap();
 
     let title_style = MonoTextStyleBuilder::new()
         .font(&FONT_6X10)
@@ -67,7 +73,7 @@ async fn main(_spawner: Spawner) {
         let frac = tenths.abs() % 10;
         let _ = write!(line, "{whole}.{frac} C");
 
-        display.clear(BinaryColor::Off).unwrap();
+        display.clear_buffer();
         Text::with_baseline(
             "Pico chip temp",
             Point::new(0, 4),
@@ -87,7 +93,7 @@ async fn main(_spawner: Spawner) {
         )
         .draw(&mut display)
         .unwrap();
-        display.flush().unwrap();
+        display.flush().ok();
 
         Timer::after_secs(1).await;
     }

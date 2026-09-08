@@ -20,8 +20,8 @@ embassy-rp = { version = "0.10.0", features = [
 embassy-time = "0.5.1"
 embedded-graphics = "0.8.1"
 heapless = "0.8.0"
+oled-i2c = { version = "0.3.0", features = ["embedded-graphics"] }
 panic-halt = "1.0.0"
-ssd1306 = "0.10.0"
 
 [profile.release]
 lto = true
