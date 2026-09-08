@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="820" viewBox="0 0 1100 820" role="img" aria-label="Pico WH and OLED on a breadboard">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 28px system-ui, sans-serif; fill: #101828; }
+      .sub { font: 15px system-ui, sans-serif; fill: #344054; }
+      .head { font: 700 18px system-ui, sans-serif; fill: #101828; }
+      .text { font: 14px system-ui, sans-serif; fill: #101828; }
+      .small { font: 12px system-ui, sans-serif; fill: #475467; }
+      .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
+      .white { font: 700 12px system-ui, sans-serif; fill: #ffffff; }
+      .board { fill: #f2f4f7; stroke: #667085; stroke-width: 2; }
+      .trench { fill: #d0d5dd; }
+      .pico { fill: #175cd3; stroke: #0b4ea2; stroke-width: 2; }
+      .usb { fill: #98a2b3; stroke: #344054; stroke-width: 1.5; }
+      .oled { fill: #101828; stroke: #000000; stroke-width: 2; }
+      .oled-glass { fill: #0d0d0d; }
+      .oled-text { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f5f5f5; }
+      .pin { fill: #e4e7ec; stroke: #344054; stroke-width: 1; }
+      .pin-use { fill: #fef0c7; stroke: #b54708; stroke-width: 1.5; }
+      .wire-red { fill: none; stroke: #d92d20; stroke-width: 4; stroke-linecap: round; }
+      .wire-black { fill: none; stroke: #101828; stroke-width: 4; stroke-linecap: round; }
+      .wire-green { fill: none; stroke: #12b76a; stroke-width: 4; stroke-linecap: round; }
+      .wire-blue { fill: none; stroke: #1570ef; stroke-width: 4; stroke-linecap: round; }
+      .warn { fill: #fffaeb; stroke: #dc6803; stroke-width: 2; }
+      .note { fill: #eff8ff; stroke: #175cd3; stroke-width: 2; }
+      .red { fill: #b42318; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1100" height="820"/>
+  <text class="title" x="40" y="40">Pico WH + OLED on the breadboard</text>
+  <text class="sub" x="40" y="64">No PiCowbell. Unplug USB while you insert parts. Follow the names printed on the OLED; pin order is not the same on every module.</text>
+
+  <rect class="board" x="40" y="88" width="620" height="430" rx="12"/>
+  <text class="small" x="56" y="112">Full-size breadboard (USB hangs off the top so the cable still fits)</text>
+  <rect class="trench" x="330" y="128" width="40" height="360" rx="6"/>
+
+  <rect class="usb" x="268" y="88" width="124" height="36" rx="4"/>
+  <text class="mono" x="304" y="111">USB</text>
+
+  <rect class="pico" x="250" y="124" width="160" height="360" rx="8"/>
+  <text class="white" x="278" y="148">Pico WH</text>
+  <circle cx="330" cy="168" r="11" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+  <text class="white" x="300" y="196">BOOTSEL</text>
+
+  <!-- Left pins (unused for this test) -->
+  <g transform="translate(226,210)">
+    <text class="mono" x="-28" y="-8">left</text>
+    <rect class="pin" x="0" y="0" width="24" height="14"/><text class="mono" x="-22" y="12">1</text>
+    <rect class="pin" x="0" y="20" width="24" height="14"/><text class="mono" x="-22" y="32">2</text>
+    <rect class="pin" x="0" y="40" width="24" height="14"/><text class="mono" x="-22" y="52">3</text>
+    <rect class="pin" x="0" y="60" width="24" height="14"/><text class="mono" x="-22" y="72">4</text>
+    <rect class="pin" x="0" y="80" width="24" height="14"/><text class="mono" x="-22" y="92">5</text>
+    <rect class="pin" x="0" y="100" width="24" height="14"/><text class="mono" x="-22" y="112">6</text>
+    <rect class="pin" x="0" y="120" width="24" height="14"/><text class="mono" x="-22" y="132">7</text>
+    <rect class="pin" x="0" y="140" width="24" height="14"/><text class="mono" x="-22" y="152">8</text>
+  </g>
+
+  <!-- Right pins: power at USB end, GP16/GP17 at the opposite end -->
+  <g transform="translate(410,210)">
+    <text class="mono" x="28" y="-8">right</text>
+    <rect class="pin" x="0" y="0" width="24" height="14"/><text class="mono" x="30" y="12">40 VBUS 5V do not use</text>
+    <rect class="pin" x="0" y="20" width="24" height="14"/><text class="mono" x="30" y="32">39</text>
+    <rect class="pin-use" x="0" y="40" width="24" height="14"/><text class="mono" x="30" y="52">38 GND</text>
+    <rect class="pin" x="0" y="60" width="24" height="14"/><text class="mono" x="30" y="72">37</text>
+    <rect class="pin-use" x="0" y="80" width="24" height="14"/><text class="mono" x="30" y="92">36 3V3</text>
+  </g>
+  <g transform="translate(410,430)">
+    <rect class="pin-use" x="0" y="0" width="24" height="14"/><text class="mono" x="30" y="12">22 GP17 SCL</text>
+    <rect class="pin-use" x="0" y="20" width="24" height="14"/><text class="mono" x="30" y="32">21 GP16 SDA</text>
+  </g>
+
+  <rect class="oled" x="700" y="160" width="220" height="150" rx="8"/>
+  <rect class="oled-glass" x="712" y="172" width="196" height="90" rx="4"/>
+  <text class="oled-text" x="760" y="226">27.4 C</text>
+  <g transform="translate(724,318)">
+    <rect class="pin" x="0" y="0" width="16" height="20"/>
+    <rect class="pin" x="48" y="0" width="16" height="20"/>
+    <rect class="pin" x="96" y="0" width="16" height="20"/>
+    <rect class="pin" x="144" y="0" width="16" height="20"/>
+  </g>
+  <text class="small" x="700" y="360">Typical Pi Hut order (check your labels):</text>
+  <text class="mono" x="700" y="380">VCC     GND     SCL     SDA</text>
+
+  <path class="wire-red" d="M434 298 C 560 298, 560 328, 732 328"/>
+  <path class="wire-black" d="M434 258 C 580 258, 580 328, 780 328"/>
+  <path class="wire-blue" d="M434 437 C 560 437, 680 370, 828 328"/>
+  <path class="wire-green" d="M434 457 C 580 470, 760 400, 876 328"/>
+
+  <text class="mono" x="700" y="420" style="fill:#d92d20">red    3V3 (pin 36)  -&gt; OLED VCC</text>
+  <text class="mono" x="700" y="440" style="fill:#101828">black  GND (pin 38)  -&gt; OLED GND</text>
+  <text class="mono" x="700" y="460" style="fill:#1570ef">blue   GP17 (pin 22) -&gt; OLED SCL</text>
+  <text class="mono" x="700" y="480" style="fill:#12b76a">green  GP16 (pin 21) -&gt; OLED SDA</text>
+
+  <rect class="warn" x="40" y="540" width="500" height="250" rx="10"/>
+  <text class="head" x="56" y="568">Four wires. That is the whole circuit.</text>
+  <text class="text" x="56" y="596">1. Sit the Pico across the centre gap, USB at the top.</text>
+  <text class="text" x="56" y="618">2. Count from the USB end. Right side: 36, 38, and 21/22 at the far end.</text>
+  <text class="text" x="56" y="640">3. Put the OLED in four unused columns, away from the Pico.</text>
+  <text class="text" x="56" y="662">4. Wire by printed names, not by left-to-right guesswork.</text>
+  <text class="text" x="56" y="684">5. OLED VCC is 3.3 V only. Never pin 40 (VBUS / 5 V).</text>
+  <text class="text" x="56" y="706">6. Power comes from the Pico USB cable. No battery needed.</text>
+  <text class="text" x="56" y="728">7. Interactive pin map: pico.pinout.xyz</text>
+  <text class="text" x="56" y="750">8. OLED shop page: thepihut.com 0.96 OLED 128x64</text>
+  <text class="text" x="56" y="772">This reading is the chip temperature, not room air.</text>
+
+  <rect class="note" x="560" y="540" width="500" height="250" rx="10"/>
+  <text class="head" x="576" y="568">How a breadboard connects things</text>
+  <text class="text" x="576" y="596">Each numbered column of five holes on one side of the</text>
+  <text class="text" x="576" y="618">gap is the same metal strip. A Pico pin in a column is</text>
+  <text class="text" x="576" y="640">already joined to the other holes in that column.</text>
+  <text class="text" x="576" y="668">Plug one end of a jumper into the same column as the</text>
+  <text class="text" x="576" y="690">Pico pin, and the other end into the OLED pin column.</text>
+  <text class="text" x="576" y="718">The two long coloured rails at the edges are optional</text>
+  <text class="text" x="576" y="740">here. You can ignore them for these four wires.</text>
+  <text class="text" x="576" y="768">The centre trench is an insulator. The Pico must straddle it.</text>
+</svg>

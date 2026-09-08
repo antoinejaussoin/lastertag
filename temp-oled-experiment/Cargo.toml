@@ -1,0 +1,27 @@
+[package]
+name = "temp-oled-experiment"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+cortex-m = { version = "0.7.7", features = ["inline-asm"] }
+cortex-m-rt = "0.7.5"
+embassy-executor = "0.10.0"
+embassy-rp = { version = "0.10.0", features = [
+    "rp2040",
+    "time-driver",
+    "critical-section-impl",
+    "executor-thread",
+] }
+embassy-time = "0.5.1"
+embedded-graphics = "0.8.1"
+heapless = "0.8.0"
+panic-halt = "1.0.0"
+ssd1306 = "0.10.0"
+
+[profile.release]
+lto = true
+opt-level = "s"
+codegen-units = 1
+debug = true
