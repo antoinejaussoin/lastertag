@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert a little-endian ELF32 to a Pico 2 (RP2350 ARM Secure) UF2 file."""
+"""Convert a little-endian ELF32 to a Pico 2 W (RP2350 ARM Secure) UF2 file."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ UF2_FLAG_FAMILY_ID_PRESENT = 0x00002000
 RP2350_ARM_S_FAMILY_ID = 0xE48BFF59
 PAGE_SIZE = 256
 FLASH_START = 0x10000000
-FLASH_END = 0x10400000  # Pico 2: 4 MiB
+FLASH_END = 0x10400000  # Pico 2 W: 4 MiB
 
 
 def load_flash_pages(elf_path: Path) -> dict[int, bytearray]:
@@ -22,7 +22,7 @@ def load_flash_pages(elf_path: Path) -> dict[int, bytearray]:
     if data[:4] != b"\x7fELF":
         raise SystemExit(f"{elf_path} is not an ELF file")
     if data[4] != 1 or data[5] != 1:
-        raise SystemExit("expected little-endian ELF32 (Pico 2 ARM image)")
+        raise SystemExit("expected little-endian ELF32 (Pico 2 W ARM image)")
 
     (
         _e_type,

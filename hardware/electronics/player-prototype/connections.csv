@@ -1,6 +1,6 @@
 reference,value_or_part,pin_1,pin_1_net,pin_2,pin_2_net,pin_3,pin_3_net,pin_4,pin_4_net
 A1,Adafruit 5906 Proto Doubler PiCowbell,Pico socket,ALL_PICO_HEADER_PINS,JST positive,VBAT,JST negative,GND,slide switch,3V3_EN
-U1,Raspberry Pi Pico WH,36,+3V3,38,GND,39,VSYS,40,VBUS
+U1,Raspberry Pi Pico 2 W,36,+3V3,38,GND,39,VSYS,40,VBUS
 R1,15 ohm 1 W,1,+3V3,2,IR_R_MID,,,,
 R4,15 ohm 1 W,1,IR_R_MID,2,IR_LED_A,,,,
 D1,Vishay TSAL6200,A,IR_LED_A,K,IR_SWITCH,,,,

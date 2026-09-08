@@ -11,6 +11,7 @@ embassy-executor = { version = "0.10.0", features = [
     "platform-cortex-m",
     "executor-thread",
 ] }
+# Pico 2 W: RP2350 (`rp235xa`). Onboard CYW43439 Wi-Fi is unused in this crate.
 embassy-rp = { version = "0.10.0", features = [
     "rp235xa",
     "time-driver",

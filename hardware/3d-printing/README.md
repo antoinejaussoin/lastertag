@@ -7,7 +7,7 @@ editable CAD sources, drawings, and exported print files for:
 - IR emitter/optics mount and protective muzzle;
 - OLED bezel and control-button mounts;
 - body receiver pods with a clear IR field of view;
-- Pico W controller and battery enclosures;
+- Pico 2 W controller and battery enclosures;
 - cable routing, strain relief, and harness clips.
 
 ## Requirements to capture before CAD

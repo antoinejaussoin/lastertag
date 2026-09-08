@@ -1,14 +1,15 @@
 # Temperature-on-OLED experiment
 
 A standalone first hardware test, separate from the laser-tag firmware. It
-reads the temperature sensor **inside** the Raspberry Pi Pico 2 and shows it
+reads the temperature sensor **inside** the Raspberry Pi Pico 2 W and shows it
 on the 0.96" I²C OLED.
 
 You do not need to know Rust or electronics already. Follow the steps in order.
 
 ## What you need
 
-- Raspberry Pi Pico 2 (this experiment targets the RP2350 chip)
+- Raspberry Pi Pico 2 W (RP2350 plus onboard 2.4 GHz Wi-Fi; this firmware
+  does not use the radio yet)
 - 0.96" four-pin I²C OLED (often sold as SSD1306; many yellow/blue 128×64
   modules are actually SH1106)
 - the full-size breadboard and jumper wires from the shopping list
@@ -30,15 +31,16 @@ Open the drawing in this folder:
 
 Useful references:
 
-- [Interactive Pico pinout](https://pico.pinout.xyz/) — hover GP16, GP17, 3V3, GND
+- [Interactive Pico pinout](https://pico.pinout.xyz/) — choose Pico 2 W; hover GP16, GP17, 3V3, GND
 - [Pi Hut 0.96" OLED](https://thepihut.com/products/0-96-oled-display-module-128x64) — this module’s pins and I²C address `0x3C`
 - [Raspberry Pi Pico getting started](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html) — BOOTSEL / UF2 upload
 
 ### Assembly
 
-1. Unplug USB. Sit the Pico 2 **across the centre gap** of the breadboard,
+1. Unplug USB. Sit the Pico 2 W **across the centre gap** of the breadboard,
    like a bridge. The USB socket should hang off the top so the cable still
-   fits. Count pins from that USB end.
+   fits. Count pins from that USB end. The antenna is at the opposite end
+   from USB.
 2. Put the OLED in four unused columns, away from the Pico, so each OLED pin
    has its own column.
 3. Four jumper wires. Match the **printed names on the OLED**, not a photo of
@@ -59,7 +61,7 @@ You can ignore the long coloured power rails for this test.
 
 ## What the firmware does
 
-The Pico 2 has a small temperature sensor on the RP2350 silicon. The program
+The Pico 2 W has a small temperature sensor on the RP2350 silicon. The program
 reads that sensor about once a second and draws the value on the OLED.
 
 That number is the **chip** temperature. It is usually a few degrees above the
@@ -92,7 +94,7 @@ rustc --version
 cargo --version
 ```
 
-### 2. Add the Pico 2 CPU target
+### 2. Add the Pico 2 W CPU target
 
 This crate’s `rust-toolchain.toml` asks `rustup` to install
 `thumbv8m.main-none-eabihf` when you enter the folder. You can also install it
@@ -102,11 +104,11 @@ yourself:
 rustup target add thumbv8m.main-none-eabihf
 ```
 
-That target is the Pico 2’s ARM Cortex-M33 CPU.
+That target is the Pico 2 W’s ARM Cortex-M33 CPU.
 
 ## Build and upload
 
-Put the Pico 2 in bootloader mode first:
+Put the Pico 2 W in bootloader mode first:
 
 1. Unplug the USB cable.
 2. Hold the **BOOTSEL** button on the Pico (the small button next to the USB

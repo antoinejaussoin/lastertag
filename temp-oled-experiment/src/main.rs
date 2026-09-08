@@ -18,12 +18,12 @@ use panic_halt as _;
 #[unsafe(link_section = ".bi_entries")]
 #[used]
 static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 3] = [
-    embassy_rp::binary_info::rp_program_name!(c"temp-oled-experiment"),
+    embassy_rp::binary_info::rp_program_name!(c"temp-oled-experiment pico2w"),
     embassy_rp::binary_info::rp_cargo_version!(),
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];
 
-/// Convert an RP2350 temperature-sensor ADC reading to Celsius.
+/// Convert a Pico 2 W (RP2350) temperature-sensor ADC reading to Celsius.
 ///
 /// Same approximation as the Pico SDK: T = 27 - (V - 0.706) / 0.001721.
 fn adc_to_celsius(raw: u16) -> f32 {

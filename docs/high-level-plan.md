@@ -9,7 +9,7 @@ network without internet access.
 The first playable version consists of:
 
 - two handheld guns;
-- one Raspberry Pi Pico W controller per player;
+- one Raspberry Pi Pico 2 W controller per player;
 - four receiver zones per player (front, back, left shoulder, right shoulder);
 - a 128×64 OLED on each gun showing health, ammunition, score, and status;
 - a local server with an operator dashboard, live scoreboard, and persistent
@@ -23,7 +23,7 @@ Laser diodes are unnecessary and create avoidable eye-safety risk.
 
 ### Per-player hardware
 
-Each player has one Raspberry Pi Pico W. It:
+Each player has one Raspberry Pi Pico 2 W. It:
 
 - reads trigger, reload, and menu buttons;
 - emits a short encoded shot through a 940 nm IR LED at a 38 kHz carrier;
@@ -35,7 +35,7 @@ Each player has one Raspberry Pi Pico W. It:
 
 Each receiver has a dedicated GPIO, preserving zone information while avoiding
 a microcontroller in every sensor pod. Receiver and control cables converge on
-the Pico W, which can be mounted in the gun or in a wearable enclosure. Add
+the Pico 2 W, which can be mounted in the gun or in a wearable enclosure. Add
 zones subject to GPIO, cabling, power, and interrupt-handling limits.
 
 ### Game server
@@ -157,7 +157,7 @@ before moving from bench prototypes to wearable hardware.
 - write protocol version 1 and electrical schematics;
 - inventory and smoke-test purchased parts.
 
-Exit: both Pico W boards can connect to Wi-Fi, display status, and exchange a
+Exit: both Pico 2 W boards can connect to Wi-Fi, display status, and exchange a
 test event with a development server.
 
 ### Milestone 1 — one-way IR link
@@ -172,7 +172,7 @@ hits and no unsafe component temperature/current.
 ### Milestone 2 — one complete player unit
 
 - finish gun controls and display;
-- connect four wearable zones to the same Pico W;
+- connect four wearable zones to the same Pico 2 W;
 - implement zone deduplication and local feedback;
 - test battery life and disconnect handling.
 

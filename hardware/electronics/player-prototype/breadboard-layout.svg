@@ -200,7 +200,7 @@
   <rect class="module" x="85" y="635" width="680" height="455" rx="14"/>
   <text class="head" x="110" y="672">PiCowbell and Pico jumper endpoints</text>
   <rect class="chip" x="110" y="700" width="195" height="320" rx="12"/>
-  <text class="white" x="145" y="730">PICO WH on A1</text>
+  <text class="white" x="138" y="730">PICO 2 W on A1</text>
   <text class="small" x="130" y="758">USB end points toward</text>
   <text class="small" x="130" y="778">PiCowbell USB marking</text>
   <text class="white" x="135" y="815">Use printed pin labels</text>

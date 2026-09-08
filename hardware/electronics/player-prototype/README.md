@@ -38,9 +38,12 @@ else on the PiCowbell consumes those GPIOs. The generic four-pin OLED connects
 to the PiCowbell's duplicate header or the breadboard with jumper wires; it
 does not plug directly into the STEMMA QT socket.
 
+On the Pico 2 W, GP23, GP24, GP25, and GP29 are used by the onboard CYW43439
+Wi-Fi chip. Do not wire player I/O to those pins.
+
 ## Power and breadboard rails
 
-1. Plug the Pico WH into the Adafruit 5906 PiCowbell socket, observing the USB-end
+1. Plug the Pico 2 W into the Adafruit 5906 PiCowbell socket, observing the USB-end
    orientation printed on the board.
 2. With USB disconnected and the PiCowbell switch off, verify the LiPo's red
    wire reaches the `+` side of the JST-PH socket, then connect it.
@@ -177,7 +180,7 @@ Initial firmware must leave GP0 low during boot and enforce bounded IR bursts.
 
 ## Source references
 
-- [Raspberry Pi Pico W datasheet](https://datasheets.raspberrypi.com/picow/pico-w-datasheet.pdf)
+- [Raspberry Pi Pico 2 W datasheet](https://datasheets.raspberrypi.com/picow/pico-2-w-datasheet.pdf)
 - [Raspberry Pi Pico pinout](https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf)
 - [Adafruit Proto Doubler PiCowbell guide](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-proto-doubler-picowbell.pdf)
 - [Vishay TSAL6200 datasheet](https://www.vishay.com/docs/81010/tsal6200.pdf)

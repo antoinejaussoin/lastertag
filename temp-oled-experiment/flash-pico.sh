@@ -1,5 +1,5 @@
 #!/bin/sh
-# Convert an RP2350 ELF to UF2 (family rp2350-arm-s) and copy it onto the Pico 2.
+# Convert an RP2350 ELF to UF2 (family rp2350-arm-s) and copy it onto the Pico 2 W.
 set -e
 
 UF2_ONLY=0

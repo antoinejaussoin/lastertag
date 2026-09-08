@@ -15,7 +15,7 @@ The first electrical artifact is the
 [`electronics/player-prototype/`](electronics/player-prototype/) breadboard
 schematic. It covers:
 
-- Pico WH power and USB charging through an Adafruit Proto Doubler PiCowbell;
+- Pico 2 W power and USB charging through an Adafruit Proto Doubler PiCowbell;
 - transistor-driven 940 nm IR emitter;
 - four separately addressable 38 kHz receiver inputs;
 - 3.3 V I²C OLED and buttons;

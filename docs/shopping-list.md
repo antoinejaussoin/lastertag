@@ -3,7 +3,7 @@
 This is the complete hardware list for a functional, rechargeable, bench-top
 prototype with:
 
-- one Raspberry Pi Pico W per player;
+- one Raspberry Pi Pico 2 W per player;
 - one IR transmitter and four independent IR receiver zones per player;
 - one OLED and three controls per player;
 - Wi-Fi communication with a web server running on an existing computer;
@@ -20,7 +20,7 @@ on 5 September 2026. Rapid prices may be displayed without VAT.
 
 | Done | Qty | Item | Exact product and UK shop | Purpose |
 |:---:|---:|---|---|---|
-| ✅ | 2 | Wi-Fi microcontroller | [Raspberry Pi Pico WH — select “Pico WH” (£6.70 each), The Pi Hut](https://thepihut.com/products/raspberry-pi-pico-w) | Official Pico W with headers already fitted; one per player |
+| ✅ | 2 | Wi-Fi microcontroller | [Raspberry Pi Pico 2 W — select the version **with headers** if you want to skip soldering, The Pi Hut](https://thepihut.com/products/raspberry-pi-pico-2-w) | RP2350 with onboard 2.4 GHz Wi-Fi; one per player; headers required for the PiCowbell |
 | ✅ | 2 | Rechargeable power/prototyping board | [Adafruit Proto Doubler PiCowbell for Pico and Pico W (£7.30 each), The Pi Hut](https://thepihut.com/products/adafruit-proto-doubler-picowbell-for-pico-and-pico-w) | No-solder Pico socket, LiPo charger, power switch, and accessible GPIO |
 | ✅ | 2 | Rechargeable battery | [500 mAh 3.7 V LiPo with JST-PH connector (£6 each), The Pi Hut](https://thepihut.com/products/500mah-3-7v-lipo-battery) | One per player; plugs directly into the PiCowbell |
 | ✅ | 2 | Player display | [0.96-inch 128×64 I²C SSD1306 OLED (£4 each), The Pi Hut](https://thepihut.com/products/0-96-oled-display-module-128x64) | Health, ammunition, score, and connection status |
@@ -56,8 +56,8 @@ server and dedicated router are not required yet.
 
 ## Important assembly notes
 
-- Select **Pico WH**, not the headerless Pico W, so it plugs into the PiCowbell
-  without soldering.
+- Select **Pico 2 W with headers**, not a headerless board, so it plugs into
+  the PiCowbell without soldering. Pico 2 (no W) has no Wi-Fi.
 - Confirm each LiPo's red wire aligns with `+` on the PiCowbell before plugging
   it in. Never force or reverse a JST connector.
 - Charge batteries where they can be observed. Do not use a battery that is

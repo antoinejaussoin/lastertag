@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="820" viewBox="0 0 1100 820" role="img" aria-label="Pico WH and OLED on a breadboard">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="820" viewBox="0 0 1100 820" role="img" aria-label="Pico 2 W and OLED on a breadboard">
   <defs>
     <style>
       .bg { fill: #ffffff; }
@@ -29,7 +29,7 @@
   </defs>
 
   <rect class="bg" width="1100" height="820"/>
-  <text class="title" x="40" y="40">Pico 2 + OLED on the breadboard</text>
+  <text class="title" x="40" y="40">Pico 2 W + OLED on the breadboard</text>
   <text class="sub" x="40" y="64">No PiCowbell. Unplug USB while you insert parts. Follow the names printed on the OLED; pin order is not the same on every module.</text>
 
   <rect class="board" x="40" y="88" width="620" height="430" rx="12"/>
@@ -40,7 +40,7 @@
   <text class="mono" x="304" y="111">USB</text>
 
   <rect class="pico" x="250" y="124" width="160" height="360" rx="8"/>
-  <text class="white" x="278" y="148">Pico 2</text>
+  <text class="white" x="272" y="148">Pico 2 W</text>
   <circle cx="330" cy="168" r="11" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
   <text class="white" x="300" y="196">BOOTSEL</text>
 

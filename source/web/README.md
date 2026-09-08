@@ -10,6 +10,6 @@ The web application will run on a small local server and provide:
 - export and backup of match history.
 
 The initial deployment target is a Raspberry Pi on the same Wi-Fi network as
-the Pico W devices. A laptop can be used during development. The planned
+the Pico 2 W devices. A laptop can be used during development. The planned
 default database is SQLite; internet hosting can be added later without making
 the game dependent on an internet connection.

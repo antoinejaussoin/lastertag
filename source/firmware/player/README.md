@@ -1,6 +1,6 @@
 # Player firmware
 
-One Raspberry Pi Pico W controls all electronics for one player.
+One Raspberry Pi Pico 2 W controls all electronics for one player.
 
 Planned responsibilities:
 
@@ -14,6 +14,6 @@ Planned responsibilities:
 - keep a short local event queue during temporary network loss.
 
 Each receiver uses its own GPIO so firmware can preserve the hit zone. Receiver
-cables and the gun controls converge on the same Pico W, located either in the
+cables and the gun controls converge on the same Pico 2 W, located either in the
 gun or in a wearable enclosure. The IR LED must be driven through a transistor,
 never directly from a GPIO pin.

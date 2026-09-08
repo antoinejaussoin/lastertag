@@ -1,5 +1,5 @@
 MEMORY {
-    /* Pico 2 has 4 MiB flash. */
+    /* Pico 2 W has 4 MiB flash. */
     FLASH : ORIGIN = 0x10000000, LENGTH = 4096K
     RAM   : ORIGIN = 0x20000000, LENGTH = 512K
     SRAM8 : ORIGIN = 0x20080000, LENGTH = 4K

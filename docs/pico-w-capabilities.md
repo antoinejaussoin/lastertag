@@ -1,12 +1,13 @@
-# What the Raspberry Pi Pico W can do
+# What the Raspberry Pi Pico 2 W can do
 
-This project uses the **Raspberry Pi Pico WH**. The `H` only means that its
-header pins were fitted at the factory; electronically it is the same board as
-the Pico W.
+This project uses the **Raspberry Pi Pico 2 W**. It is the wireless Pico 2:
+an RP2350 microcontroller with an Infineon CYW43439 for 2.4 GHz Wi-Fi and
+Bluetooth. Header pins must be fitted (or bought pre-soldered) to plug into
+the PiCowbell. A Pico 2 without the W has no radio.
 
 The most important distinction is:
 
-> A Pico W is a microcontroller, not a small Linux computer.
+> A Pico 2 W is a microcontroller, not a small Linux computer.
 
 It is designed to start one embedded program quickly, interact directly with
 buttons, sensors and LEDs, and keep doing that job predictably. A Raspberry Pi
@@ -15,13 +16,14 @@ desktop applications and large files.
 
 ## Short answer
 
-The Pico W:
+The Pico 2 W:
 
 - does **not** practically run Raspberry Pi OS or ordinary Linux;
-- runs a firmware program directly on its RP2040 microcontroller;
-- has two 133 MHz Arm Cortex-M0+ processor cores;
-- has 264 KiB of volatile working memory (SRAM);
-- has 2 MiB of persistent flash shared by firmware and saved data;
+- runs a firmware program directly on its RP2350 microcontroller;
+- has two Arm Cortex-M33 cores (or two RISC-V Hazard3 cores), typically at
+  up to 150 MHz; this project uses the Arm cores;
+- has 520 KiB of volatile working memory (SRAM);
+- has 4 MiB of persistent flash shared by firmware and saved data;
 - has 2.4 GHz Wi-Fi and Bluetooth 5.2;
 - can read buttons and sensors and precisely control outputs;
 - can run C/C++, MicroPython, Arduino-style code, Rust, or a small RTOS;
@@ -33,10 +35,11 @@ That is ample for one laser-tag player controller.
 
 Not in the normal or useful sense.
 
-The RP2040 has only 264 KiB of RAM and no memory-management unit (MMU). It has
-no built-in disk, display controller, HDMI, Ethernet, keyboard interface or
-large external RAM. A normal Linux system expects vastly more memory and
-usually an MMU for virtual memory and process isolation.
+The RP2350 has only 520 KiB of RAM and no memory-management unit (MMU) of the
+kind a desktop Linux kernel expects. It has no built-in disk, display
+controller, HDMI, Ethernet, keyboard interface or large external RAM. A normal
+Linux system expects vastly more memory and usually an MMU for virtual memory
+and process isolation.
 
 Experimental Unix-like systems or emulators can be made for very small
 microcontrollers, but they are demonstrations rather than a sensible basis for
@@ -52,12 +55,12 @@ The Pico can instead run:
 - **a custom scheduler/event loop:** often enough for a project this size.
 
 The web server and SQLite database belong on a laptop, desktop computer or
-Linux-capable Raspberry Pi. The Pico W communicates with that server over
+Linux-capable Raspberry Pi. The Pico 2 W communicates with that server over
 Wi-Fi.
 
 ## What happens when it powers on?
 
-1. Permanent code in the RP2040's internal boot ROM runs.
+1. Permanent code in the RP2350's internal boot ROM runs.
 2. Normally it finds the firmware stored in the external flash chip.
 3. The firmware initializes RAM, clocks and peripherals.
 4. Its entry function starts and normally continues until power is removed,
@@ -68,22 +71,24 @@ provides one. There are no independent applications being launched by an
 operating system. The loaded firmware owns the machine.
 
 Holding `BOOTSEL` while connecting USB starts the ROM USB bootloader. The Pico
-appears to the computer as a drive named `RPI-RP2`; copying a UF2 firmware file
+appears to the computer as a drive named `RP2350`; copying a UF2 firmware file
 to it reprograms flash and reboots the board. The apparent USB drive is a
-programming interface, not a normal 2 MiB disk.
+programming interface, not a normal 4 MiB disk.
 
 With MicroPython installed, a computer can also open a USB serial REPL. The
 REPL is an interactive Python prompt supplied by MicroPython, not Linux.
 
 ## Processor
 
-The RP2040 contains:
+The RP2350 contains:
 
-- two Arm Cortex-M0+ cores, normally clocked at up to 133 MHz;
-- integer hardware but no hardware floating-point unit;
+- two Arm Cortex-M33 cores, normally clocked at up to 150 MHz, with a
+  single-precision floating-point unit (or two Hazard3 RISC-V cores instead;
+  this project uses Arm);
 - hardware integer divider and interpolator blocks;
-- 12 DMA channels for moving data without constant CPU involvement;
+- 16 DMA channels for moving data without constant CPU involvement;
 - interrupt, timer and watchdog hardware;
+- Arm TrustZone, OTP, and optional signed boot;
 - a 16 KiB cache in front of execute-in-place flash.
 
 Both cores can run simultaneously, but using two cores requires explicit
@@ -97,7 +102,7 @@ packets, the OLED and network events.
 
 ## Memory: RAM versus persistent flash
 
-### 264 KiB SRAM: temporary working memory
+### 520 KiB SRAM: temporary working memory
 
 SRAM holds values that change while the program runs:
 
@@ -112,7 +117,7 @@ SRAM holds values that change while the program runs:
 SRAM loses all contents when power is removed or the Pico resets. It is shared
 by both CPU cores, the Wi-Fi/network software and the application.
 
-`264 KiB` is 270,336 bytes. The application cannot normally use all of it:
+`520 KiB` is 532,480 bytes. The application cannot normally use all of it:
 firmware runtime state, stacks, drivers and network buffers take a portion.
 MicroPython itself consumes substantially more RAM than a small compiled C
 program, and the exact free heap changes between firmware builds.
@@ -120,9 +125,9 @@ program, and the exact free heap changes between firmware builds.
 The 16 KiB flash cache is not additional general-purpose RAM. It automatically
 speeds access to code and read-only data held in flash.
 
-### 2 MiB QSPI flash: persistent memory
+### 4 MiB QSPI flash: persistent memory
 
-The Pico W board has a separate 2 MiB flash chip. Its contents remain after
+The Pico 2 W board has a separate 4 MiB flash chip. Its contents remain after
 power is removed. It normally contains:
 
 - the executable firmware or MicroPython interpreter;
@@ -130,10 +135,12 @@ power is removed. It normally contains:
 - MicroPython files, if using its filesystem;
 - any explicitly reserved application-data area.
 
-The RP2040 itself has no internal user flash. It reads code from the board's
-external flash through QSPI and can execute that code in place, known as XIP.
+The RP2350 itself has no large internal user flash for application code. It
+reads code from the board's external flash through QSPI and can execute that
+code in place, known as XIP. A small OTP region exists for keys and factory
+data; it is not general application storage.
 
-`2 MiB` is 2,097,152 bytes, but not all of it is available for saved data.
+`4 MiB` is 4,194,304 bytes, but not all of it is available for saved data.
 Firmware occupies part of it. A MicroPython build also reserves space for the
 interpreter and exposes the remaining portion as a small filesystem. Exact
 free space depends on the specific firmware version and partition layout.
@@ -181,7 +188,7 @@ Complete match history and statistics belong in the server's SQLite database.
   general application RAM.
 - External storage can be added over SPI or I2C if genuinely needed.
 
-## What can fit in 2 MiB?
+## What can fit in 4 MiB?
 
 Exact sizes depend on language, libraries and compiler options, but these are
 realistic categories.
@@ -264,8 +271,9 @@ a Python loop toggling a pin.
 
 ### Other options
 
-- **Arduino-Pico:** familiar Arduino APIs on top of RP2040 support.
-- **Rust:** strong compile-time safety with community RP2040 libraries.
+- **Arduino-Pico:** familiar Arduino APIs on top of RP2350 support.
+- **Rust:** strong compile-time safety with community RP2350 libraries
+  (`embassy-rp` with the `rp235xa` feature for Pico 2 W).
 - **CircuitPython:** beginner-friendly Python variant, but generally uses more
   flash/RAM and has different library trade-offs.
 - **FreeRTOS:** task scheduling for C/C++ firmware when a deliberate RTOS
@@ -275,25 +283,25 @@ Official Raspberry Pi support is strongest for the C/C++ SDK and MicroPython.
 
 ## Input and output hardware
 
-The Pico W exposes 26 multifunction 3.3 V GPIO pins:
+The Pico 2 W exposes 26 multifunction 3.3 V GPIO pins:
 
 - 23 are digital-only;
 - three exposed pins can also be analogue inputs;
 - digital pins can act as input, output, interrupt, PWM or peripheral signals;
 - pin functions can include UART, SPI and I2C.
 
-The RP2040 provides:
+The RP2350 provides:
 
 - two UART controllers;
 - two SPI controllers;
 - two I2C controllers;
-- 16 PWM channels across eight slices;
+- 24 PWM channels across twelve slices;
 - a 12-bit ADC rated up to 500 ksps;
 - one internal temperature-sensor ADC input;
 - USB 1.1 device or host hardware;
-- eight PIO state machines across two PIO blocks.
+- twelve PIO state machines across three PIO blocks.
 
-PIO is a distinctive RP2040 feature: tiny deterministic state machines execute
+PIO is a distinctive RP2350 feature: tiny deterministic state machines execute
 short programs independently of the CPU. They can generate or receive precise
 digital waveforms. This is useful for custom protocols and could handle the IR
 carrier or packet timing, although ordinary PWM is sufficient for the initial
@@ -315,7 +323,7 @@ leaving the IR gate low until firmware deliberately sends a shot.
 
 ## Wi-Fi and Bluetooth
 
-The Pico W includes an Infineon CYW43439 radio connected to the RP2040:
+The Pico 2 W includes an Infineon CYW43439 radio connected to the RP2350:
 
 - Wi-Fi 4 / IEEE 802.11b/g/n;
 - single-band 2.4 GHz only;
@@ -330,7 +338,7 @@ The actual features available depend on the firmware, SDK and libraries being
 used. Wi-Fi and Bluetooth consume RAM, flash and power, and radio traffic is
 not deterministic.
 
-The Pico W can run TCP, UDP, DNS, DHCP, HTTP, WebSocket-like application
+The Pico 2 W can run TCP, UDP, DNS, DHCP, HTTP, WebSocket-like application
 protocols and MQTT when suitable libraries are included. TLS is possible but
 uses noticeably more memory and processing time.
 
@@ -340,7 +348,7 @@ Gameplay should tolerate packets being delayed, duplicated or temporarily
 lost.
 
 Keep metal, batteries and dense wiring away from the onboard antenna end of
-the Pico W. Poor physical placement can reduce range.
+the Pico 2 W. Poor physical placement can reduce range.
 
 ## Timing and real-time behavior
 
@@ -361,7 +369,7 @@ server.
 
 ## Clock and time
 
-The RP2040 contains timer and real-time-clock hardware, but the Pico W has no
+The RP2350 contains timer and real-time-clock hardware, but the Pico 2 W has no
 battery-backed clock. It does not know civil date/time after complete power
 loss unless it receives the time from a server or an external RTC.
 
@@ -378,7 +386,7 @@ large database queries or serving many simultaneous users.
 
 In this project:
 
-- Pico W: player hardware, immediate rules, display, IR and network client;
+- Pico 2 W: player hardware, immediate rules, display, IR and network client;
 - external server: match authority, web UI, user access and SQLite history.
 
 This division keeps the player responsive even when the server or Wi-Fi is
@@ -390,10 +398,10 @@ USB UF2 installation is the simplest and most reliable update path during
 development. It can always be reached through the ROM `BOOTSEL` mechanism even
 if application firmware is broken.
 
-Network/over-the-air updates are possible, but 2 MiB makes robust dual-image
-updates tight. An updater must authenticate the image, survive power loss and
-avoid overwriting its currently executing flash code. OTA should be added only
-after the basic firmware is stable.
+Network/over-the-air updates are possible. 4 MiB leaves more room than the
+older 2 MiB Pico W, but an updater must still authenticate the image, survive
+power loss and avoid overwriting its currently executing flash code. OTA
+should be added only after the basic firmware is stable.
 
 SWD pads provide low-level programming and debugging with an external debug
 probe. They are useful for difficult firmware faults but not required for the
@@ -401,12 +409,12 @@ initial prototype.
 
 ## Security limitations
 
-RP2040 was not designed as a high-security application processor:
+RP2350 is stronger than RP2040 (TrustZone, optional signed boot, OTP key
+storage), but a player tag is still a physically accessible device:
 
-- application code and credentials reside in external flash;
-- there is no RP2040 secure-boot chain comparable to newer secure MCUs;
-- there is no transparent flash encryption;
-- physical debug/access can expose secrets;
+- application code and credentials usually reside in external flash;
+- signed boot and flash protection are optional and must be designed in;
+- physical debug/access can expose secrets if those features are unused;
 - all firmware code shares one address space without desktop-style process
   isolation.
 
@@ -416,7 +424,7 @@ accessible player unit as impossible to extract.
 
 ## Recommended role in this project
 
-One Pico W can comfortably:
+One Pico 2 W can comfortably:
 
 - read all four receiver zones independently;
 - generate encoded IR shots;
@@ -439,9 +447,8 @@ It should not:
 
 ## Official references
 
-- [Raspberry Pi Pico W datasheet](https://pip-assets.raspberrypi.com/categories/686-raspberry-pi-pico-w/documents/RP-008312-DS-2-pico-w-datasheet.pdf)
-- [Raspberry Pi Pico W product brief](https://pip-assets.raspberrypi.com/categories/686-raspberry-pi-pico-w/documents/RP-008313-DS-1-pico-w-product-brief.pdf)
-- [RP2040 datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf)
+- [Raspberry Pi Pico 2 W datasheet](https://datasheets.raspberrypi.com/picow/pico-2-w-datasheet.pdf)
+- [RP2350 datasheet](https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf)
 - [Raspberry Pi microcontroller documentation](https://www.raspberrypi.com/documentation/microcontrollers/)
 - [MicroPython on Pico-series boards](https://www.raspberrypi.com/documentation/microcontrollers/micropython.html)
 - [Pico C/C++ SDK](https://www.raspberrypi.com/documentation/microcontrollers/c_sdk.html)
