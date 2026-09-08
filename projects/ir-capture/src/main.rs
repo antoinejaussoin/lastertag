@@ -47,9 +47,10 @@ async fn main(spawner: Spawner) {
     .await;
     cli::start(spawner, p.USB, flash);
 
-    let mut ir_pin = Input::new(p.PIN_15, Pull::Up);
+    let mut ir_pin = Input::new(p.PIN_18, Pull::Up);
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = 100_000;
+    // Same OLED pins as temperature-display: GP17 SCL, GP16 SDA.
     let i2c = I2c::new_blocking(p.I2C0, p.PIN_17, p.PIN_16, i2c_config);
     let mut screen = display::Screen::new(i2c);
 

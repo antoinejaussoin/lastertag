@@ -31,13 +31,14 @@ The PiCowbell and LiPo are not used for this test. USB powers the Pico.
 
 ## How to plug it together
 
-Open the drawing in this folder:
+Two drawings in this folder:
 
-- [`wiring.svg`](wiring.svg)
+- [`connections.svg`](connections.svg) — what joins to what, no breadboard
+- [`wiring.svg`](wiring.svg) — the same circuit, hole by hole on the breadboard
 
 Useful references:
 
-- [Interactive Pico pinout](https://pico.pinout.xyz/) — choose Pico 2 W; hover GP15, GP16, GP17, 3V3, GND
+- [Interactive Pico pinout](https://pico.pinout.xyz/) — choose Pico 2 W; hover GP16, GP17, GP18, 3V3, GND
 - [Pi Hut TSOP38238](https://thepihut.com/products/ir-infrared-receiver-tsop38238)
 - [Vishay TSOP382 datasheet](https://www.vishay.com/docs/82491/tsop382.pdf) — pin 1 `OUT`, pin 2 `GND`, pin 3 `VS`
 - [Pi Hut 0.96" OLED](https://thepihut.com/products/0-96-oled-display-module-128x64)
@@ -50,7 +51,7 @@ down. Left to right:
 
 | Leg | Name | Goes to |
 |---|---|---|
-| left | `OUT` | Pico `GP15` (physical pin 20) |
+| left | `OUT` | Pico `GP18` (physical pin 24) |
 | middle | `GND` | Pico `GND` (physical pin 38) |
 | right | `VS` | Pico `3V3` through 100 Ω, with capacitors to `GND` |
 
@@ -59,41 +60,73 @@ has an internal pull-up; firmware also enables the Pico pull-up.
 
 ### Assembly
 
-1. Unplug USB. Sit the Pico 2 W **across the centre gap** of the breadboard,
-   like a bridge. The USB socket should hang off the top so the cable still
-   fits. Count pins from that USB end. The antenna is at the opposite end
-   from USB.
-2. Keep the OLED in four unused columns, away from the Pico, so each OLED pin
-   has its own column. Wire it exactly as in the temperature test:
+Unplug USB. Hold the breadboard so **printed column 1 is on the left**. Follow
+[`wiring.svg`](wiring.svg) hole for hole. Yellow holes on the drawing already
+have something in them.
 
-   | OLED pin | Pico pin | Physical pin (USB at the top) |
-   |---|---|---:|
-   | `VCC` | `3V3` | 36 (fifth pin down the **right** side) |
-   | `GND` | `GND` | 38 (third pin down the **right** side) |
-   | `SDA` | `GP16` | 21 (bottom pin on the **right** side) |
-   | `SCL` | `GP17` | 22 (second pin from the bottom on the **right** side) |
+1. Sit the Pico 2 W **across the centre trench**, like a DIP chip. USB hangs
+   off the left so the cable still fits. 20 pins go in **row e** (columns 1–20)
+   and 20 pins go in **row f**. The antenna is at column 20.
 
-3. Put the TSOP in three unused columns on the **left** side, lens facing you
-   so a remote can see it. Do not bury the lens against the Pico.
-4. Receiver wires and filter:
+   | Pico pin | Hole | Name |
+   |---|---|---|
+   | 1 | `e1` | GP0 |
+   | 21 | `f20` | GP16 (SDA) |
+   | 22 | `f19` | GP17 (SCL) |
+   | 24 | `f17` | GP18 (IR) |
+   | 36 | `f5` | 3V3 |
+   | 38 | `f3` | GND |
+   | 40 | `f1` | VBUS — leave empty |
 
-   | TSOP pin | Connection |
+2. Power the long rails from the Pico, then join top and bottom:
+
+   | Colour | From | To |
+   |---|---|---|
+   | red | `j5` | bottom `+3V3` rail |
+   | black | `j3` | bottom `GND` rail |
+   | red | bottom `+` column 35 | top `+` column 35 |
+   | black | bottom `GND` column 34 | top `GND` column 34 |
+
+3. OLED pins in **`a23` `a24` `a25` `a26`**. Typical Pi Hut order is
+   `VCC`, `GND`, `SCL`, `SDA`. If your module prints a different order, keep
+   those four holes and move the wires to the printed names.
+
+   The screen uses the **same GPIOs as temperature-display**: `GP16` (SDA) and
+   `GP17` (SCL). If those four wires already work, leave them.
+
+   | OLED name | Hole | Jumper |
+   |---|---|---|
+   | `VCC` | `a23` | top `+3V3` rail |
+   | `GND` | `a24` | top `GND` rail |
+   | `SCL` | `e25` | `g19` (GP17) |
+   | `SDA` | `e26` | `g20` (GP16) |
+
+4. TSOP38238 legs in **`c28` `c29` `c30`**. Lens toward you (toward the
+   trench). With the lens facing you, left to right is `OUT`, `GND`, `VS`.
+
+   | Part | Holes |
    |---|---|
-   | `OUT` | jumper to `GP15`, physical pin 20 (bottom pin on the **left** side) |
-   | `GND` | jumper to Pico `GND`, physical pin 38 |
-   | `VS` | **100 Ω** from Pico `3V3` (pin 36) into the `VS` column |
-   | `VS` to `GND` | 100 nF ceramic (either way) in the same two columns |
-   | `VS` to `GND` | 4.7 µF electrolytic: **positive** on `VS`, **stripe/minus** on `GND` |
+   | TSOP `OUT` / `GND` / `VS` | `c28` / `c29` / `c30` |
+   | orange jumper `OUT` → GP18 | `d28` → `g17` |
+   | black jumper TSOP `GND` | `a29` → top `GND` rail |
+   | 100 Ω from `+3V3` into `VS` | top `+` column 30 → `a30` |
+   | 100 nF ceramic | `d30` – `d31` (either way) |
+   | 4.7 µF electrolytic | `e30` (+) – `e31` (stripe / minus) |
+   | black jumper, capacitor return | `a31` → top `GND` rail |
 
-5. On a breadboard, every hole in the same numbered column (on one side of
-   the gap) is already connected. Plug each jumper into the same column as the
-   Pico pin, then into the part.
+Do not add extra links between columns 28, 29, and 30. That would short `OUT`
+or `VS` to `GND`.
 
 The 100 Ω resistor has no polarity. The ceramic capacitor (often marked `104`)
 has no polarity. The electrolytic can is polarized: the stripe is negative.
 
-This sandbox uses `GP15` because it sits opposite the OLED pins and is easy to
-find. The later player board maps body receivers to `GP10`–`GP13` instead.
+Rows `a`–`e` in one numbered column are already joined. Rows `f`–`j` in that
+column are a second, separate strip. That is why a jumper in `g17` is already
+connected to Pico pin 24 in `f17`.
+
+The receiver uses `GP18` so it sits on the same Pico edge as the OLED (`GP16`
+and `GP17`). The later player board maps body receivers to `GP10`–`GP13`
+instead.
 
 ## What the firmware does
 
@@ -304,7 +337,7 @@ Reflash this folder with BOOTSEL + `make`. If the value is still garbage, in
 ## If nothing happens when you press the remote
 
 - The TSOP lens faces the remote, not the Pico or the table.
-- `OUT` is on **GP15** (pin 20), not an adjacent pin. Swapping `OUT` and `VS`
+- `OUT` is on **GP18** (pin 24), on the same side as the OLED. Swapping `OUT` and `VS`
   can make the part hot; unplug USB and recheck left-to-right: `OUT`, `GND`,
   `VS` with the lens toward you.
 - `VS` is 3.3 V through 100 Ω, not 5 V.
