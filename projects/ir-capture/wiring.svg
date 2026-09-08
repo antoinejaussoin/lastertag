@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="980" viewBox="0 0 1100 980" role="img" aria-label="Pico 2 W, OLED, and TSOP38238 on a breadboard">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 28px system-ui, sans-serif; fill: #101828; }
+      .sub { font: 15px system-ui, sans-serif; fill: #344054; }
+      .head { font: 700 18px system-ui, sans-serif; fill: #101828; }
+      .text { font: 14px system-ui, sans-serif; fill: #101828; }
+      .small { font: 12px system-ui, sans-serif; fill: #475467; }
+      .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
+      .white { font: 700 12px system-ui, sans-serif; fill: #ffffff; }
+      .board { fill: #f2f4f7; stroke: #667085; stroke-width: 2; }
+      .trench { fill: #d0d5dd; }
+      .pico { fill: #175cd3; stroke: #0b4ea2; stroke-width: 2; }
+      .usb { fill: #98a2b3; stroke: #344054; stroke-width: 1.5; }
+      .oled { fill: #101828; stroke: #000000; stroke-width: 2; }
+      .oled-glass { fill: #0d0d0d; }
+      .oled-text { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f5f5f5; }
+      .pin { fill: #e4e7ec; stroke: #344054; stroke-width: 1; }
+      .pin-use { fill: #fef0c7; stroke: #b54708; stroke-width: 1.5; }
+      .wire-red { fill: none; stroke: #d92d20; stroke-width: 4; stroke-linecap: round; }
+      .wire-black { fill: none; stroke: #101828; stroke-width: 4; stroke-linecap: round; }
+      .wire-green { fill: none; stroke: #12b76a; stroke-width: 4; stroke-linecap: round; }
+      .wire-blue { fill: none; stroke: #1570ef; stroke-width: 4; stroke-linecap: round; }
+      .wire-orange { fill: none; stroke: #dc6803; stroke-width: 4; stroke-linecap: round; }
+      .warn { fill: #fffaeb; stroke: #dc6803; stroke-width: 2; }
+      .note { fill: #eff8ff; stroke: #175cd3; stroke-width: 2; }
+      .tsop { fill: #101828; stroke: #000000; stroke-width: 2; }
+      .lens { fill: #344054; }
+      .part { fill: #f9fafb; stroke: #344054; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1100" height="980"/>
+  <text class="title" x="40" y="40">Pico 2 W + OLED + TSOP38238</text>
+  <text class="sub" x="40" y="64">Keep the four OLED wires from the temperature test. Add the receiver on the left. Unplug USB while you insert parts.</text>
+
+  <rect class="board" x="200" y="88" width="500" height="430" rx="12"/>
+  <text class="small" x="216" y="112">Full-size breadboard (USB hangs off the top so the cable still fits)</text>
+  <rect class="trench" x="430" y="128" width="40" height="360" rx="6"/>
+
+  <rect class="usb" x="368" y="88" width="124" height="36" rx="4"/>
+  <text class="mono" x="404" y="111">USB</text>
+
+  <rect class="pico" x="350" y="124" width="160" height="360" rx="8"/>
+  <text class="white" x="372" y="148">Pico 2 W</text>
+  <circle cx="430" cy="168" r="11" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+  <text class="white" x="400" y="196">BOOTSEL</text>
+
+  <g transform="translate(326,430)">
+    <rect class="pin-use" x="0" y="0" width="24" height="14"/><text class="mono" x="-88" y="12">20 GP15 OUT</text>
+  </g>
+  <g transform="translate(510,210)">
+    <text class="mono" x="28" y="-8">right</text>
+    <rect class="pin" x="0" y="0" width="24" height="14"/><text class="mono" x="30" y="12">40 VBUS 5V do not use</text>
+    <rect class="pin" x="0" y="20" width="24" height="14"/><text class="mono" x="30" y="32">39</text>
+    <rect class="pin-use" x="0" y="40" width="24" height="14"/><text class="mono" x="30" y="52">38 GND</text>
+    <rect class="pin" x="0" y="60" width="24" height="14"/><text class="mono" x="30" y="72">37</text>
+    <rect class="pin-use" x="0" y="80" width="24" height="14"/><text class="mono" x="30" y="92">36 3V3</text>
+  </g>
+  <g transform="translate(510,430)">
+    <rect class="pin-use" x="0" y="0" width="24" height="14"/><text class="mono" x="30" y="12">22 GP17 SCL</text>
+    <rect class="pin-use" x="0" y="20" width="24" height="14"/><text class="mono" x="30" y="32">21 GP16 SDA</text>
+  </g>
+
+  <!-- TSOP -->
+  <rect class="tsop" x="40" y="280" width="120" height="70" rx="8"/>
+  <ellipse class="lens" cx="100" cy="302" rx="28" ry="14"/>
+  <text class="white" x="62" y="338">TSOP38238</text>
+  <g transform="translate(58,350)">
+    <rect class="pin-use" x="0" y="0" width="14" height="18"/>
+    <rect class="pin-use" x="32" y="0" width="14" height="18"/>
+    <rect class="pin-use" x="64" y="0" width="14" height="18"/>
+  </g>
+  <text class="mono" x="40" y="390">OUT   GND   VS</text>
+  <text class="small" x="40" y="408">Lens toward you. Legs down.</text>
+  <text class="small" x="40" y="424">Left to right: OUT, GND, VS</text>
+
+  <rect class="part" x="36" y="448" width="128" height="52" rx="6"/>
+  <text class="mono" x="48" y="468">100 ohm to 3V3</text>
+  <text class="mono" x="48" y="488">caps to GND</text>
+
+  <path class="wire-orange" d="M65 368 C 65 500, 200 500, 326 437"/>
+  <path class="wire-black" d="M97 368 C 140 430, 200 280, 534 258"/>
+  <path class="wire-red" d="M129 368 C 180 400, 240 310, 534 298"/>
+
+  <!-- OLED -->
+  <rect class="oled" x="780" y="160" width="220" height="150" rx="8"/>
+  <rect class="oled-glass" x="792" y="172" width="196" height="90" rx="4"/>
+  <text class="oled-text" x="830" y="226">20:0D</text>
+  <g transform="translate(804,318)">
+    <rect class="pin" x="0" y="0" width="16" height="20"/>
+    <rect class="pin" x="48" y="0" width="16" height="20"/>
+    <rect class="pin" x="96" y="0" width="16" height="20"/>
+    <rect class="pin" x="144" y="0" width="16" height="20"/>
+  </g>
+  <text class="small" x="780" y="360">Typical Pi Hut OLED (check labels):</text>
+  <text class="mono" x="780" y="380">VCC     GND     SCL     SDA</text>
+
+  <path class="wire-red" d="M534 298 C 660 298, 660 328, 812 328"/>
+  <path class="wire-black" d="M534 258 C 680 258, 680 328, 860 328"/>
+  <path class="wire-blue" d="M534 437 C 660 437, 760 370, 908 328"/>
+  <path class="wire-green" d="M534 457 C 680 470, 840 400, 956 328"/>
+
+  <text class="mono" x="780" y="420" style="fill:#d92d20">red    3V3 (pin 36)  -&gt; OLED VCC and 100 ohm</text>
+  <text class="mono" x="780" y="440" style="fill:#101828">black  GND (pin 38)  -&gt; OLED GND and TSOP GND</text>
+  <text class="mono" x="780" y="460" style="fill:#1570ef">blue   GP17 (pin 22) -&gt; OLED SCL</text>
+  <text class="mono" x="780" y="480" style="fill:#12b76a">green  GP16 (pin 21) -&gt; OLED SDA</text>
+  <text class="mono" x="780" y="500" style="fill:#dc6803">orange GP15 (pin 20) -&gt; TSOP OUT</text>
+
+  <rect class="warn" x="40" y="540" width="520" height="410" rx="10"/>
+  <text class="head" x="56" y="568">Receiver wiring (new for this test)</text>
+  <text class="text" x="56" y="596">1. Hold the TSOP with the rounded lens toward you</text>
+  <text class="text" x="56" y="618">   and the three legs pointing down. Left to right:</text>
+  <text class="text" x="56" y="640">   OUT, GND, VS. Do not guess from the back of the part.</text>
+  <text class="text" x="56" y="668">2. Sit it in three unused columns on the left, lens</text>
+  <text class="text" x="56" y="690">   facing you (away from the Pico), so a remote can see it.</text>
+  <text class="text" x="56" y="718">3. OUT (left leg) to GP15, physical pin 20: bottom pin</text>
+  <text class="text" x="56" y="740">   on the left side, opposite the OLED SDA pin.</text>
+  <text class="text" x="56" y="768">4. GND (middle leg) to Pico GND, physical pin 38.</text>
+  <text class="text" x="56" y="796">5. VS (right leg) does not go straight to 3V3. Put a</text>
+  <text class="text" x="56" y="818">   100 ohm resistor from 3V3 (pin 36) to VS.</text>
+  <text class="text" x="56" y="846">6. On that same VS column: 100 nF ceramic to GND, and</text>
+  <text class="text" x="56" y="868">   4.7 uF electrolytic to GND (stripe / minus to GND).</text>
+  <text class="text" x="56" y="896">7. OLED VCC is still 3.3 V only. Never pin 40 (VBUS).</text>
+  <text class="text" x="56" y="924">Point a TV remote at the lens. Idle OUT is high.</text>
+
+  <rect class="note" x="580" y="540" width="480" height="410" rx="10"/>
+  <text class="head" x="596" y="568">OLED (unchanged) and breadboard</text>
+  <text class="text" x="596" y="596">The four OLED wires are the same as temperature-display:</text>
+  <text class="text" x="596" y="618">VCC to 3V3, GND to GND, SCL to GP17, SDA to GP16.</text>
+  <text class="text" x="596" y="646">Count from the USB end. GP15 is the last pin on the</text>
+  <text class="text" x="596" y="668">left. GP16/GP17 are the last two pins on the right.</text>
+  <text class="text" x="596" y="696">Each numbered column of five holes on one side of the</text>
+  <text class="text" x="596" y="718">gap is the same metal strip. Plug a jumper into the</text>
+  <text class="text" x="596" y="740">same column as the Pico pin, then into the part.</text>
+  <text class="text" x="596" y="768">The 100 ohm resistor has no polarity. The 100 nF</text>
+  <text class="text" x="596" y="790">ceramic (often marked 104) has no polarity. The 4.7 uF</text>
+  <text class="text" x="596" y="812">can has a stripe on the negative lead; that lead to GND.</text>
+  <text class="text" x="596" y="840">Do not power the TSOP from VBUS (5 V). 3.3 V is correct.</text>
+  <text class="text" x="596" y="868">Interactive pin map: pico.pinout.xyz (choose Pico 2 W)</text>
+  <text class="text" x="596" y="890">TSOP datasheet: vishay.com TSOP382</text>
+  <text class="text" x="596" y="912">Power comes from the Pico USB cable. No battery needed.</text>
+</svg>
