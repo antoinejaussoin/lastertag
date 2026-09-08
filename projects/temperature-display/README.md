@@ -129,7 +129,7 @@ If nothing appears, the cable is probably charge-only. Try another cable.
 Then, from the `lastertag` repository root:
 
 ```bash
-cd temp-oled-experiment
+cd projects/temperature-display
 make
 ```
 
@@ -141,13 +141,13 @@ The first build downloads crates and can take several minutes. After that,
 `make` is the only command you need when the board is already in BOOTSEL.
 
 If `make` builds the UF2 but cannot copy it, drag
-`temp-oled-experiment.uf2` onto the **RP2350** drive in Finder.
+`temperature-display.uf2` onto the **RP2350** drive in Finder.
 
 If you only want the files without copying them onto the board:
 
 ```bash
 make build   # ELF only
-make uf2     # ELF plus temp-oled-experiment.uf2
+make uf2     # ELF plus temperature-display.uf2
 ```
 
 ## What you should see
@@ -241,4 +241,4 @@ garbage, in `src/main.rs` change `OledConfig::sh1106_128x64()` to
 Edit `src/main.rs`, save, put the Pico back in BOOTSEL, then `make` again.
 
 This folder is only a sandbox. Game firmware will live later under
-`source/firmware/`.
+`projects/lasertag/source/firmware/`.

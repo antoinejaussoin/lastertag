@@ -16,10 +16,10 @@ persists match history.
 
 ## Repository layout
 
-- [`temp-oled-experiment/`](temp-oled-experiment/) — first hardware sandbox: Pico 2 W temperature on the OLED
-- [`source/`](source/) — embedded firmware, shared protocol code, and web app
+- [`projects/lasertag/source/`](projects/lasertag/source/) — embedded firmware, shared protocol code, and web app
+- [`projects/lasertag/hardware/`](projects/lasertag/hardware/) — electronics notes and future 3D-printable parts
+- [`projects/temperature-display/`](projects/temperature-display/) — first hardware sandbox: Pico 2 W temperature on the OLED
 - [`docs/`](docs/) — architecture, project plan, and purchasing guide
-- [`hardware/`](hardware/) — electronics notes and future 3D-printable parts
 
 Start with the [high-level plan](docs/high-level-plan.md), then use the
 [shopping list](docs/shopping-list.md) for the two-player prototype. The

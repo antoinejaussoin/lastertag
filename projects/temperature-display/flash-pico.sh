@@ -10,7 +10,7 @@ fi
 
 ELF="${1:?usage: flash-pico.sh [--uf2-only] <firmware.elf>}"
 HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-UF2="$HERE/temp-oled-experiment.uf2"
+UF2="$HERE/temperature-display.uf2"
 
 python3 "$HERE/elf2uf2_rp2350.py" "$ELF" "$UF2"
 echo "UF2: $UF2"
@@ -34,7 +34,7 @@ EOF
 	exit 1
 fi
 
-dest="$boot/temp-oled-experiment.uf2"
+dest="$boot/temperature-display.uf2"
 echo "Copying onto $boot ..."
 python3 - "$UF2" "$dest" "$boot" <<'PY'
 import os, shutil, sys, threading

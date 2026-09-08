@@ -26,7 +26,7 @@ static IMAGE_DEF: ImageDef = ImageDef::secure_exe();
 #[unsafe(link_section = ".bi_entries")]
 #[used]
 static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
-    embassy_rp::binary_info::rp_program_name!(c"lastertag-temp-oled"),
+    embassy_rp::binary_info::rp_program_name!(c"temperature-display"),
     embassy_rp::binary_info::rp_cargo_version!(),
     embassy_rp::binary_info::rp_program_description!(c"Pico 2 W chip temp + Wi-Fi POST"),
     embassy_rp::binary_info::rp_program_build_attribute!(),

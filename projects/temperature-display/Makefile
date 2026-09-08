@@ -1,6 +1,6 @@
 CARGO ?= cargo
 TARGET := thumbv8m.main-none-eabihf
-BIN := temp-oled-experiment
+BIN := temperature-display
 ELF := target/$(TARGET)/release/$(BIN)
 UF2 := $(BIN).uf2
 FLASH := ./flash-pico.sh
