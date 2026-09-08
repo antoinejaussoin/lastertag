@@ -226,22 +226,28 @@ async fn wifi_task(mut control: cyw43::Control<'static>, stack: Stack<'static>) 
         control.leave().await;
         Timer::after_millis(200).await;
 
-        let join = if cfg.psk.is_empty() {
-            control
-                .join(cfg.ssid.as_str(), JoinOptions::new_open())
-                .await
-        } else {
-            control
-                .join(cfg.ssid.as_str(), JoinOptions::new(cfg.psk.as_bytes()))
-                .await
-        };
-
-        let up = match join {
-            Ok(()) => embassy_time::with_timeout(Duration::from_secs(20), stack.wait_config_up())
-                .await
-                .is_ok(),
-            Err(_) => false,
-        };
+        // `join()` waits forever for a chip event. Cap the whole attempt so a
+        // missed SET_SSID/PSK_SUP cannot stick the OLED on "joining wifi".
+        let up = embassy_time::with_timeout(Duration::from_secs(30), async {
+            let join = if cfg.psk.is_empty() {
+                control
+                    .join(cfg.ssid.as_str(), JoinOptions::new_open())
+                    .await
+            } else {
+                control
+                    .join(cfg.ssid.as_str(), JoinOptions::new(cfg.psk.as_bytes()))
+                    .await
+            };
+            match join {
+                Ok(()) => {
+                    stack.wait_config_up().await;
+                    true
+                }
+                Err(_) => false,
+            }
+        })
+        .await
+        .unwrap_or(false);
 
         if up {
             WifiStatus::Up.store();
@@ -250,7 +256,8 @@ async fn wifi_task(mut control: cyw43::Control<'static>, stack: Stack<'static>) 
         } else {
             WifiStatus::Fail.store();
             control.gpio_set(0, false).await;
-            match select(settings::wait_rejoin(), Timer::after_secs(15)).await {
+            control.leave().await;
+            match select(settings::wait_rejoin(), Timer::after_secs(2)).await {
                 Either::First(()) | Either::Second(()) => {}
             }
         }
