@@ -1,44 +1,73 @@
 #!/bin/sh
-# Copy an RP2040 ELF onto a Pico WH in BOOTSEL mode (macOS volume RPI-RP2).
+# Convert an RP2350 ELF to UF2 (family rp2350-arm-s) and copy it onto the Pico 2.
 set -e
 
-ELF="${1:?usage: flash-pico.sh <firmware.elf>}"
+UF2_ONLY=0
+if [ "${1:-}" = "--uf2-only" ]; then
+	UF2_ONLY=1
+	shift
+fi
+
+ELF="${1:?usage: flash-pico.sh [--uf2-only] <firmware.elf>}"
 HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 UF2="$HERE/temp-oled-experiment.uf2"
-ELF2UF2="${ELF2UF2:-$HOME/.cargo/bin/elf2uf2-rs}"
 
-if [ ! -x "$ELF2UF2" ]; then
-	echo "Install the UF2 helper with: cargo install elf2uf2-rs --locked" >&2
-	exit 1
+python3 "$HERE/elf2uf2_rp2350.py" "$ELF" "$UF2"
+echo "UF2: $UF2"
+
+if [ "$UF2_ONLY" -eq 1 ]; then
+	exit 0
 fi
 
-if [ -d /Volumes/RP2350 ] && [ ! -d /Volumes/RPI-RP2 ]; then
+boot=""
+if [ -d /Volumes/RP2350 ]; then
+	boot="/Volumes/RP2350"
+fi
+
+if [ -z "$boot" ]; then
 	cat >&2 <<'EOF'
-Finder is showing a drive named RP2350. That is a Pico 2 (RP2350 chip).
+No RP2350 drive.
 
-This firmware is built for Pico W / Pico WH (RP2040). That board appears as
-RPI-RP2. Copying this file onto RP2350 will not run.
-
-Hold BOOTSEL on the Pico WH and plug it in instead. If the board you have
-really is a Pico 2 W, say so and the experiment can be retargeted.
+Hold BOOTSEL, plug in USB, release, and wait until Finder shows RP2350.
+Then run make again. Use a data cable, not a charge-only cable.
 EOF
 	exit 1
 fi
 
-if [ ! -d /Volumes/RPI-RP2 ]; then
-	cat >&2 <<'EOF'
-No RPI-RP2 drive.
+dest="$boot/temp-oled-experiment.uf2"
+echo "Copying onto $boot ..."
+python3 - "$UF2" "$dest" "$boot" <<'PY'
+import os, shutil, sys, threading
 
-1. Unplug USB.
-2. Hold BOOTSEL on the Pico WH.
-3. Plug USB in, then release BOOTSEL.
-4. Wait until Finder shows RPI-RP2, then run this again.
+src, dest, boot = sys.argv[1], sys.argv[2], sys.argv[3]
+err = {}
 
-Use a data cable, not a charge-only cable.
-EOF
-	exit 1
-fi
+def copy():
+    try:
+        shutil.copyfile(src, dest)
+        err["ok"] = True
+    except OSError as e:
+        # The Pico ejects itself while the copy finishes; that is success.
+        err["os"] = e
+    except Exception as e:
+        err["other"] = e
 
-"$ELF2UF2" "$ELF" "$UF2"
-cp "$UF2" /Volumes/RPI-RP2/
-echo "Copied $UF2 to RPI-RP2. The drive should disappear; that means it worked."
+t = threading.Thread(target=copy, daemon=True)
+t.start()
+t.join(timeout=15)
+
+if not os.path.isdir(boot):
+    print("The RP2350 drive disappeared; that means the Pico accepted the file.")
+    sys.exit(0)
+if err.get("ok"):
+    print(f"Copied to {dest}.")
+    sys.exit(0)
+
+print(
+    "Could not finish copying onto the Pico automatically.\n"
+    f"In Finder, drag\n  {src}\n"
+    "onto the RP2350 drive. The drive should vanish after a second.",
+    file=sys.stderr,
+)
+sys.exit(1)
+PY

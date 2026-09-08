@@ -16,7 +16,7 @@ persists match history.
 
 ## Repository layout
 
-- [`temp-oled-experiment/`](temp-oled-experiment/) — first hardware sandbox: Pico temperature on the OLED
+- [`temp-oled-experiment/`](temp-oled-experiment/) — first hardware sandbox: Pico 2 temperature on the OLED
 - [`source/`](source/) — embedded firmware, shared protocol code, and web app
 - [`docs/`](docs/) — architecture, project plan, and purchasing guide
 - [`hardware/`](hardware/) — electronics notes and future 3D-printable parts

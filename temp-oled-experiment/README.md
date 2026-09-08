@@ -1,17 +1,17 @@
 # Temperature-on-OLED experiment
 
 A standalone first hardware test, separate from the laser-tag firmware. It
-reads the temperature sensor **inside** the Raspberry Pi Pico chip and shows it
+reads the temperature sensor **inside** the Raspberry Pi Pico 2 and shows it
 on the SSD1306 OLED.
 
 You do not need to know Rust or electronics already. Follow the steps in order.
 
 ## What you need
 
-- Raspberry Pi Pico WH (headers already fitted)
+- Raspberry Pi Pico 2 (this experiment targets the RP2350 chip)
 - 0.96" SSD1306 OLED (the Pi Hut four-pin module)
 - the full-size breadboard and jumper wires from the shopping list
-- a **data** Micro-USB cable (charge-only cables will not work)
+- a **data** USB cable (charge-only cables will not work)
 
 The PiCowbell and LiPo are not used for this test. USB powers the Pico.
 
@@ -35,7 +35,7 @@ Useful references:
 
 ### Assembly
 
-1. Unplug USB. Sit the Pico WH **across the centre gap** of the breadboard,
+1. Unplug USB. Sit the Pico 2 **across the centre gap** of the breadboard,
    like a bridge. The USB socket should hang off the top so the cable still
    fits. Count pins from that USB end.
 2. Put the OLED in four unused columns, away from the Pico, so each OLED pin
@@ -58,7 +58,7 @@ You can ignore the long coloured power rails for this test.
 
 ## What the firmware does
 
-The Pico has a small temperature sensor on the RP2040 silicon. The program
+The Pico 2 has a small temperature sensor on the RP2350 silicon. The program
 reads that sensor about once a second and draws the value on the OLED.
 
 That number is the **chip** temperature. It is usually a few degrees above the
@@ -91,82 +91,54 @@ rustc --version
 cargo --version
 ```
 
-### 2. Add the Pico CPU target
+### 2. Add the Pico 2 CPU target
 
 This crate’s `rust-toolchain.toml` asks `rustup` to install
-`thumbv6m-none-eabi` when you enter the folder. You can also install it
+`thumbv8m.main-none-eabihf` when you enter the folder. You can also install it
 yourself:
 
 ```bash
-rustup target add thumbv6m-none-eabi
+rustup target add thumbv8m.main-none-eabihf
 ```
 
-That target is the Pico’s ARM Cortex-M0+ CPU. Your Mac cannot run this binary
-directly; only the Pico can.
-
-### 3. Install the UF2 helper
-
-```bash
-cargo install elf2uf2-rs --locked
-```
-
-UF2 is the file format the Pico’s built-in bootloader understands. You copy a
-`.uf2` file onto a fake USB disk called `RPI-RP2`, and the Pico writes it to
-flash and reboots.
+That target is the Pico 2’s ARM Cortex-M33 CPU.
 
 ## Build and upload
 
-In Terminal, from the `lastertag` repository root:
-
-```bash
-cd temp-oled-experiment
-make
-```
-
-That runs a release build. The compiled firmware is:
-
-`target/thumbv6m-none-eabi/release/temp-oled-experiment`
-
-The first build downloads crates and can take several minutes. `make uf2` also
-writes a `.uf2` you can copy onto the Pico. `make help` lists the other
-targets.
-
-### Put the Pico in bootloader mode
-
-The chip must look like a USB drive named **RPI-RP2**:
+Put the Pico 2 in bootloader mode first:
 
 1. Unplug the USB cable.
 2. Hold the **BOOTSEL** button on the Pico (the small button next to the USB
    socket).
 3. Plug the USB cable in while still holding BOOTSEL.
 4. Release BOOTSEL.
-5. Finder should show a drive called `RPI-RP2`.
+5. Finder should show a drive called **RP2350**.
 
 If nothing appears, the cable is probably charge-only. Try another cable.
 
-### Option A — one command (easiest once the drive is visible)
-
-With `RPI-RP2` already mounted:
+Then, from the `lastertag` repository root:
 
 ```bash
-make flash
+cd temp-oled-experiment
+make
 ```
 
-This builds, converts the program to UF2, and copies it to the Pico. The drive
-will disappear; that is normal. The program starts immediately.
+That compiles the firmware, converts it to a `.uf2`, and copies it onto the
+Pico. The `RP2350` drive disappears; that is normal. The program starts
+immediately.
 
-If Finder shows **RP2350** instead of **RPI-RP2**, that board is a Pico 2, not
-a Pico WH. This firmware will not run on it.
+The first build downloads crates and can take several minutes. After that,
+`make` is the only command you need when the board is already in BOOTSEL.
 
-### Option B — drag the UF2 in Finder
+If `make` builds the UF2 but cannot copy it, drag
+`temp-oled-experiment.uf2` onto the **RP2350** drive in Finder.
+
+If you only want the files without copying them onto the board:
 
 ```bash
-make uf2
+make build   # ELF only
+make uf2     # ELF plus temp-oled-experiment.uf2
 ```
-
-That writes `temp-oled-experiment.uf2` in this folder. Put the Pico in
-bootloader mode, then copy that file onto `RPI-RP2`. The drive ejects itself
-and the screen should show a temperature.
 
 ## What you should see
 
@@ -188,7 +160,7 @@ A value between about 20 °C and 45 °C at a desk is typical.
 - `VCC` is on **3V3** (pin 36), not **VBUS** (pin 40).
 - You counted pins from the USB end. `GP16`/`GP17` are on the **right** side,
   at the end opposite the USB plug.
-- You actually copied a UF2 (the `RPI-RP2` drive vanished after the copy).
+- You actually copied a UF2 (the `RP2350` drive vanished after the copy).
 - Some SSD1306 modules use I²C address `0x3D` instead of `0x3C`. In
   `src/main.rs`, replace `I2CDisplayInterface::new(i2c)` with
   `I2CDisplayInterface::new_alternate_address(i2c)`.
@@ -196,8 +168,7 @@ A value between about 20 °C and 45 °C at a desk is typical.
 
 ## Changing the program
 
-Edit `src/main.rs`, save, then build and upload again. The Pico only runs the
-last UF2 you copied; there is no “run” button on the board.
+Edit `src/main.rs`, save, put the Pico back in BOOTSEL, then `make` again.
 
 This folder is only a sandbox. Game firmware will live later under
 `source/firmware/`.

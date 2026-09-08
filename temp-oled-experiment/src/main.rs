@@ -16,21 +16,25 @@ use panic_halt as _;
 use ssd1306::prelude::*;
 use ssd1306::{I2CDisplayInterface, Ssd1306};
 
-/// Convert an RP2040 temperature-sensor ADC reading to Celsius.
+#[unsafe(link_section = ".bi_entries")]
+#[used]
+static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 3] = [
+    embassy_rp::binary_info::rp_program_name!(c"temp-oled-experiment"),
+    embassy_rp::binary_info::rp_cargo_version!(),
+    embassy_rp::binary_info::rp_program_build_attribute!(),
+];
+
+/// Convert an RP2350 temperature-sensor ADC reading to Celsius.
 ///
-/// Formula is from the RP2040 datasheet, section 4.9.5.
+/// Same approximation as the Pico SDK: T = 27 - (V - 0.706) / 0.001721.
 fn adc_to_celsius(raw: u16) -> f32 {
     27.0 - (raw as f32 * 3.3 / 4096.0 - 0.706) / 0.001721
 }
 
-#[embassy_executor::main(
-    executor = "embassy_rp::executor::Executor",
-    entry = "cortex_m_rt::entry"
-)]
+#[embassy_executor::main]
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
 
-    // Internal chip temperature sensor (not a separate part).
     let mut adc = Adc::new_blocking(p.ADC, AdcConfig::default());
     let mut temp_sensor = Channel::new_temp_sensor(p.ADC_TEMP_SENSOR);
 
@@ -39,7 +43,6 @@ async fn main(_spawner: Spawner) {
     i2c_config.frequency = 400_000;
     let i2c = I2c::new_blocking(p.I2C0, p.PIN_17, p.PIN_16, i2c_config);
 
-    // Most SSD1306 modules, including the Pi Hut 0.96" screen, use 0x3C.
     let interface = I2CDisplayInterface::new(i2c);
     let mut display = Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
         .into_buffered_graphics_mode();
