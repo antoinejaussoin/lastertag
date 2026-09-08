@@ -8,8 +8,8 @@ You do not need to know Rust or electronics already. Follow the steps in order.
 
 ## What you need
 
-- Raspberry Pi Pico 2 W (RP2350 plus onboard 2.4 GHz Wi-Fi; this firmware
-  does not use the radio yet)
+- Raspberry Pi Pico 2 W (RP2350 plus onboard 2.4 GHz Wi-Fi)
+- a **2.4 GHz** Wi-Fi network (the Pico cannot join 5 GHz-only access points)
 - 0.96" four-pin I²C OLED (often sold as SSD1306; many yellow/blue 128×64
   modules are actually SH1106)
 - the full-size breadboard and jumper wires from the shopping list
@@ -66,6 +66,13 @@ reads that sensor about once a second and draws the value on the OLED.
 
 That number is the **chip** temperature. It is usually a few degrees above the
 room, and it rises while the chip runs. It is not a weather reading.
+
+Wi-Fi SSID, password, and the HTTP POST URL are **not** compiled in. You type
+them over USB serial; `save` stores them in flash. After a reboot they are
+still there. Once joined, the Pico POSTs `{"celsius":27.4}` about once a
+minute to that URL.
+
+The onboard LED (on the wireless chip) turns on when Wi-Fi is up.
 
 ## Install the software tools (once)
 
@@ -150,14 +157,55 @@ Text updating about once a second, similar to:
 ```text
 Pico chip temp
   27.4 C
-updates every 1s
+USB: wifi/save
 ```
+
+The bottom line is status: `joining wifi`, `wifi ok`, `wifi fail`, or
+`wifi ok  post ok` after a successful POST.
 
 On a dual-colour 0.96" panel the top band is yellow and the rest is blue.
 The title sits in the yellow band; the temperature number is blue. That is
 the glass, not a wiring fault.
 
 A value between about 20 °C and 45 °C at a desk is typical.
+
+## USB Wi-Fi and server setup
+
+Flash the board, wait until the OLED is showing a temperature, then open a
+serial terminal. On macOS:
+
+```bash
+ls /dev/cu.usbmodem*
+screen /dev/cu.usbmodem* 115200
+```
+
+If several `usbmodem` devices appear, try each until you see a `>` prompt.
+Type `help`. Leave `screen` with `Ctrl-A` then `K`, then `Y`.
+
+On this computer, start a listener (binds all interfaces, port 8080):
+
+```bash
+python3 listen_post.py
+```
+
+It prints this machine’s LAN IP. On the Pico console, using that IP:
+
+```text
+wifi YourNetworkName
+psk YourPassword
+server 192.168.1.23:8080/temp
+save
+```
+
+`psk` with no password means an open network. `server` can also be a hostname
+(`nas.local:8080/temp`). The Pico is 2.4 GHz only.
+
+`save` writes flash and starts joining. `show` prints the current RAM copy.
+`clear` wipes the saved settings. After `save`, you can unplug USB and power
+from the PiCowbell; the board still has the settings.
+
+The listener should print a JSON body about once a minute. The Pico talks to
+your **LAN IP**, not `localhost`.
 
 SH1106 panels have 132 columns of RAM and 128 visible. This firmware starts
 the write window at column 0 so the left edge is not leftover RAM. If a 2-pixel
