@@ -1,13 +1,16 @@
-//! RAM + flash storage for Wi-Fi and the HTTP POST target.
+//! Provisioned Wi-Fi and POST target: RAM copy plus last flash sector.
 
 use embassy_rp::flash::{Blocking, ERASE_SIZE, Error as FlashError, Flash};
 use embassy_rp::peripherals::FLASH;
+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
+use embassy_sync::mutex::Mutex;
+use embassy_sync::signal::Signal;
 use heapless::String;
 
 /// Pico 2 W onboard flash size.
 pub const FLASH_SIZE: usize = 4 * 1024 * 1024;
 /// Last 4 KiB sector, well above the firmware image.
-pub const CONFIG_OFFSET: u32 = (FLASH_SIZE - ERASE_SIZE) as u32;
+const CONFIG_OFFSET: u32 = (FLASH_SIZE - ERASE_SIZE) as u32;
 
 const MAGIC: u32 = 0x5445_4D50; // "TEMP"
 const SSID_MAX: usize = 32;
@@ -15,6 +18,9 @@ const PSK_MAX: usize = 64;
 const SERVER_MAX: usize = 128;
 
 pub type ConfigFlash = Flash<'static, FLASH, Blocking, FLASH_SIZE>;
+
+static SETTINGS: Mutex<CriticalSectionRawMutex, NetConfig> = Mutex::new(NetConfig::empty());
+static JOIN: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 /// In-RAM copy of the provisioned settings.
 #[derive(Clone)]
@@ -43,6 +49,26 @@ pub struct ServerTarget {
     pub host: String<64>,
     pub port: u16,
     pub path: String<64>,
+}
+
+pub async fn snapshot() -> NetConfig {
+    SETTINGS.lock().await.clone()
+}
+
+pub async fn replace(cfg: NetConfig) {
+    *SETTINGS.lock().await = cfg;
+}
+
+pub async fn update(f: impl FnOnce(&mut NetConfig)) {
+    f(&mut *SETTINGS.lock().await);
+}
+
+pub fn request_rejoin() {
+    JOIN.signal(());
+}
+
+pub async fn wait_rejoin() {
+    JOIN.wait().await;
 }
 
 /// Parse `host:port/path`, `http://host:port/path`, or `host/path` (port 80).
@@ -82,9 +108,7 @@ fn split_host_port(hostport: &str) -> Option<(&str, u16)> {
         if host.is_empty() {
             return None;
         }
-        // "192.168.1.1" has no port; "example.com:8080" does.
-        // A hostname/IPv4 with a port has non-empty host and a numeric suffix.
-        if port_s.bytes().all(|b| b.is_ascii_digit()) && !port_s.is_empty() {
+        if !port_s.is_empty() && port_s.bytes().all(|b| b.is_ascii_digit()) {
             let port: u16 = port_s.parse().ok()?;
             return Some((host, port));
         }
@@ -92,7 +116,7 @@ fn split_host_port(hostport: &str) -> Option<(&str, u16)> {
     Some((hostport, 80))
 }
 
-pub fn load(flash: &mut ConfigFlash) -> NetConfig {
+pub fn load_flash(flash: &mut ConfigFlash) -> NetConfig {
     let mut buf = [0u8; 256];
     if flash.blocking_read(CONFIG_OFFSET, &mut buf).is_err() {
         return NetConfig::empty();
@@ -100,13 +124,13 @@ pub fn load(flash: &mut ConfigFlash) -> NetConfig {
     decode(&buf).unwrap_or_else(NetConfig::empty)
 }
 
-pub fn save(flash: &mut ConfigFlash, cfg: &NetConfig) -> Result<(), FlashError> {
+pub fn save_flash(flash: &mut ConfigFlash, cfg: &NetConfig) -> Result<(), FlashError> {
     let buf = encode(cfg);
     flash.blocking_erase(CONFIG_OFFSET, CONFIG_OFFSET + ERASE_SIZE as u32)?;
     flash.blocking_write(CONFIG_OFFSET, &buf)
 }
 
-pub fn erase(flash: &mut ConfigFlash) -> Result<(), FlashError> {
+pub fn erase_flash(flash: &mut ConfigFlash) -> Result<(), FlashError> {
     flash.blocking_erase(CONFIG_OFFSET, CONFIG_OFFSET + ERASE_SIZE as u32)
 }
 
