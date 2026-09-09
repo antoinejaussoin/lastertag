@@ -99,6 +99,11 @@ have something in them.
 
 4. IR LED and 220 Ω. The resistor has no polarity. The LED does.
 
+   The 220 Ω from the Royal Ohm pack is **red-red-brown** (then usually gold).
+   That is not the 10 kΩ pack (**brown-black-orange**) and not a 15 Ω
+   (**brown-green-black**). A 10 kΩ here leaves the LED dark. A 15 Ω here can
+   damage GP18.
+
    | Part | Holes |
    |---|---|
    | orange jumper GP18 → resistor | `b17` → `b28` |
@@ -123,9 +128,10 @@ connected to Pico GP18 in `e17`.
 
 ## What the firmware does
 
-GP18 PWM-modulates 38 kHz. On each button press the program sends one **NEC**
-frame: address `0x42`, command `0x01`. ir-capture already understands that
-encoding, so its OLED should show `42:01` and its HTTP POST looks like:
+GP18 is a GPIO. Marks are a 38 kHz square wave; spaces are the pin low. On
+each button press the program sends three **NEC** frames: address `0x42`,
+command `0x01`. ir-capture already understands that encoding, so its OLED
+should show `42:01` and its HTTP POST looks like:
 
 ```json
 {"proto":"nec","addr":66,"cmd":1,"rep":false}
@@ -133,7 +139,16 @@ encoding, so its OLED should show `42:01` and its HTTP POST looks like:
 
 A held button does not repeat. Release and press again for another burst.
 
-The sender OLED shows `ready` until the first press, then `sent 42:01`.
+Right after you flash, the sender OLED shows `aim TSOP` and the LED blinks a
+38 kHz carrier about once a second. **Do not use a phone camera** — 940 nm at
+this current is usually invisible on an iPhone. Point the LED at the capture
+TSOP from a few centimetres. Capture should flip to `L` / `stuck L` in time
+with `carrier ON`. Then it sends NEC once and sits at `ready`. After a press
+it shows `sent 42:01`.
+
+Keep phones **away from the capture TSOP**. An iPhone’s Face ID / LiDAR
+illuminator is also 940 nm; that chip will report short garbled `raw` bursts
+that have nothing to do with this LED.
 
 There is no Wi-Fi on this board. Capture still POSTs what it hears if you
 already set that up.
@@ -217,7 +232,8 @@ make uf2     # ELF plus ir-sender.uf2
 
 ## What you should see
 
-Text on the **sender** OLED, similar to:
+Right after flash, the **sender** OLED shows `aim TSOP` and `carrier ON` /
+`carrier off`. Point it at capture. Then:
 
 ```text
 IR sender
@@ -274,9 +290,22 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
 
 ## If capture shows nothing, or raw times instead of `42:01`
 
+- After flash, OLED must say `aim TSOP` (otherwise this UF2 is not on the
+  board). Ignore the phone camera. Point the LED at the capture TSOP: that
+  screen should show `L` or `stuck L` while sender says `carrier ON`. Still
+  nothing: both LED legs on the **top** half of the board (rows `a`–`e`,
+  not across the trench), orange jumper in column **17** not **18** (two
+  columns left of the blue SCL wire, with the GND column in between), long
+  lead in `c32`. Swap the LED if needed — there are spares in the TSAL6200
+  pack.
+- Do **not** hold an iPhone (or any Face ID / LiDAR phone) near the capture
+  TSOP. That illuminator is 940 nm and shows up as short `raw` junk. A TV
+  remote is the right “capture still works” check.
 - Point the LED at the TSOP lens on the other breadboard, a few centimetres
-  away. Do not aim at the Pico or the table.
-- The first press after a long idle can be eaten by the TSOP AGC. Press again.
+  away. Do not aim at the Pico or the table. A phone camera is a wiring test,
+  not a protocol test: 38 kHz bursts are too short and too dim to trust.
+- The orange jumper must be column **17 on the top** (`b17`), the same strip
+  as Pico `e17` / GP18. Column **18** on that row is GND — an easy miss.
 - Long LED lead is in `c32` (anode). Swapping the LED means it never lights.
 - The 220 Ω is from column 28 to 32, not a 15 Ω or 100 Ω.
 - You flashed **this** folder (`projects/ir-sender`) onto the sender Pico, and

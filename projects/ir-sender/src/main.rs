@@ -10,7 +10,6 @@ use embassy_executor::Spawner;
 use embassy_rp::block::ImageDef;
 use embassy_rp::gpio::{Input, Pull};
 use embassy_rp::i2c::{self, I2c};
-use embassy_rp::pwm::Pwm;
 use embassy_time::Timer;
 use panic_halt as _;
 
@@ -35,30 +34,57 @@ const CMD: u8 = 0x01;
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
 
-    // GP18 / PWM1A → 220 Ω → TSAL6200 anode. Idle duty is 0 (pin low).
-    let mut pwm = Pwm::new_output_a(p.PWM_SLICE1, p.PIN_18, ir::pwm_config());
+    // GP18 → 220 Ω → TSAL6200 anode. Idle is low.
+    let mut ir = ir::IrLed::new(p.PIN_18);
     // GP19 to GND through the tactile switch. Pull-up so open = high.
     let mut button = Input::new(p.PIN_19, Pull::Up);
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = 100_000;
-    // Same OLED pins as ir-capture: GP17 SCL, GP16 SDA.
     let i2c = I2c::new_blocking(p.I2C0, p.PIN_17, p.PIN_16, i2c_config);
     let mut screen = display::Screen::new(i2c);
-    screen.show("ready", "press btn");
+    let mut presses: u32 = 0;
+
+    // 38 kHz on/off so the *capture* TSOP is the detector. A phone camera
+    // often shows nothing at 9 mA / 940 nm. Keep the phone away from the TSOP.
+    screen.show("aim TSOP", "carrier on", presses);
+    for _ in 0..8 {
+        screen.show("aim TSOP", "carrier ON", presses);
+        ir.carrier_ms(400);
+        screen.show("aim TSOP", "carrier off", presses);
+        Timer::after_millis(400).await;
+    }
+    'glow: loop {
+        screen.show("aim TSOP", "carrier ON", presses);
+        ir.carrier_ms(400);
+        screen.show("aim TSOP", "carrier off", presses);
+        for _ in 0..40 {
+            Timer::after_millis(10).await;
+            if button.is_low() {
+                break 'glow;
+            }
+        }
+    }
+    ir.idle();
+    Timer::after_millis(40).await;
+    presses = presses.saturating_add(1);
+
+    screen.show("hello IR", "sending", presses);
+    ir.send_nec(ADDR, CMD);
+    screen.show("ready", "press btn", presses);
 
     loop {
+        button.wait_for_high().await;
+        Timer::after_millis(40).await;
         button.wait_for_falling_edge().await;
         Timer::after_millis(40).await;
         if button.is_high() {
             continue;
         }
 
-        screen.show("sent 42:01", "sending");
-        ir::send_nec(&mut pwm, ADDR, CMD);
-        screen.show("sent 42:01", "press btn");
-
-        button.wait_for_high().await;
-        Timer::after_millis(40).await;
+        presses = presses.saturating_add(1);
+        screen.show("sent 42:01", "sending", presses);
+        ir.send_nec(ADDR, CMD);
+        screen.show("sent 42:01", "press btn", presses);
     }
 }

@@ -1,97 +1,135 @@
 //! Drive a 940 nm IR LED with a 38 kHz carrier and a NEC envelope.
 //!
-//! # What this pin does
+//! GP18 is a GPIO. Marks are a 38 kHz square wave timed from the CPU cycle
+//! counter; spaces are the pin held low. Wiring: GPIO → 220 Ω → anode,
+//! cathode → GND. Do not substitute a 15 Ω resistor.
 //!
-//! GP18 is a normal digital output. Firmware runs the Pico PWM block at
-//! **38 kHz** (the frequency the Vishay TSOP38238 in `ir-capture` listens
-//! for). A **mark** is “carrier on”: the pin sits at ~33% duty so the LED
-//! flickers at 38 kHz. A **space** is “carrier off”: duty is 0, the pin stays
-//! low, the LED is dark.
+//! NEC: 9000 µs mark, 4500 µs space, then 32 LSB-first bits (560 µs mark +
+//! 560 µs space = 0, 560 + 1690 = 1), then a 560 µs stop mark. Bytes are
+//! address, !address, command, !command.
 //!
-//! Idle is also duty 0. The LED is wired GPIO → 220 Ω → anode, cathode → GND,
-//! so a low pin means no current. Never leave the pin stuck high.
-//!
-//! This sandbox drives the LED from the GPIO through that one resistor
-//! (~9 mA). The later player gun uses a transistor so it can pulse harder;
-//! do not copy this GPIO-direct wiring onto that board, and do not replace
-//! the 220 Ω with a 15 Ω part from the shopping list.
-//!
-//! # NEC frame
-//!
-//! Same timings `ir-capture` already decodes:
-//!
-//! 1. Leader: 9000 µs mark, 4500 µs space.
-//! 2. 32 bits, least-significant bit first. Each bit is a 560 µs mark then a
-//!    space: 560 µs means `0`, 1690 µs means `1`.
-//! 3. A final 560 µs mark (stop bit).
-//!
-//! The 32 bits are address, inverted address, command, inverted command.
-//! This crate always sends classic 8-bit NEC (`addr` XOR `!addr` is `0xFF`),
-//! so capture shows two hex digits of address, not four.
-//!
-//! Timings are busy-waited with [`embassy_time::Instant`]. The burst is only
-//! ~70 ms; blocking the executor for that long is fine here.
+//! Each send is three copies of the frame so the TSOP AGC can lock.
 
+use cortex_m::peripheral::DWT;
 use embassy_rp::clocks::clk_sys_freq;
-use embassy_rp::pwm::{Config, Pwm, SetDutyCycle};
-use embassy_time::Instant;
+use embassy_rp::gpio::{Drive, Level, Output, SlewRate};
+use embassy_rp::peripherals::PIN_18;
+use embassy_rp::Peri;
+use embassy_time::{block_for, Duration, Instant};
 
-/// Carrier the TSOP38238 is tuned for.
 const CARRIER_HZ: u32 = 38_000;
-
-/// NEC mark / zero-space width, microseconds.
 const MARK_US: u64 = 560;
-
-/// NEC one-space width, microseconds.
 const ONE_SPACE_US: u64 = 1690;
+const INTER_FRAME_MS: u64 = 40;
 
-/// PWM1A on GP18: 38 kHz, idle (LED off).
-pub fn pwm_config() -> Config {
-    let mut cfg = Config::default();
-    // `clk_sys / ((top + 1) * divider)`, divider is 1.
-    // Pico 2 W Embassy default is 150 MHz → top 3946 → ~38.004 kHz.
-    cfg.top = (clk_sys_freq() / CARRIER_HZ).saturating_sub(1) as u16;
-    cfg.compare_a = 0;
-    cfg.enable = true;
-    cfg
+pub struct IrLed {
+    pin: Output<'static>,
+    on_cycles: u32,
+    off_cycles: u32,
+    dwt_ok: bool,
 }
 
-/// One classic NEC frame. `addr` and `cmd` are the values capture will print.
-pub fn send_nec(pwm: &mut Pwm<'_>, addr: u8, cmd: u8) {
-    // ~1/3 duty is the usual IR-remote carrier. `SetDutyCycle` rejects a
-    // value above `top`; `top / 3` is safely inside that.
-    let duty = pwm.max_duty_cycle() / 3;
-    // Wire order, LSB first: addr, !addr, cmd, !cmd.
-    let bits = u32::from(addr)
-        | (u32::from(!addr) << 8)
-        | (u32::from(cmd) << 16)
-        | (u32::from(!cmd) << 24);
+impl IrLed {
+    pub fn new(gpio: Peri<'static, PIN_18>) -> Self {
+        enable_cycle_counter();
+        let mut pin = Output::new(gpio, Level::Low);
+        pin.set_drive_strength(Drive::_12mA);
+        pin.set_slew_rate(SlewRate::Fast);
 
-    mark(pwm, duty, 9000);
-    space(pwm, 4500);
-    for i in 0..32 {
-        mark(pwm, duty, MARK_US);
-        if (bits >> i) & 1 == 1 {
-            space(pwm, ONE_SPACE_US);
-        } else {
-            space(pwm, MARK_US);
+        let period = (clk_sys_freq() / CARRIER_HZ).max(3);
+        let on_cycles = period / 3;
+        Self {
+            pin,
+            on_cycles,
+            off_cycles: period - on_cycles,
+            dwt_ok: dwt_running(),
         }
     }
-    mark(pwm, duty, MARK_US);
-    let _ = pwm.set_duty_cycle(0);
+
+    pub fn idle(&mut self) {
+        self.pin.set_low();
+    }
+
+    /// 38 kHz for `ms`. Capture’s TSOP should pull its pin low for this whole
+    /// window (OLED title `L` or `stuck L`). DC-on does not do that.
+    pub fn carrier_ms(&mut self, ms: u64) {
+        self.mark(ms.saturating_mul(1000));
+        self.idle();
+    }
+
+    /// Three NEC frames. Capture should print `42:01` for addr `0x42`, cmd `0x01`.
+    pub fn send_nec(&mut self, addr: u8, cmd: u8) {
+        self.send_one(addr, cmd);
+        block_for(Duration::from_millis(INTER_FRAME_MS));
+        self.send_one(addr, cmd);
+        block_for(Duration::from_millis(INTER_FRAME_MS));
+        self.send_one(addr, cmd);
+        self.idle();
+    }
+
+    fn send_one(&mut self, addr: u8, cmd: u8) {
+        let bits = u32::from(addr)
+            | (u32::from(!addr) << 8)
+            | (u32::from(cmd) << 16)
+            | (u32::from(!cmd) << 24);
+
+        self.mark(9000);
+        self.space(4500);
+        for i in 0..32 {
+            self.mark(MARK_US);
+            if (bits >> i) & 1 == 1 {
+                self.space(ONE_SPACE_US);
+            } else {
+                self.space(MARK_US);
+            }
+        }
+        self.mark(MARK_US);
+        self.idle();
+    }
+
+    fn mark(&mut self, us: u64) {
+        if self.dwt_ok {
+            let pulses = (us * u64::from(CARRIER_HZ) / 1_000_000).max(1);
+            let t0 = DWT::cycle_count();
+            let mut due = 0u32;
+            for _ in 0..pulses {
+                self.pin.set_high();
+                due = due.wrapping_add(self.on_cycles);
+                while DWT::cycle_count().wrapping_sub(t0) < due {}
+                self.pin.set_low();
+                due = due.wrapping_add(self.off_cycles);
+                while DWT::cycle_count().wrapping_sub(t0) < due {}
+            }
+            return;
+        }
+
+        let end = Instant::now() + Duration::from_micros(us);
+        while Instant::now() < end {
+            self.pin.set_high();
+            let t = Instant::now() + Duration::from_micros(8);
+            while Instant::now() < t {}
+            self.pin.set_low();
+            let t = Instant::now() + Duration::from_micros(18);
+            while Instant::now() < t {}
+        }
+    }
+
+    fn space(&mut self, us: u64) {
+        self.idle();
+        block_for(Duration::from_micros(us));
+    }
 }
 
-fn mark(pwm: &mut Pwm<'_>, duty: u16, us: u64) {
-    let _ = pwm.set_duty_cycle(duty);
-    busy_wait_us(us);
+fn dwt_running() -> bool {
+    let a = DWT::cycle_count();
+    cortex_m::asm::delay(50_000);
+    DWT::cycle_count().wrapping_sub(a) > 100
 }
 
-fn space(pwm: &mut Pwm<'_>, us: u64) {
-    let _ = pwm.set_duty_cycle(0);
-    busy_wait_us(us);
-}
-
-fn busy_wait_us(us: u64) {
-    let start = Instant::now();
-    while start.elapsed().as_micros() < us {}
+fn enable_cycle_counter() {
+    unsafe {
+        let mut core = cortex_m::Peripherals::steal();
+        core.DCB.enable_trace();
+        core.DWT.enable_cycle_counter();
+    }
 }
