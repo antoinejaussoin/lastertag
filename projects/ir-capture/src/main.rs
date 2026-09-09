@@ -61,49 +61,70 @@ async fn main(spawner: Spawner) {
     let i2c = I2c::new_blocking(p.I2C0, p.PIN_17, p.PIN_16, i2c_config);
     let mut screen = display::Screen::new(i2c);
 
-    // Last fully-decoded NEC address/command. Repeat frames (button held)
-    // do not contain those bytes, so decode() reuses this pair. `None` until
-    // the first non-repeat NEC success; a repeat before that is ignored.
-    let mut last_nec: Option<(u16, u8)> = None;
+    // Last fully-decoded NEC or Samsung address/command. Repeat frames
+    // (button held) do not contain those bytes, so decode() reuses this
+    // event. `None` until the first non-repeat success.
+    let mut last: Option<ir::Event> = None;
     let mut main_line = heapless::String::<16>::new();
     let _ = main_line.push_str("ready");
-    screen.show(main_line.as_str(), wifi::status_line());
+    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
 
     loop {
-        // Race the IR waiter against a 500 ms tick.
+        // Race the IR *wait* against a 300 ms tick — not the capture itself.
         //
         // `select` completes when *either* future finishes. The IR side sleeps
-        // until the TSOP pin falls (then busy-samples the burst). The timer
-        // lets us refresh the OLED Wi-Fi/POST status line even when nobody is
-        // pressing a remote. Whichever loses is dropped; that is fine: a new
-        // `wait_and_capture` is created next iteration, and the timer is
+        // until the TSOP pin falls. Capture is a busy loop and must not be
+        // cancelled by the timer. The tick refreshes the OLED Wi-Fi/POST
+        // status and the title H/L pin indicator even when nobody is pressing
+        // a remote. Whichever loses is dropped; that is fine: a new
+        // `wait_for_falling_edge` is created next iteration, and the timer is
         // restarted.
-        match select(ir::wait_and_capture(&mut ir_pin), Timer::after_millis(500)).await {
-            Either::First(frame) => {
-                // `None` = glitch / first pulse too short. Do not update OLED
-                // or POST; just wait for the next burst.
-                let Some(event) = ir::decode(&frame, last_nec) else {
+        match select(ir_pin.wait_for_falling_edge(), Timer::after_millis(300)).await {
+            Either::First(()) => {
+                let frame = ir::capture_busy(&ir_pin);
+                // Falling edge then almost no further edges: pin went low and
+                // stayed there (short, swapped VS/OUT, etc.).
+                if frame.durations_us.len() < 2 {
+                    screen.show("stuck L", wifi::status_line(), ir_pin.is_high());
+                    Timer::after_millis(200).await;
                     continue;
-                };
+                }
+
+                let event = ir::decode(&frame, last);
                 // Remember address/command only for a full frame, never for a
                 // repeat (that would just write the same pair again).
-                if let ir::Event::Nec { addr, cmd, repeat } = event {
-                    if !repeat {
-                        last_nec = Some((addr, cmd));
+                match event {
+                    ir::Event::Nec {
+                        repeat: false, ..
                     }
+                    | ir::Event::Samsung {
+                        repeat: false, ..
+                    } => {
+                        last = Some(event);
+                    }
+                    _ => {}
                 }
-                // 16-char hex (`20:0D`) or `RAW n` for the OLED value row.
                 main_line = ir::oled_line(&event);
-                screen.show(main_line.as_str(), wifi::status_line());
-                // Fire-and-forget from the UI's point of view: we still await
-                // the TCP POST so the next status refresh can show `post ok`.
-                wifi::post_json(stack, ir::json_body(&event).as_str()).await;
-                // POST may have changed `wifi::status_line()` (`post ok` / fail).
-                screen.show(main_line.as_str(), wifi::status_line());
+                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+
+                // Skip POSTing tiny noise bursts. Structured NEC/Samsung
+                // always go out; `Raw` only if it looks like a real frame.
+                let post = match event {
+                    ir::Event::Raw { count, d0, .. } => count >= 8 && d0 >= 800,
+                    _ => true,
+                };
+                if post {
+                    // Fire-and-forget from the UI's point of view: we still
+                    // await the TCP POST so the next status refresh can show
+                    // `post ok`.
+                    wifi::post_json(stack, ir::json_body(&event).as_str()).await;
+                    // POST may have changed `wifi::status_line()` (`post ok` / fail).
+                    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+                }
             }
             Either::Second(()) => {
-                // Idle tick: keep the bottom status row current (joining / ok).
-                screen.show(main_line.as_str(), wifi::status_line());
+                // Idle tick: keep the bottom status row and pin H/L current.
+                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
             }
         }
     }

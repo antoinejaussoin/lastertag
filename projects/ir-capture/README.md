@@ -133,9 +133,14 @@ instead.
 The TSOP38238 demodulates 38 kHz infrared. The program waits for a burst,
 records mark/space times, and:
 
-- decodes **NEC** TV remotes (address and command in hex);
-- shows other 38 kHz protocols as `RAW` plus the number of edges;
-- treats a held NEC button as a repeat (`rpt` on the OLED).
+- decodes **Samsung** TV remotes (`S` plus address and command in hex);
+- decodes **NEC** remotes (address and command in hex);
+- shows anything else as the first two pulse times in milliseconds;
+- treats a held Samsung or NEC button as a repeat (` r` on the OLED).
+
+The title ends with **`H`** or **`L`**: the receiver output is idle-high, so
+`H` means the pin looks healthy. `L` at rest means `OUT` is stuck low
+(wrong pin, swapped `OUT`/`VS`, or a short).
 
 Wi-Fi SSID, password, and the HTTP POST URL are **not** compiled in. You type
 them over USB serial; `save` stores them in flash. After a reboot they are
@@ -145,13 +150,17 @@ already provisioned for that project keeps its Wi-Fi settings.
 Once joined, each captured button POSTs JSON to that URL, for example:
 
 ```json
+{"proto":"samsung","addr":57504,"cmd":26,"rep":false}
+```
+
+```json
 {"proto":"nec","addr":32,"cmd":13,"rep":false}
 ```
 
-or, if the burst is not NEC:
+or, if the burst is neither:
 
 ```json
-{"proto":"raw","n":67,"lead":[9020,4480]}
+{"proto":"raw","n":67,"lead":[4500,4500]}
 ```
 
 The onboard LED (on the wireless chip) turns on when Wi-Fi is up.
@@ -237,22 +246,30 @@ make uf2     # ELF plus ir-capture.uf2
 Text on the OLED, similar to:
 
 ```text
-IR capture
+IR capture    H
   ready
 USB: wifi/save
 ```
 
-Point a TV remote at the TSOP lens and press a button. A typical NEC remote
-shows address and command in hex:
+Point a TV remote at the TSOP lens and press a button. A Samsung TV remote
+usually looks like this (address is often `E0E0`):
 
 ```text
-IR capture
+IR capture    H
+  S E0E0:1A
+wifi ok  post ok
+```
+
+A typical NEC remote shows address and command without the `S`:
+
+```text
+IR capture    H
   20:0D
 wifi ok  post ok
 ```
 
-Holding the button adds `rpt`. Unknown 38 kHz encodings show as `RAW` and an
-edge count.
+Holding the button adds ` r`. Other 38 kHz encodings show the first two
+pulse lengths, for example `4.5 4.5 67` (milliseconds, then edge count).
 
 The bottom line is status: `joining wifi`, `wifi ok`, `wifi fail`, or
 `wifi ok  post ok` after a successful POST.
@@ -261,8 +278,9 @@ On a dual-colour 0.96" panel the top band is yellow and the rest is blue.
 The title sits in the yellow band; the hex value is blue. That is the glass,
 not a wiring fault.
 
-If every press shows `RAW`, the remote is not NEC (common for some TVs). The
-timings are still captured and posted.
+If every press shows times like `4.5 4.5` instead of `S …`, the header is
+Samsung-like but the bit timings did not match; the JSON still has the lead
+times.
 
 ## USB Wi-Fi and server setup
 
@@ -336,16 +354,26 @@ Reflash this folder with BOOTSEL + `make`. If the value is still garbage, in
 
 ## If nothing happens when you press the remote
 
-- The TSOP lens faces the remote, not the Pico or the table.
-- `OUT` is on **GP18** (pin 24), on the same side as the OLED. Swapping `OUT` and `VS`
-  can make the part hot; unplug USB and recheck left-to-right: `OUT`, `GND`,
-  `VS` with the lens toward you.
-- `VS` is 3.3 V through 100 Ω, not 5 V.
-- The electrolytic stripe is on **GND**, not on `VS`.
-- Use a 38 kHz remote. The TSOP38238 ignores other carriers (for example
-  36 kHz-only or 56 kHz gadgets).
-- Range is typically tens of centimetres to a few metres indoors. Try closer,
-  and avoid pointing a bright lamp straight into the lens.
+Samsung remotes are the usual case here. Older IR-only Samsung remotes speak
+**Samsung32** (not NEC). This firmware decodes that after you reflash. Many
+**Samsung Smart / One Remote** handsets are Bluetooth: only a few keys still
+emit IR (often **Power**). Try Power first, close to the lens. A cheap IR-only
+TV remote is a better test.
+
+Also check:
+
+- You flashed **this** folder after the `GP18` pin change (`BOOTSEL` + `make`).
+  An older UF2 still listens on a different GPIO.
+- The title shows **`H`** at rest. If it shows **`L`**, `OUT` is stuck low:
+  confirm the orange jumper is `d28` → `g17` (Pico pin 24 / `GP18`), and that
+  the TSOP legs are `OUT`, `GND`, `VS` left to right with the lens toward you.
+  Swapping `OUT` and `VS` can make the part hot; unplug USB and recheck.
+- The first press after a long idle can be eaten by the TSOP AGC. Press again.
+- `VS` is 3.3 V through 100 Ω, not 5 V. The electrolytic stripe is on **GND**.
+- The TSOP38238 is a 38 kHz part. It ignores 56 kHz gadgets; 36 kHz remotes
+  only work at very short range.
+- Range is typically tens of centimetres to a few metres. Point at the **lens**,
+  not the Pico or the table, and avoid a bright lamp straight into the lens.
 
 ## Changing the program
 

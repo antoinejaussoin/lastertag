@@ -27,9 +27,9 @@
 //! and a **space** is “carrier off” (pin sits **high**). A remote button press
 //! is therefore a sequence of pulse widths: low for 9 ms, high for 4.5 ms,
 //! low for 560 µs, high for 560 µs, and so on. This file records those widths
-//! in microseconds, then tries to interpret them as the common **NEC** TV
-//! remote protocol. If it is not NEC, it still reports a `Raw` event so you
-//! can see that *something* arrived.
+//! in microseconds, then tries to interpret them as **NEC** or **Samsung32**.
+//! If it is neither, it still reports a `Raw` event so you can see that
+//! *something* arrived.
 //!
 //! The Pico GPIO (GP18) is just a digital input: it samples 0 vs 1. Firmware
 //! also turns on an internal **pull-up resistor** (see `main.rs`): a weak
@@ -52,7 +52,7 @@
 //! several receivers would eventually want interrupts, PIO, or a dedicated
 //! core so networking is not stalled.
 //!
-//! # NEC (the protocol this decoder understands)
+//! # NEC
 //!
 //! A normal NEC frame, after demodulation, looks like:
 //!
@@ -71,6 +71,14 @@
 //! Holding a NEC button does not resend the 32 bits. The remote sends a short
 //! **repeat**: ~9000 µs mark, ~2250 µs space, then a short mark. Repeat frames
 //! contain no address/command, so we reuse the last successfully decoded pair.
+//!
+//! # Samsung32
+//!
+//! Many Samsung TV remotes use a close cousin: ~4500 µs mark and ~4500 µs
+//! space as the leader, then the same 32 LSB-first bits as NEC. Address is
+//! the first 16 bits as-is (often `0xE0E0`). A hold-repeat is a short burst
+//! with the same 4.5 ms / 4.5 ms leader and no payload; we reuse the last
+//! Samsung pair, same idea as NEC repeats.
 
 // `core::fmt::Write` is the trait that makes the `write!` macro work on our
 // tiny `heapless::String`. `as _` imports the trait without binding the name
@@ -93,23 +101,24 @@ use heapless::{String, Vec};
 
 /// Maximum number of mark/space durations we will store for one burst.
 ///
-/// A full NEC frame is 2 leader pulses + 32 bits × 2 (mark+space) = 66
-/// samples, sometimes 67 with a trailing stop mark. 96 leaves slack for
-/// slightly chatty remotes without using much RAM (`96 * 4` bytes of `u32`).
+/// A full NEC or Samsung32 frame is 2 leader pulses + 32 bits × 2
+/// (mark+space) = 66 samples, sometimes 67 with a trailing stop mark. 96
+/// leaves slack for slightly chatty remotes without using much RAM
+/// (`96 * 4` bytes of `u32`).
 const MAX_EDGES: usize = 96;
 
 /// If the pin stays at the same level this long, the burst is over.
 ///
 /// After the last mark the remote goes idle (pin high) until the next frame
-/// (~40–100 ms later for NEC repeats). 20 ms is long enough that we are not
+/// (~40–100 ms later for NEC repeats). 25 ms is long enough that we are not
 /// still inside a bit, and short enough that we finish before the next frame.
-const FRAME_GAP_US: u64 = 20_000;
+const FRAME_GAP_US: u64 = 25_000;
 
 /// Hard cap on how long we will spin waiting for that idle gap.
 ///
 /// If the wire is stuck low (short to ground, unplugged TSOP with a
 /// conflicting driver, etc.) we would otherwise loop forever. 150 ms is
-/// longer than a legitimate NEC frame plus a generous margin.
+/// longer than a legitimate NEC/Samsung frame plus a generous margin.
 const MAX_FRAME_MS: u64 = 150;
 
 /// Fewer than two durations is not even “a pulse then a gap” — treat as noise.
@@ -118,8 +127,9 @@ const MIN_EDGES: usize = 2;
 /// Reject a burst whose first pulse is shorter than this.
 ///
 /// Electrical glitches can produce a few-microsecond spike. A real NEC leader
-/// is ~9 ms; even odd protocols are usually hundreds of microseconds.
-const MIN_FIRST_PULSE_US: u32 = 200;
+/// is ~9 ms and Samsung is ~4.5 ms; even odd protocols are usually hundreds
+/// of microseconds.
+const MIN_FIRST_PULSE_US: u32 = 150;
 
 /// One captured burst: alternating pulse widths in microseconds.
 ///
@@ -146,7 +156,17 @@ pub enum Event {
         /// `true` if this was a hold-repeat, not a fresh 32-bit frame.
         repeat: bool,
     },
-    /// 38 kHz activity that did not match NEC. Still useful on the OLED/HTTP.
+    /// A Samsung32 TV-remote button code.
+    Samsung {
+        /// Usually 16-bit (often `0xE0E0`).
+        addr: u16,
+        /// Button / command byte (0–255). Meaning is remote-specific.
+        cmd: u8,
+        /// `true` if this was a hold-repeat, not a fresh 32-bit frame.
+        repeat: bool,
+    },
+    /// 38 kHz activity that did not match NEC or Samsung. Still useful on the
+    /// OLED/HTTP.
     Raw {
         /// How many mark/space values we stored (capped at 255 for the wire format).
         count: u8,
@@ -158,28 +178,16 @@ pub enum Event {
     },
 }
 
-/// Block until the TSOP output falls, then measure the rest of the burst.
-///
-/// `async` so the *wait for the first edge* can yield to Wi-Fi/USB. The
-/// measurement itself ([`capture_busy`]) is synchronous on purpose.
-///
-/// `pin` is `&mut` because `wait_for_falling_edge` needs exclusive access to
-/// the GPIO wait machinery. After that we only read the pin.
-pub async fn wait_and_capture(pin: &mut Input<'_>) -> Frame {
-    // Sleep until idle-high becomes active-low: the start of a mark.
-    // Embassy registers an interrupt on this pin; this task is not spinning.
-    pin.wait_for_falling_edge().await;
-    // From here we must poll. Returning a `Frame` by value is fine: it is a
-    // small stack `Vec`.
-    capture_busy(pin)
-}
-
 /// Busy-wait, pushing a duration every time the pin changes level.
 ///
 /// Called with the pin **already low** (we just saw the falling edge).
 /// `last` is “when the current level began”. The first `push` is therefore
 /// the width of that opening mark.
-fn capture_busy(pin: &Input<'_>) -> Frame {
+///
+/// Kept separate from `wait_for_falling_edge` so `main` can race only the
+/// wait against the OLED tick. Combining them would let a timer cancel the
+/// capture mid-burst.
+pub fn capture_busy(pin: &Input<'_>) -> Frame {
     // Empty list of pulse widths; capacity is `MAX_EDGES`, length starts at 0.
     let mut durations: Vec<u32, MAX_EDGES> = Vec::new();
     // Timestamp of the most recent edge (the falling edge we just waited for,
@@ -205,8 +213,8 @@ fn capture_busy(pin: &Input<'_>) -> Frame {
         // How long the pin has sat at the current level.
         let elapsed = now.duration_since(last).as_micros();
         // Long quiet stretch ⇒ the remote stopped transmitting. We do **not**
-        // push `elapsed` itself: that would record the 20 ms idle as a fake
-        // space. The last stored value is the last real mark or space.
+        // push `elapsed` itself: that would record the idle as a fake space.
+        // The last stored value is the last real mark or space.
         if elapsed > FRAME_GAP_US {
             break;
         }
@@ -214,7 +222,7 @@ fn capture_busy(pin: &Input<'_>) -> Frame {
         if pin.is_high() != high {
             // `heapless::Vec::push` returns `Err(the_value)` if the array is
             // full. We drop the extra edge and stop; a truncated frame will
-            // fail NEC decode and may still show as `Raw`.
+            // fail structured decode and may still show as `Raw`.
             if durations.push(elapsed as u32).is_err() {
                 break;
             }
@@ -231,35 +239,55 @@ fn capture_busy(pin: &Input<'_>) -> Frame {
     }
 }
 
-/// Turn a captured burst into a NEC event, or a `Raw` fallback, or `None`.
+/// Turn a captured burst into NEC, Samsung, or a `Raw` fallback.
 ///
-/// `last_nec` is the previous non-repeat address/command. Repeat frames need
-/// it because they do not carry the 32 data bits. `None` here means “we have
-/// never seen a full NEC frame since boot”, so a lone repeat is dropped.
-pub fn decode(frame: &Frame, last_nec: Option<(u16, u8)>) -> Option<Event> {
+/// `last` is the previous non-repeat event. Repeat frames need it because
+/// they do not carry the 32 data bits. `None` here means we have never seen
+/// a full frame since boot, so a lone repeat becomes `Raw`.
+pub fn decode(frame: &Frame, last: Option<Event>) -> Event {
     // Cheap view of the heapless vec as a normal slice (`&[u32]`).
     let d = frame.durations_us.as_slice();
-    // Too short, or a needle-spike first pulse: ignore (do not even POST).
+    // Too short, or a needle-spike first pulse: still report `Raw` so the
+    // OLED can show timings; `main` decides whether to POST.
     if d.len() < MIN_EDGES || d[0] < MIN_FIRST_PULSE_US {
-        return None;
+        return Event::Raw {
+            count: d.len().min(255) as u8,
+            d0: d.first().copied().unwrap_or(0),
+            d1: d.get(1).copied().unwrap_or(0),
+        };
     }
-    // Prefer a structured NEC decode when the timings look like NEC.
-    if let Some(event) = decode_nec(d, last_nec) {
-        return Some(event);
+    if let Some(event) = decode_nec(d, last) {
+        return event;
     }
-    // Not NEC (Sony SIRC, RC5, a garbled burst, a different remote, …).
-    Some(Event::Raw {
+    if let Some(event) = decode_samsung(d, last) {
+        return event;
+    }
+    Event::Raw {
         // OLED/JSON use `u8`; 96 edges still fits. `min(255)` is defensive.
         count: d.len().min(255) as u8,
         d0: d[0],
         // `get` so a 1-element slice cannot panic. `copied` turns `&u32` into
         // `u32`. Unreachable given `MIN_EDGES == 2`, but cheap insurance.
         d1: d.get(1).copied().unwrap_or(0),
-    })
+    }
+}
+
+fn last_nec(last: Option<Event>) -> Option<(u16, u8)> {
+    match last {
+        Some(Event::Nec { addr, cmd, .. }) => Some((addr, cmd)),
+        _ => None,
+    }
+}
+
+fn last_samsung(last: Option<Event>) -> Option<(u16, u8)> {
+    match last {
+        Some(Event::Samsung { addr, cmd, .. }) => Some((addr, cmd)),
+        _ => None,
+    }
 }
 
 /// Strict-ish NEC parser. Returns `None` as soon as a timing is implausible.
-fn decode_nec(d: &[u32], last_nec: Option<(u16, u8)>) -> Option<Event> {
+fn decode_nec(d: &[u32], last: Option<Event>) -> Option<Event> {
     // Every NEC frame — data or repeat — starts with an ~9 ms mark.
     // 25% tolerance: 6750–11250 µs. Cheap remotes and distance stretch this.
     if !near(d[0], 9000, 25) {
@@ -272,7 +300,7 @@ fn decode_nec(d: &[u32], last_nec: Option<(u16, u8)>) -> Option<Event> {
     if near(d[1], 2250, 30) && d.len() <= 6 {
         // `?` on `Option`: if we never stored a command, abort (`None`).
         // Repeats are meaningless without a prior button.
-        let (addr, cmd) = last_nec?;
+        let (addr, cmd) = last_nec(last)?;
         return Some(Event::Nec {
             addr,
             cmd,
@@ -280,29 +308,69 @@ fn decode_nec(d: &[u32], last_nec: Option<(u16, u8)>) -> Option<Event> {
         });
     }
 
-    // Data frame: second pulse must be the ~4.5 ms leader space, and we need
-    // 2 leader samples + 64 bit samples (32 marks + 32 spaces).
-    if !near(d[1], 4500, 25) || d.len() < 66 {
+    // Data frame: second pulse must be the ~4.5 ms leader space.
+    if !near(d[1], 4500, 25) {
         return None;
     }
 
-    // Skip the two leader durations; what remains should be 32 × (mark, space).
+    let bits = decode_32_bits(d)?;
+    Some(Event::Nec {
+        addr: nec_address(bits),
+        cmd: ((bits >> 16) & 0xFF) as u8,
+        repeat: false,
+    })
+}
+
+/// Samsung TV remotes: 4.5 ms mark + 4.5 ms space, then NEC-style bits.
+fn decode_samsung(d: &[u32], last: Option<Event>) -> Option<Event> {
+    if !near(d[0], 4500, 30) {
+        return None;
+    }
+
+    if near(d[1], 4500, 30) && d.len() <= 8 {
+        let (addr, cmd) = last_samsung(last)?;
+        return Some(Event::Samsung {
+            addr,
+            cmd,
+            repeat: true,
+        });
+    }
+
+    if !near(d[1], 4500, 30) {
+        return None;
+    }
+
+    let bits = decode_32_bits(d)?;
+    Some(Event::Samsung {
+        addr: (bits & 0xFFFF) as u16,
+        cmd: ((bits >> 16) & 0xFF) as u8,
+        repeat: false,
+    })
+}
+
+/// Skip the two leader durations; pack 32 × (mark, space) into a `u32`.
+///
+/// Bit 0 is the first bit received (NEC and Samsung32 are LSB first).
+fn decode_32_bits(d: &[u32]) -> Option<u32> {
+    // 2 leader samples + 64 bit samples (32 marks + 32 spaces).
+    if d.len() < 66 {
+        return None;
+    }
     let data = &d[2..];
-    // Pack 32 bits into a `u32`, bit 0 = first bit received (NEC is LSB first).
     let mut bits: u32 = 0;
     for i in 0..32 {
         // Even index: the ~560 µs mark that starts every bit.
         let mark = data[i * 2];
         // Odd index: the space whose width is the actual 0/1.
         let space = data[i * 2 + 1];
-        // 50% window around 560 µs: 280–840. Wider than the leader because
-        // short pulses jitter more as a fraction of their length.
-        if !near(mark, 560, 50) {
+        // ~55% window around 560 µs. Wider than the leader because short
+        // pulses jitter more as a fraction of their length.
+        if !near(mark, 560, 55) {
             return None;
         }
-        // Classic NEC: 0 ≈ 560 µs space, 1 ≈ 1690 µs space. A 1000 µs split
-        // sits between them; we do not require the space to be “near” either
-        // nominal, so slightly drunk remotes still decode.
+        // Classic NEC/Samsung: 0 ≈ 560 µs space, 1 ≈ 1690 µs space. A 1000 µs
+        // split sits between them; we do not require the space to be “near”
+        // either nominal, so slightly drunk remotes still decode.
         if space > 1000 {
             // Set bit `i`. First loop iteration (`i == 0`) is the least
             // significant bit of the address byte.
@@ -310,29 +378,25 @@ fn decode_nec(d: &[u32], last_nec: Option<(u16, u8)>) -> Option<Event> {
         }
         // Else leave bit `i` as 0. No `else` needed.
     }
+    Some(bits)
+}
 
+fn nec_address(bits: u32) -> u16 {
     // Slice the 32-bit word into the four NEC bytes. Shifts are in bit
     // positions, not byte indexes: bits [0..8) are the first byte on the wire.
     let addr8 = (bits & 0xFF) as u8;
     let addr_inv = ((bits >> 8) & 0xFF) as u8;
-    let cmd = ((bits >> 16) & 0xFF) as u8;
     // We ignore bits [24..32), the inverted command, rather than rejecting
     // the frame if they do not match `!cmd`. That is a deliberate simplification.
     //
     // Classic NEC: `addr_inv` is `!addr8`, so XOR is all ones (`0xFF`).
     // Extended NEC: those two bytes are a 16-bit address, XOR is not `0xFF`.
-    let addr = if addr8 ^ addr_inv == 0xFF {
+    if addr8 ^ addr_inv == 0xFF {
         addr8 as u16
     } else {
         // Little-endian packing: low byte = first address byte on the wire.
         addr8 as u16 | (u16::from(addr_inv) << 8)
-    };
-
-    Some(Event::Nec {
-        addr,
-        cmd,
-        repeat: false,
-    })
+    }
 }
 
 /// True if `value` is within `pct` percent of `nominal` (inclusive).
@@ -350,28 +414,47 @@ fn near(value: u32, nominal: u32, pct: u32) -> bool {
 
 /// One OLED line, at most 16 characters (this project's value row).
 ///
-/// Examples: `20:0D`, `20:0D rpt`, `1A2B:0C`, `RAW 67`.
+/// Examples: `20:0D`, `20:0D r`, `S E0E0:1A`, `4.5 4.5 67`.
+fn write_hex_cmd(line: &mut String<16>, prefix: &str, addr: u16, cmd: u8, repeat: bool) {
+    let _ = line.push_str(prefix);
+    if addr > 0xFF {
+        // Extended NEC / 16-bit Samsung: four hex digits of address, colon,
+        // two of cmd. `let _ =` discards `Result`: if the string were full,
+        // we silently keep the truncated prefix rather than panicking.
+        let _ = write!(line, "{addr:04X}:{cmd:02X}");
+    } else {
+        // Classic 8-bit address: `20:0D` rather than `0020:0D`.
+        let _ = write!(line, "{addr:02X}:{cmd:02X}");
+    }
+    if repeat {
+        let _ = line.push_str(" r");
+    }
+}
+
 pub fn oled_line(event: &Event) -> String<16> {
     // Empty stack string; `write!` appends UTF-8 bytes up to 16.
     let mut line = String::new();
     match *event {
         Event::Nec { addr, cmd, repeat } => {
-            if addr > 0xFF {
-                // Extended NEC: four hex digits of address, colon, two of cmd.
-                // `let _ =` discards `Result`: if the string were full, we
-                // silently keep the truncated prefix rather than panicking.
-                let _ = write!(line, "{addr:04X}:{cmd:02X}");
-            } else {
-                // Classic 8-bit address: `20:0D` rather than `0020:0D`.
-                let _ = write!(line, "{addr:02X}:{cmd:02X}");
-            }
-            if repeat {
-                // Hold: `20:0D rpt`. Four extra bytes, still under 16.
-                let _ = line.push_str(" rpt");
-            }
+            write_hex_cmd(&mut line, "", addr, cmd, repeat);
         }
-        Event::Raw { count, .. } => {
-            let _ = write!(line, "RAW {count}");
+        Event::Samsung { addr, cmd, repeat } => {
+            write_hex_cmd(&mut line, "S ", addr, cmd, repeat);
+        }
+        Event::Raw { count, d0, d1 } => {
+            // Leader pulses in milliseconds with one decimal, then edge count
+            // if it still fits. Example: `4.5 4.5 67`.
+            let _ = write!(
+                line,
+                "{}.{} {}.{}",
+                d0 / 1000,
+                (d0 / 100) % 10,
+                d1 / 1000,
+                (d1 / 100) % 10
+            );
+            if line.len() < 12 {
+                let _ = write!(line, " {count}");
+            }
         }
     }
     line
@@ -391,6 +474,13 @@ pub fn json_body(event: &Event) -> String<96> {
             let _ = write!(
                 body,
                 "{{\"proto\":\"nec\",\"addr\":{addr},\"cmd\":{cmd},\"rep\":{}}}",
+                if repeat { "true" } else { "false" }
+            );
+        }
+        Event::Samsung { addr, cmd, repeat } => {
+            let _ = write!(
+                body,
+                "{{\"proto\":\"samsung\",\"addr\":{addr},\"cmd\":{cmd},\"rep\":{}}}",
                 if repeat { "true" } else { "false" }
             );
         }

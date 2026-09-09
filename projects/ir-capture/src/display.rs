@@ -33,11 +33,20 @@ impl Screen {
         }
     }
 
-    pub fn show(&mut self, main_line: &str, status: &str) {
+    pub fn show(&mut self, main_line: &str, status: &str, pin_high: bool) {
         self.display.clear_buffer();
-        Text::with_baseline("IR capture", Point::new(0, 4), self.title, Baseline::Top)
-            .draw(&mut self.display)
-            .unwrap();
+        Text::with_baseline(
+            if pin_high {
+                "IR capture    H"
+            } else {
+                "IR capture    L"
+            },
+            Point::new(0, 4),
+            self.title,
+            Baseline::Top,
+        )
+        .draw(&mut self.display)
+        .unwrap();
         Text::with_baseline(main_line, Point::new(8, 24), self.value, Baseline::Top)
             .draw(&mut self.display)
             .unwrap();
