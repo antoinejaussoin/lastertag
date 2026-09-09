@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="680" viewBox="0 0 1100 680" role="img" aria-label="IR sender connections: OLED, 220 ohm resistor, IR LED, and button on the Pico 2 W">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 26px system-ui, sans-serif; fill: #101828; }
+      .sub { font: 14px system-ui, sans-serif; fill: #344054; }
+      .head { font: 700 16px system-ui, sans-serif; fill: #101828; }
+      .text { font: 13px system-ui, sans-serif; fill: #101828; }
+      .small { font: 12px system-ui, sans-serif; fill: #475467; }
+      .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
+      .white { font: 700 12px system-ui, sans-serif; fill: #ffffff; }
+      .pico { fill: #175cd3; stroke: #0b4ea2; stroke-width: 2; }
+      .usb { fill: #98a2b3; stroke: #344054; stroke-width: 1.5; }
+      .oled { fill: #101828; stroke: #000; stroke-width: 2; }
+      .glass { fill: #0d0d0d; }
+      .ot { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f5f5f5; }
+      .led { fill: #98a2b3; stroke: #344054; stroke-width: 1.6; }
+      .lens { fill: #d0d5dd; stroke: #101828; stroke-width: 1.2; }
+      .btn { fill: #f2f4f7; stroke: #344054; stroke-width: 1.6; }
+      .pin { fill: #e4e7ec; stroke: #344054; stroke-width: 1; }
+      .pin-use { fill: #fef0c7; stroke: #b54708; stroke-width: 1.4; }
+      .pin-bad { fill: #fda29b; stroke: #b42318; stroke-width: 1.4; }
+      .part { fill: none; stroke: #7a2e0e; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .dot { fill: #101828; }
+      .w { fill: none; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+      .red { stroke: #d92d20; }
+      .blk { stroke: #101828; }
+      .blu { stroke: #1570ef; }
+      .grn { stroke: #12b76a; }
+      .org { stroke: #dc6803; }
+      .pur { stroke: #9b51e0; }
+      .card { fill: #f8fafc; stroke: #667085; stroke-width: 1.6; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1100" height="680"/>
+  <text class="title" x="36" y="36">IR sender - connections</text>
+  <text class="sub" x="36" y="58">OLED on the right, same four wires as ir-capture. LED through 220 ohm on GP18. Button to GP19. 3.3 V only - never VBUS.</text>
+
+  <rect class="usb" x="198" y="78" width="100" height="28" rx="4"/>
+  <text class="mono" x="226" y="97">USB</text>
+  <rect class="pico" x="180" y="106" width="136" height="330" rx="8"/>
+  <text class="white" x="206" y="132">Pico 2 W</text>
+  <circle cx="248" cy="158" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+  <text class="white" x="218" y="188">BOOTSEL</text>
+  <text class="white" x="216" y="416">antenna</text>
+
+  <rect class="pin-bad" x="316" y="118" width="22" height="14"/>
+  <text class="mono" x="344" y="129">40 VBUS  leave empty</text>
+  <rect class="pin-use" x="316" y="154" width="22" height="14"/>
+  <text class="mono" x="344" y="165">38 GND</text>
+  <rect class="pin-use" x="316" y="190" width="22" height="14"/>
+  <text class="mono" x="344" y="201">36 3V3</text>
+  <rect class="pin-use" x="316" y="264" width="22" height="14"/>
+  <text class="mono" x="344" y="275">25 GP19  button</text>
+  <rect class="pin-use" x="316" y="300" width="22" height="14"/>
+  <text class="mono" x="344" y="311">24 GP18  IR LED</text>
+  <rect class="pin-use" x="316" y="336" width="22" height="14"/>
+  <text class="mono" x="344" y="347">22 GP17  SCL</text>
+  <rect class="pin-use" x="316" y="372" width="22" height="14"/>
+  <text class="mono" x="344" y="383">21 GP16  SDA</text>
+
+  <rect class="oled" x="820" y="78" width="200" height="110" rx="8"/>
+  <rect class="glass" x="832" y="88" width="176" height="62" rx="4"/>
+  <text class="ot" x="876" y="126">ready</text>
+  <g transform="translate(844,196)">
+    <rect class="pin-use" x="0" y="0" width="14" height="16"/>
+    <rect class="pin-use" x="48" y="0" width="14" height="16"/>
+    <rect class="pin-use" x="96" y="0" width="14" height="16"/>
+    <rect class="pin-use" x="144" y="0" width="14" height="16"/>
+  </g>
+  <text class="mono" x="838" y="230">VCC</text>
+  <text class="mono" x="886" y="230">GND</text>
+  <text class="mono" x="934" y="230">SCL</text>
+  <text class="mono" x="982" y="230">SDA</text>
+  <text class="small" x="820" y="250">OLED - same four wires as ir-capture</text>
+
+  <path class="part" d="M560 300 h10 l6-8 10 16 10-16 10 16 6-8 h10"/>
+  <text class="mono" x="588" y="288">220 ohm</text>
+
+  <ellipse class="led" cx="780" cy="300" rx="22" ry="16"/>
+  <ellipse class="lens" cx="802" cy="300" rx="8" ry="12"/>
+  <text class="mono" x="758" y="304">A</text>
+  <text class="small" x="748" y="332">TSAL6200  long lead = A</text>
+
+  <rect class="btn" x="820" y="268" width="88" height="56" rx="8"/>
+  <circle cx="864" cy="292" r="10" fill="#344054"/>
+  <text class="mono" x="838" y="336">button</text>
+
+  <circle class="dot" cx="500" cy="161" r="4"/>
+  <circle class="dot" cx="500" cy="197" r="4"/>
+
+  <path class="w red" d="M338 197 H851 V204"/>
+  <path class="w blk" d="M338 161 H899 V204"/>
+  <path class="w blu" d="M338 343 H947 V212"/>
+  <path class="w grn" d="M338 379 H995 V212"/>
+  <path class="w org" d="M338 307 H560"/>
+  <path class="w org" d="M632 300 H758"/>
+  <path class="w blk" d="M802 300 H860 V161 H500"/>
+  <path class="w pur" d="M338 271 H864 V268"/>
+  <path class="w blk" d="M864 324 V400 H500 V161"/>
+
+  <rect class="card" x="36" y="450" width="1028" height="206" rx="10"/>
+  <text class="head" x="56" y="480">Wires</text>
+  <text class="mono" x="56" y="508" style="fill:#d92d20">red      3V3 pin 36   -&gt;  OLED VCC</text>
+  <text class="mono" x="56" y="530">black    GND pin 38   -&gt;  OLED GND, LED cathode, one side of the button</text>
+  <text class="mono" x="56" y="552" style="fill:#1570ef">blue     GP17 pin 22  -&gt;  OLED SCL</text>
+  <text class="mono" x="56" y="574" style="fill:#12b76a">green    GP16 pin 21  -&gt;  OLED SDA</text>
+  <text class="mono" x="56" y="596" style="fill:#dc6803">orange   GP18 pin 24  -&gt;  220 ohm  -&gt;  LED anode (long lead)</text>
+  <text class="mono" x="56" y="618" style="fill:#9b51e0">purple   GP19 pin 25  -&gt;  other side of the button</text>
+  <text class="text" x="56" y="644">220 ohm has no polarity. Do not substitute a 15 ohm resistor. GP18 is two pins above GP17 (a GND sits between them).</text>
+</svg>

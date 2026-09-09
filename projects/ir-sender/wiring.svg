@@ -1,0 +1,707 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1520" height="1180" viewBox="0 0 1520 1180" role="img" aria-label="Hole-by-hole breadboard map for Pico 2 W, OLED, IR LED and button">
+<defs>
+<style>
+  .bg{fill:#fff}
+  .title{font:700 28px system-ui,sans-serif;fill:#101828}
+  .sub{font:15px system-ui,sans-serif;fill:#344054}
+  .head{font:700 17px system-ui,sans-serif;fill:#101828}
+  .text{font:13.5px system-ui,sans-serif;fill:#101828}
+  .small{font:12px system-ui,sans-serif;fill:#475467}
+  .tiny{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#475467}
+  .mono{font:700 12.5px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#101828}
+  .white{font:700 12px system-ui,sans-serif;fill:#fff}
+  .board{fill:#e9edf1;stroke:#667085;stroke-width:2.5}
+  .trench{fill:#cdd3db}
+  .hole{fill:#98a2b3;stroke:#344054;stroke-width:.55}
+  .hole-used{fill:#fdb022;stroke:#b54708;stroke-width:1.15}
+  .hole-pico{fill:#84caff;stroke:#175cd3;stroke-width:1.05}
+  .hole-bad{fill:#fda29b;stroke:#b42318;stroke-width:1.2}
+  .rail-red{fill:#fee4e2;stroke:#d92d20;stroke-width:1.4}
+  .rail-blue{fill:#d1e0ff;stroke:#175cd3;stroke-width:1.4}
+  .pico{fill:#175cd3;stroke:#0b4ea2;stroke-width:2}
+  .usb{fill:#98a2b3;stroke:#344054;stroke-width:1.4}
+  .oled{fill:#101828;stroke:#000;stroke-width:1.8}
+  .glass{fill:#0d0d0d}
+  .ot{font:700 13px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f5f5}
+  .led{fill:#d0d5dd;stroke:#344054;stroke-width:1.4}
+  .btn{fill:#f2f4f7;stroke:#344054;stroke-width:1.5}
+  .res{fill:none;stroke:#7a2e0e;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .wire{fill:none;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+  .w-red{stroke:#d92d20}.w-black{stroke:#101828}.w-blue{stroke:#1570ef}
+  .w-green{stroke:#12b76a}.w-orange{stroke:#dc6803}.w-purple{stroke:#9b51e0}
+  .card{fill:#fffaeb;stroke:#dc6803;stroke-width:2}
+  .card2{fill:#eff8ff;stroke:#175cd3;stroke-width:2}
+  .card3{fill:#f8f9fc;stroke:#667085;stroke-width:2}
+</style>
+</defs>
+<rect class="bg" width="1520" height="1180"/>
+<text class="title" x="52" y="34">IR sender — exact breadboard holes</text>
+<text class="sub" x="52" y="56">Column 1 on the left (numbers printed on the board). USB hangs off that end, chip facing you. Unplug USB while inserting parts.</text>
+<text class="sub" x="52" y="76">Blue holes = Pico pins. Yellow = a jumper or component lead. Red hole e1 = 5 V, leave empty. GP16–GP19 are on the top row.</text>
+<rect class="board" x="52" y="160" width="1004.0" height="462.0" rx="14"/>
+<rect class="rail-red" x="118" y="187" width="864" height="18" rx="4"/>
+<rect class="rail-blue" x="118" y="211" width="864" height="18" rx="4"/>
+<rect class="rail-blue" x="118" y="549" width="864" height="18" rx="4"/>
+<rect class="rail-red" x="118" y="573" width="864" height="18" rx="4"/>
+<text class="mono" x="58" y="200" style="fill:#d92d20">+3V3</text>
+<text class="mono" x="58" y="224" style="fill:#175cd3">GND</text>
+<text class="mono" x="58" y="562" style="fill:#175cd3">GND</text>
+<text class="mono" x="58" y="586" style="fill:#d92d20">+3V3</text>
+<rect class="trench" x="118" y="390" width="864" height="26" rx="5"/>
+<text class="tiny" x="658" y="407">centre trench — insulator. Pico bridges it like a DIP chip.</text>
+<text class="tiny" x="125.0" y="248">1</text>
+<text class="tiny" x="173.0" y="248">3</text>
+<text class="tiny" x="221.0" y="248">5</text>
+<text class="tiny" x="485.0" y="248">16</text>
+<text class="tiny" x="509.0" y="248">17</text>
+<text class="tiny" x="557.0" y="248">19</text>
+<text class="tiny" x="581.0" y="248">20</text>
+<text class="tiny" x="653.0" y="248">23</text>
+<text class="tiny" x="677.0" y="248">24</text>
+<text class="tiny" x="701.0" y="248">25</text>
+<text class="tiny" x="725.0" y="248">26</text>
+<text class="tiny" x="773.0" y="248">28</text>
+<text class="tiny" x="869.0" y="248">32</text>
+<text class="tiny" x="893.0" y="248">33</text>
+<text class="tiny" x="917.0" y="248">34</text>
+<text class="tiny" x="941.0" y="248">35</text>
+<text class="tiny" x="965.0" y="248">36</text>
+<text class="mono" x="72" y="266">a</text>
+<text class="mono" x="990" y="266">a</text>
+<text class="mono" x="72" y="290">b</text>
+<text class="mono" x="990" y="290">b</text>
+<text class="mono" x="72" y="314">c</text>
+<text class="mono" x="990" y="314">c</text>
+<text class="mono" x="72" y="338">d</text>
+<text class="mono" x="990" y="338">d</text>
+<text class="mono" x="72" y="362">e</text>
+<text class="mono" x="990" y="362">e</text>
+<text class="mono" x="72" y="424">f</text>
+<text class="mono" x="990" y="424">f</text>
+<text class="mono" x="72" y="448">g</text>
+<text class="mono" x="990" y="448">g</text>
+<text class="mono" x="72" y="472">h</text>
+<text class="mono" x="990" y="472">h</text>
+<text class="mono" x="72" y="496">i</text>
+<text class="mono" x="990" y="496">i</text>
+<text class="mono" x="72" y="520">j</text>
+<text class="mono" x="990" y="520">j</text>
+<circle class="hole" cx="130.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="334.0" r="3.4"/>
+<circle class="hole-bad" cx="130.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="130.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="130.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="130.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="130.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="130.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="130.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="154.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="154.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="154.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="154.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="154.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="154.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="154.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="154.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="178.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="178.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="178.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="178.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="178.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="178.0" cy="196.0" r="3.1"/>
+<circle class="hole-used" cx="178.0" cy="220.0" r="4.2"/>
+<circle class="hole" cx="178.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="178.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="202.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="202.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="202.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="202.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="202.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="202.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="202.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="202.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="226.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="226.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="226.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="226.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="226.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="226.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="226.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="226.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="226.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="226.0" cy="516.0" r="3.4"/>
+<circle class="hole-used" cx="226.0" cy="196.0" r="4.2"/>
+<circle class="hole" cx="226.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="226.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="226.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="250.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="250.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="250.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="250.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="250.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="250.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="250.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="250.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="274.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="274.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="274.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="274.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="274.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="274.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="274.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="274.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="298.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="298.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="298.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="298.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="298.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="298.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="298.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="298.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="322.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="322.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="322.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="322.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="322.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="322.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="322.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="322.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="346.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="346.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="346.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="346.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="346.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="346.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="346.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="346.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="370.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="370.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="370.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="370.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="370.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="370.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="370.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="370.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="394.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="394.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="394.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="394.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="394.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="394.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="394.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="394.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="418.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="418.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="418.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="418.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="418.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="418.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="418.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="418.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="442.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="442.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="442.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="442.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="442.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="442.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="442.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="442.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="466.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="466.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="466.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="466.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="466.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="466.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="466.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="466.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="490.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="310.0" r="3.4"/>
+<circle class="hole-used" cx="490.0" cy="334.0" r="4.4"/>
+<circle class="hole-pico" cx="490.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="490.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="490.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="490.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="490.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="490.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="490.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="514.0" cy="262.0" r="3.4"/>
+<circle class="hole-used" cx="514.0" cy="286.0" r="4.4"/>
+<circle class="hole" cx="514.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="514.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="514.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="514.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="514.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="514.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="514.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="514.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="514.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="514.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="514.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="514.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="538.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="538.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="538.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="538.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="538.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="538.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="538.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="538.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="562.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="562.0" cy="286.0" r="3.4"/>
+<circle class="hole-used" cx="562.0" cy="310.0" r="4.4"/>
+<circle class="hole" cx="562.0" cy="334.0" r="3.4"/>
+<circle class="hole-pico" cx="562.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="562.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="562.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="562.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="562.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="562.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="562.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="562.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="562.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="562.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="586.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="310.0" r="3.4"/>
+<circle class="hole-used" cx="586.0" cy="334.0" r="4.4"/>
+<circle class="hole-pico" cx="586.0" cy="358.0" r="4.4"/>
+<circle class="hole-pico" cx="586.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="586.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="586.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="586.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="586.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="586.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="610.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="610.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="610.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="610.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="610.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="634.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="634.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="634.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="634.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="634.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="658.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="658.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="658.0" cy="516.0" r="3.4"/>
+<circle class="hole-used" cx="658.0" cy="196.0" r="4.2"/>
+<circle class="hole" cx="658.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="658.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="658.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="682.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="682.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="682.0" cy="196.0" r="3.1"/>
+<circle class="hole-used" cx="682.0" cy="220.0" r="4.2"/>
+<circle class="hole" cx="682.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="682.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="706.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="706.0" cy="286.0" r="3.4"/>
+<circle class="hole-used" cx="706.0" cy="310.0" r="4.4"/>
+<circle class="hole" cx="706.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="706.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="706.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="706.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="706.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="730.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="730.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="310.0" r="3.4"/>
+<circle class="hole-used" cx="730.0" cy="334.0" r="4.4"/>
+<circle class="hole" cx="730.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="730.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="730.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="730.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="730.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="754.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="754.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="754.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="754.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="754.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="778.0" cy="262.0" r="4.4"/>
+<circle class="hole-used" cx="778.0" cy="286.0" r="4.4"/>
+<circle class="hole" cx="778.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="778.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="778.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="778.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="778.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="802.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="802.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="802.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="802.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="802.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="826.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="826.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="826.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="826.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="826.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="850.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="850.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="850.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="850.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="850.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="874.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="874.0" cy="286.0" r="3.4"/>
+<circle class="hole-used" cx="874.0" cy="310.0" r="4.4"/>
+<circle class="hole" cx="874.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="874.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="874.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="874.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="874.0" cy="582.0" r="3.1"/>
+<circle class="hole-used" cx="898.0" cy="262.0" r="4.4"/>
+<circle class="hole" cx="898.0" cy="286.0" r="3.4"/>
+<circle class="hole-used" cx="898.0" cy="310.0" r="4.4"/>
+<circle class="hole" cx="898.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="898.0" cy="196.0" r="3.1"/>
+<circle class="hole-used" cx="898.0" cy="220.0" r="4.2"/>
+<circle class="hole" cx="898.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="898.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="922.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="922.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="922.0" cy="310.0" r="3.4"/>
+<circle class="hole-used" cx="922.0" cy="334.0" r="4.4"/>
+<circle class="hole-used" cx="922.0" cy="358.0" r="4.4"/>
+<circle class="hole-used" cx="922.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="922.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="922.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="922.0" cy="492.0" r="3.4"/>
+<circle class="hole-used" cx="922.0" cy="516.0" r="4.4"/>
+<circle class="hole" cx="922.0" cy="196.0" r="3.1"/>
+<circle class="hole-used" cx="922.0" cy="220.0" r="4.2"/>
+<circle class="hole-used" cx="922.0" cy="558.0" r="4.2"/>
+<circle class="hole" cx="922.0" cy="582.0" r="3.1"/>
+<circle class="hole" cx="946.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="334.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="358.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="420.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="946.0" cy="516.0" r="3.4"/>
+<circle class="hole-used" cx="946.0" cy="196.0" r="4.2"/>
+<circle class="hole" cx="946.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="946.0" cy="558.0" r="3.1"/>
+<circle class="hole-used" cx="946.0" cy="582.0" r="4.2"/>
+<circle class="hole" cx="970.0" cy="262.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="286.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="310.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="334.0" r="3.4"/>
+<circle class="hole-used" cx="970.0" cy="358.0" r="4.4"/>
+<circle class="hole-used" cx="970.0" cy="420.0" r="4.4"/>
+<circle class="hole" cx="970.0" cy="444.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="468.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="492.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="516.0" r="3.4"/>
+<circle class="hole" cx="970.0" cy="196.0" r="3.1"/>
+<circle class="hole" cx="970.0" cy="220.0" r="3.1"/>
+<circle class="hole" cx="970.0" cy="558.0" r="3.1"/>
+<circle class="hole" cx="970.0" cy="582.0" r="3.1"/>
+<rect class="pico" x="112" y="364" width="492" height="50" rx="7"/>
+<rect class="usb" x="48" y="373.0" width="64" height="32" rx="4"/>
+<text class="mono" x="62" y="394.0">USB</text>
+<circle cx="178" cy="389.0" r="8" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+<text class="white" x="226" y="394.0">Pico 2 W</text>
+<text class="white" x="442" y="394.0">antenna →</text>
+<text class="tiny" x="112" y="340">row e = Pico pins 40 … 21 (VBUS at USB, GP16 at antenna)</text>
+<text class="tiny" x="112" y="452">row f = Pico pins 1 … 20 (GP0 at USB)</text>
+<rect class="oled" x="644" y="86" width="100" height="52" rx="6"/>
+<rect class="glass" x="650" y="92" width="88" height="24" rx="3"/>
+<text class="ot" x="666" y="109">ready</text>
+<text class="white" x="662" y="130">OLED</text>
+<line class="wire" style="stroke:#d92d20;stroke-width:2.4" x1="658" y1="138" x2="658" y2="262"/>
+<text class="tiny" x="649" y="150" style="fill:#d92d20">VCC</text>
+<line class="wire" style="stroke:#101828;stroke-width:2.4" x1="682" y1="138" x2="682" y2="262"/>
+<text class="tiny" x="673" y="150" style="fill:#101828">GND</text>
+<line class="wire" style="stroke:#1570ef;stroke-width:2.4" x1="706" y1="138" x2="706" y2="262"/>
+<text class="tiny" x="697" y="150" style="fill:#1570ef">SCL</text>
+<line class="wire" style="stroke:#12b76a;stroke-width:2.4" x1="730" y1="138" x2="730" y2="262"/>
+<text class="tiny" x="721" y="150" style="fill:#12b76a">SDA</text>
+<text class="tiny" x="636" y="82">typical Pi Hut order — if labels differ, keep a23–a26 and move the four wires</text>
+<path class="res" d="M778 262 V244 l8-6 12 12 12-12 12 12 8-6 H874 V262"/>
+<text class="tiny" x="796" y="234">220Ω</text>
+<ellipse class="led" cx="886.0" cy="308.0" rx="18" ry="12"/>
+<text class="tiny" x="868" y="332">A</text>
+<text class="tiny" x="892" y="332">K</text>
+<text class="tiny" x="866" y="294">IR LED</text>
+<rect class="btn" x="908.0" y="348" width="76.0" height="86" rx="8"/>
+<circle cx="946.0" cy="389" r="11" fill="#344054"/>
+<text class="tiny" x="924" y="344">button</text>
+<path class="wire w-red" d="M226 262 V196"/>
+<path class="wire w-black" d="M178 262 V220"/>
+<path class="wire w-red" d="M946 582 H1006 V196 H946"/>
+<path class="wire w-black" d="M922 558 H994 V220 H922"/>
+<path class="wire w-red" d="M658 262 V196"/>
+<path class="wire w-black" d="M682 262 V220"/>
+<path class="wire w-blue" d="M706 310 H562"/>
+<path class="wire w-green" d="M730 334 H586"/>
+<path class="wire w-orange" d="M514 286 H778"/>
+<path class="wire w-black" d="M898 262 V220"/>
+<path class="wire w-purple" d="M490 334 H922"/>
+<path class="wire w-black" d="M922 516 V558"/>
+<text class="tiny" x="504" y="278">b17</text>
+<text class="tiny" x="768" y="278">b28</text>
+<text class="tiny" x="480" y="323">d16</text>
+<text class="tiny" x="552" y="300">c19</text>
+<text class="tiny" x="576" y="348">d20</text>
+<text class="tiny" x="696" y="300">c25</text>
+<text class="tiny" x="734" y="348">d26</text>
+<text class="tiny" x="636" y="278">a23</text>
+<text class="tiny" x="234" y="250">a5</text>
+<text class="tiny" x="160" y="250">a3</text>
+<text class="tiny" x="504" y="348">e17</text>
+<text class="tiny" x="552" y="348">e19</text>
+<text class="tiny" x="576" y="372">e20</text>
+<text class="tiny" x="234" y="348">e5</text>
+<text class="tiny" x="168" y="348">e3</text>
+<text class="tiny" x="480" y="348">e16</text>
+<text class="tiny" x="912" y="323">d34</text>
+<text class="tiny" x="930" y="521">j34</text>
+<rect class="card2" x="52" y="646" width="480" height="400" rx="10"/>
+<text class="head" x="68" y="674">1. Pico and power</text>
+<text class="text" x="68" y="698">Push the Pico across the trench, USB off the left, chip</text>
+<text class="text" x="68" y="718">facing you. 20 pins in row e, 20 pins in row f.</text>
+<text class="mono" x="68" y="744">e1 = pin 40 VBUS (empty)  f1 = pin 1 GP0</text>
+<text class="mono" x="68" y="764">e17 = pin 24 GP18         e16 = pin 25 GP19</text>
+<text class="mono" x="68" y="784">e19 = pin 22 GP17         e20 = pin 21 GP16</text>
+<text class="mono" x="68" y="804">e5 = pin 36 3V3           e3 = pin 38 GND</text>
+<text class="text" x="68" y="830">Short jumpers above the Pico, then join the long rails:</text>
+<text class="mono" x="68" y="854" style="fill:#d92d20">red    a5 → top +3V3 rail</text>
+<text class="mono" x="68" y="874" style="fill:#101828">black  a3 → top GND rail</text>
+<text class="mono" x="68" y="894" style="fill:#d92d20">red    bottom + col 35 → top + col 35</text>
+<text class="mono" x="68" y="914" style="fill:#101828">black  bottom GND col 34 → top GND col 34</text>
+<text class="text" x="68" y="940">Leave e1 empty. That pin is 5 V from USB.</text>
+<text class="text" x="68" y="962">a–e in column 17 are already joined to Pico GP18.</text>
+<text class="text" x="68" y="982">a–e in column 16 are already joined to Pico GP19.</text>
+<text class="text" x="68" y="1004">a–e in column 19 / 20 are GP17 / GP16.</text>
+<text class="text" x="68" y="1026">Columns 37–63 of a full-size board stay empty.</text>
+<rect class="card" x="548" y="646" width="460" height="400" rx="10"/>
+<text class="head" x="564" y="674">2. OLED — pins in a23 a24 a25 a26</text>
+<text class="text" x="564" y="698">Four pins in row a. Screen hangs off the top of the board.</text>
+<text class="mono" x="564" y="726" style="fill:#d92d20">VCC  a23 → top +3V3 rail   (short red)</text>
+<text class="mono" x="564" y="746" style="fill:#101828">GND  a24 → top GND rail    (short black)</text>
+<text class="mono" x="564" y="766" style="fill:#1570ef">SCL  c25 → c19             (blue, GP17)</text>
+<text class="mono" x="564" y="786" style="fill:#12b76a">SDA  d26 → d20             (green, GP16)</text>
+<text class="text" x="564" y="812">These stay on the top side. They do not cross the trench.</text>
+<text class="head" x="564" y="842">3. IR LED — 220 Ω then TSAL6200</text>
+<text class="text" x="564" y="866">Long lead (anode) in c32. Short lead / flat rim in c33.</text>
+<text class="mono" x="564" y="892" style="fill:#dc6803">GP18  b17 → b28     (orange, same side)</text>
+<text class="mono" x="564" y="912">220Ω           a28 – a32   (either way)</text>
+<text class="mono" x="564" y="932">LED            c32 (A) – c33 (K)</text>
+<text class="mono" x="564" y="952" style="fill:#101828">K     a33 → top GND rail</text>
+<text class="head" x="564" y="978">4. Button — across the trench</text>
+<text class="mono" x="564" y="1000">legs  e34 e36 f34 f36</text>
+<text class="mono" x="564" y="1018" style="fill:#9b51e0">GP19  d16 → d34     (purple)</text>
+<text class="mono" x="564" y="1036" style="fill:#101828">GND   j34 → bottom GND rail</text>
+<rect class="card3" x="1024" y="646" width="444" height="400" rx="10"/>
+<text class="head" x="1040" y="674">Colour key</text>
+<text class="mono" x="1040" y="702" style="fill:#d92d20">red      +3.3 V</text>
+<text class="mono" x="1040" y="722" style="fill:#101828">black    GND</text>
+<text class="mono" x="1040" y="742" style="fill:#1570ef">blue     OLED SCL → GP17</text>
+<text class="mono" x="1040" y="762" style="fill:#12b76a">green    OLED SDA → GP16</text>
+<text class="mono" x="1040" y="782" style="fill:#dc6803">orange   GP18 → 220Ω → LED</text>
+<text class="mono" x="1040" y="802" style="fill:#9b51e0">purple   GP19 → button</text>
+<text class="head" x="1040" y="834">Before you plug USB back in</text>
+<text class="text" x="1040" y="858">• Pico straddles the trench, USB on the left</text>
+<text class="text" x="1040" y="880">• e1 is empty (no 5 V on the rails)</text>
+<text class="text" x="1040" y="902">• OLED VCC comes from +3V3, not VBUS</text>
+<text class="text" x="1040" y="924">• LED resistor is 220 Ω, never 15 Ω</text>
+<text class="text" x="1040" y="946">• Long LED lead is in c32 (anode)</text>
+<text class="text" x="1040" y="968">• Point the LED at the other board’s TSOP</text>
+<text class="text" x="1040" y="998">pico.pinout.xyz — choose Pico 2 W</text>
+<text class="text" x="1040" y="1020">Power is the Pico USB cable. No battery.</text>
+<text class="text" x="1040" y="1042">Later player boards drive the LED with a transistor on GP0.</text>
+</svg>
