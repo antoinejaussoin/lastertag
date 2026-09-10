@@ -13,28 +13,30 @@ You do not need to know Rust or electronics already. Follow the steps in order.
 - the **second** Raspberry Pi Pico 2 W (keep the first one running ir-capture)
 - 0.96" four-pin I²C OLED (the second module from the shopping list)
 - Vishay TSAL6200 940 nm IR LED (Rapid)
-- one **220 Ω** resistor (from the pack of 100)
+- one Diotec **BC337-40** transistor
+- two **15 Ω, 1 W** resistors (brown-green-black)
+- one **220 Ω** resistor (red-red-brown) — GPIO to the transistor **base** only
+- one **10 kΩ** resistor (brown-black-orange) — base to GND
 - one tactile push button (Diptronics DTS-644K)
 - the second full-size breadboard and jumper wires
 - a **data** USB cable (charge-only cables will not work)
 
-The PiCowbell, LiPo, transistor, and 15 Ω resistors are **not** used here. USB
-powers the Pico.
+The PiCowbell and LiPo are **not** used here. USB powers the Pico.
 
 ## Safety
 
 - Unplug USB while you insert parts.
 - Power the OLED from **3.3 V only**. Do not use `VBUS` (physical pin 40, the
   5 V USB pin).
-- The IR LED goes through **220 Ω** on a GPIO. Never use a 15 Ω resistor on
-  this pin: that would pull far too much current from the Pico. The later
-  player gun uses a transistor driver; this sandbox does not.
+- The two 15 Ω resistors feed the LED from **3.3 V** through the transistor.
+  Never put a 15 Ω resistor on GP18. The 220 Ω is only between GP18 and the
+  base.
 
 ## How to plug it together
 
 Two drawings in this folder:
 
-- [`connections.svg`](connections.svg) — what joins to what, no breadboard
+- [`connections.svg`](connections.svg) — three diagrams (OLED, button, TSAL), Pico on each, no breadboard
 - [`wiring.svg`](wiring.svg) — the same circuit, hole by hole on the breadboard
 
 Useful references:
@@ -50,88 +52,109 @@ Looks like a clear or smoke-grey 5 mm LED:
 
 | Leg | Name | Goes to |
 |---|---|---|
-| long | anode (`A`) | 220 Ω (the other side of the resistor is Pico `GP18`) |
-| short, next to the flat rim | cathode (`K`) | Pico `GND` |
+| long | anode (`A`) | two 15 Ω from `+3V3` |
+| short, next to the flat rim | cathode (`K`) | BC337 collector |
+
+### BC337-40 pinout
+
+Small black TO-92, one flat face, three legs. For the Diotec part, with the
+**flat toward you** and the legs down, the order is **C-B-E** (left to right).
+On this breadboard, point the flat at the **trench** and use
+`c37` = C, `c36` = B, `c35` = E. All IR parts stay in rows `a`–`d`.
 
 ### Assembly
 
-Unplug USB. Hold the breadboard so **printed column 1 is on the left**. Follow
-[`wiring.svg`](wiring.svg) hole for hole. Yellow holes on the drawing already
-have something in them.
+Unplug USB. Hold the breadboard so **printed column 64 is on the left** (Pico /
+USB) and **column 1 is on the right**. The Pico sits **lower**: pins in **row
+`e`** (above the trench) and **row `j`** (below the trench). On this board the
+lower letters run `j` `i` `h` `g` `f` from the trench down. Top rails are `+`
+then `−`. After row `f`, the bottom rails are `+` then `−` at the very bottom.
+
+Follow [`wiring.svg`](wiring.svg) hole for hole. Yellow holes on the drawing
+already have something in them. If your last printed number is 63, not 64,
+shift every hole one column toward the Pico.
 
 1. Sit the Pico 2 W **across the centre trench**, like a DIP chip. USB hangs
-   off the left so the cable still fits. 20 pins go in **row e** (columns 1–20)
-   and 20 pins go in **row f**. The antenna is at column 20.
+   off the left at column 64 so the cable still fits. 20 pins go in **row e**
+   (columns 64–45) and 20 pins go in **row j**. The antenna is at column 45.
 
    With the chip facing you and USB on the left, the **top** row (e) is pins
-   40–21 and the **bottom** row (f) is pins 1–20. GP16–GP19 are on the top.
+   40–21 and the **bottom** row (j) is pins 1–20. GP16–GP19 are on the top.
 
    | Pico pin | Hole | Name |
    |---|---|---|
-   | 40 | `e1` | VBUS — leave empty |
-   | 38 | `e3` | GND |
-   | 36 | `e5` | 3V3 |
-   | 25 | `e16` | GP19 (button) |
-   | 24 | `e17` | GP18 (IR LED) |
-   | 22 | `e19` | GP17 (SCL) |
-   | 21 | `e20` | GP16 (SDA) |
-   | 1 | `f1` | GP0 |
+   | 40 | `e64` | VBUS — leave empty |
+   | 38 | `e62` | GND |
+   | 36 | `e60` | 3V3 |
+   | 25 | `e49` | GP19 (button) |
+   | 24 | `e48` | GP18 (IR LED) |
+   | 23 | `e47` | GND — skip this column |
+   | 22 | `e46` | GP17 (SCL) |
+   | 21 | `e45` | GP16 (SDA) |
+   | 1 | `j64` | GP0 |
 
 2. Power the long rails from the Pico, then join top and bottom:
 
    | Colour | From | To |
    |---|---|---|
-   | red | `a5` | top `+3V3` rail |
-   | black | `a3` | top `GND` rail |
-   | red | bottom `+` column 35 | top `+` column 35 |
-   | black | bottom `GND` column 34 | top `GND` column 34 |
+   | red | `a60` | top `+` rail |
+   | black | `a62` | top `−` rail |
+   | red | bottom `+` column 32 | top `+` column 32 |
+   | black | bottom `−` column 31 | top `−` column 31 |
 
-3. OLED pins in **`a23` `a24` `a25` `a26`**. Typical Pi Hut order is
-   `VCC`, `GND`, `SCL`, `SDA`. If your module prints a different order, keep
-   those four holes and move the wires to the printed names.
+3. OLED pins in **`a42` `a41` `a40` `a39`**, from the Pico toward column 1.
+   Typical Pi Hut order is `VCC`, `GND`, `SCL`, `SDA`. If your module prints a
+   different order, keep those four holes and move the wires to the printed
+   names.
 
    | OLED name | Hole | Jumper |
    |---|---|---|
-   | `VCC` | `a23` | top `+3V3` rail |
-   | `GND` | `a24` | top `GND` rail |
-   | `SCL` | `c25` | `c19` (GP17) |
-   | `SDA` | `d26` | `d20` (GP16) |
+   | `VCC` | `a42` | top `+` rail |
+   | `GND` | `a41` | top `−` rail |
+   | `SCL` | `c40` | `c46` (GP17) |
+   | `SDA` | `d39` | `d45` (GP16) |
 
-4. IR LED and 220 Ω. The resistor has no polarity. The LED does.
-
-   The 220 Ω from the Royal Ohm pack is **red-red-brown** (then usually gold).
-   That is not the 10 kΩ pack (**brown-black-orange**) and not a 15 Ω
-   (**brown-green-black**). A 10 kΩ here leaves the LED dark. A 15 Ω here can
-   damage GP18.
+4. IR driver on the **top** half (rows `a`–`d`). The 15 Ω pair sits in **row
+   `b`**, under the OLED pins. Unplug USB first.
 
    | Part | Holes |
    |---|---|
-   | orange jumper GP18 → resistor | `b17` → `b28` |
-   | 220 Ω | `a28` – `a32` |
-   | TSAL6200 anode / cathode | `c32` / `c33` |
-   | black jumper LED cathode → GND | `a33` → top `GND` rail |
+   | BC337-40, flat toward the trench | `c37` C, `c36` B, `c35` E |
+   | red jumper +3V3 → first 15 Ω | top `+` column 44 → `b44` |
+   | 15 Ω | `b44` – `b38` |
+   | 15 Ω | `b38` – `b33` |
+   | TSAL6200 anode / cathode | `c33` / `c37` (cathode shares C) |
+   | orange jumper GP18 → 220 Ω | `b48` → `d32` |
+   | 220 Ω (base) | `d32` – `d36` |
+   | 10 kΩ base pull-down | `a36` → top `−` rail |
+   | black jumper emitter → GND | `a35` → top `−` rail |
 
-   Long LED lead in `c32`. Short lead and flat rim in `c33`.
+   Long LED lead in `c33`. Short lead and flat rim in `c37`.
 
-5. Button across the trench so pressing it joins the two sides. A four-leg
-   switch has two permanently connected legs on each side.
+   Bands: 15 Ω is **brown-green-black**. 220 Ω is **red-red-brown**. 10 kΩ is
+   **brown-black-orange**. A 15 Ω on GP18 can damage the Pico.
+
+5. Button across the trench so pressing it joins `e` to `j`. A four-leg switch
+   has two permanently connected legs on each side. Keep it off column 32 —
+   that strip is the GP18 / 220 Ω node.
 
    | Part | Holes |
    |---|---|
-   | button legs | `e34` `e36` `f34` `f36` |
-   | purple jumper GP19 | `d16` → `d34` |
-   | black jumper to GND | `j34` → bottom `GND` rail |
+   | button legs | `e31` `e29` `j31` `j29` |
+   | purple jumper GP19 | `d49` → `d31` |
+   | black jumper to GND | `j31` → bottom `−` rail |
 
-Rows `a`–`e` in one numbered column are already joined. Rows `f`–`j` in that
-column are a second, separate strip. That is why a jumper in `b17` is already
-connected to Pico GP18 in `e17`.
+Rows `a`–`e` in one numbered column are already joined. Rows `j`–`f` in that
+column are a second, separate strip. That is why a jumper in `b48` is already
+connected to Pico GP18 in `e48`.
 
 ## What the firmware does
 
-GP18 is a GPIO. Marks are a 38 kHz square wave; spaces are the pin low. On
-each button press the program sends three **NEC** frames: address `0x42`,
-command `0x01`. ir-capture already understands that encoding, so its OLED
-should show `42:01` and its HTTP POST looks like:
+GP18 is a GPIO into the BC337 base. Marks are a 38 kHz square wave on that
+pin; spaces are the pin low (transistor off). The LED itself runs from 3.3 V
+at about 58 mA. On each button press the program sends three **NEC** frames:
+address `0x42`, command `0x01`. ir-capture already understands that encoding,
+so its OLED should show `42:01` and its HTTP POST looks like:
 
 ```json
 {"proto":"nec","addr":66,"cmd":1,"rep":false}
@@ -140,9 +163,9 @@ should show `42:01` and its HTTP POST looks like:
 A held button does not repeat. Release and press again for another burst.
 
 Right after you flash, the sender OLED shows `aim TSOP` and the LED blinks a
-38 kHz carrier about once a second. **Do not use a phone camera** — 940 nm at
-this current is usually invisible on an iPhone. Point the LED at the capture
-TSOP from a few centimetres. Capture should flip to `L` / `stuck L` in time
+38 kHz carrier about once a second. A phone camera may now show a faint
+purple blink; the capture TSOP is still the real test. Point the LED at that
+lens from a few centimetres. Capture should flip to `L` / `stuck L` in time
 with `carrier ON`. Then it sends NEC once and sits at `ready`. After a press
 it shows `sent 42:01`.
 
@@ -282,7 +305,7 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
   mistake.
 - `VCC` is on **3V3** (pin 36), not **VBUS** (pin 40).
 - You counted pins from the USB end. `GP16`/`GP17` are on the **top** row,
-  at the end opposite the USB plug (`e20` / `e19`).
+  at the end opposite the USB plug (`e45` / `e46`).
 - You actually copied a UF2 (the `RP2350` drive vanished after the copy).
 - Some modules use I²C address `0x3D` instead of `0x3C`. In `src/display.rs`,
   change the `0x3C` passed to `Oled::new` to `0x3D`.
@@ -291,23 +314,21 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
 ## If capture shows nothing, or raw times instead of `42:01`
 
 - After flash, OLED must say `aim TSOP` (otherwise this UF2 is not on the
-  board). Ignore the phone camera. Point the LED at the capture TSOP: that
-  screen should show `L` or `stuck L` while sender says `carrier ON`. Still
-  nothing: both LED legs on the **top** half of the board (rows `a`–`e`,
-  not across the trench), orange jumper in column **17** not **18** (two
-  columns left of the blue SCL wire, with the GND column in between), long
-  lead in `c32`. Swap the LED if needed — there are spares in the TSAL6200
-  pack.
+  board). Point the LED at the capture TSOP: that screen should show `L` or
+  `stuck L` while sender says `carrier ON`. Still nothing: Q1 flat toward the
+  trench (`c37` C, `c36` B, `c35` E), long LED lead in `c33`, orange
+  jumper from `b48` (GP18) not column 47, 15 Ω only in the 3.3 V LED path.
 - Do **not** hold an iPhone (or any Face ID / LiDAR phone) near the capture
   TSOP. That illuminator is 940 nm and shows up as short `raw` junk. A TV
   remote is the right “capture still works” check.
 - Point the LED at the TSOP lens on the other breadboard, a few centimetres
   away. Do not aim at the Pico or the table. A phone camera is a wiring test,
   not a protocol test: 38 kHz bursts are too short and too dim to trust.
-- The orange jumper must be column **17 on the top** (`b17`), the same strip
-  as Pico `e17` / GP18. Column **18** on that row is GND — an easy miss.
-- Long LED lead is in `c32` (anode). Swapping the LED means it never lights.
-- The 220 Ω is from column 28 to 32, not a 15 Ω or 100 Ω.
+- The orange jumper must be column **48 on the top** (`b48`), the same strip
+  as Pico `e48` / GP18. Column **47** on that row is GND — an easy miss.
+- Long LED lead is in `c33` (anode). Cathode must sit on the collector (`c37`),
+  not on GND.
+- The 220 Ω is `d32`–`d36` (base). The 15 Ω pair is `b44`–`b38`–`b33`.
 - You flashed **this** folder (`projects/ir-sender`) onto the sender Pico, and
   ir-capture is still running on the other Pico.
 - Capture’s title shows **`H`** at rest. If it shows **`L`**, that board’s
@@ -319,5 +340,5 @@ Edit `src/main.rs` or `src/ir.rs`, save, put the Pico back in BOOTSEL, then
 `make` again.
 
 This folder is only a sandbox. Game firmware will live later under
-`projects/lasertag/source/firmware/`. The player board’s IR LED uses a
-transistor on GP0, not this GPIO-plus-resistor circuit.
+`projects/lasertag/source/firmware/`. The player board uses this same
+transistor driver on GP0.

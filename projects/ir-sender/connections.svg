@@ -1,11 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="680" viewBox="0 0 1100 680" role="img" aria-label="IR sender connections: OLED, 220 ohm resistor, IR LED, and button on the Pico 2 W">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1760" viewBox="0 0 1100 1760" role="img" aria-label="IR sender connections as three separate Pico diagrams: OLED, button, and TSAL driver">
   <defs>
     <style>
       .bg { fill: #ffffff; }
       .title { font: 700 26px system-ui, sans-serif; fill: #101828; }
       .sub { font: 14px system-ui, sans-serif; fill: #344054; }
-      .head { font: 700 16px system-ui, sans-serif; fill: #101828; }
-      .text { font: 13px system-ui, sans-serif; fill: #101828; }
+      .head { font: 700 17px system-ui, sans-serif; fill: #101828; }
       .small { font: 12px system-ui, sans-serif; fill: #475467; }
       .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
       .white { font: 700 12px system-ui, sans-serif; fill: #ffffff; }
@@ -17,7 +16,8 @@
       .led { fill: #98a2b3; stroke: #344054; stroke-width: 1.6; }
       .lens { fill: #d0d5dd; stroke: #101828; stroke-width: 1.2; }
       .btn { fill: #f2f4f7; stroke: #344054; stroke-width: 1.6; }
-      .pin { fill: #e4e7ec; stroke: #344054; stroke-width: 1; }
+      .to92 { fill: #1d2939; stroke: #101828; stroke-width: 1.4; }
+      .pin { fill: #e4e7ec; stroke: #98a2b3; stroke-width: 1; }
       .pin-use { fill: #fef0c7; stroke: #b54708; stroke-width: 1.4; }
       .pin-bad { fill: #fda29b; stroke: #b42318; stroke-width: 1.4; }
       .part { fill: none; stroke: #7a2e0e; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -29,84 +29,184 @@
       .grn { stroke: #12b76a; }
       .org { stroke: #dc6803; }
       .pur { stroke: #9b51e0; }
-      .card { fill: #f8fafc; stroke: #667085; stroke-width: 1.6; }
+      .card { fill: #f8fafc; stroke: #d0d5dd; stroke-width: 1.6; }
+      .gnd { fill: none; stroke: #101828; stroke-width: 2.2; stroke-linecap: round; }
     </style>
   </defs>
 
-  <rect class="bg" width="1100" height="680"/>
-  <text class="title" x="36" y="36">IR sender - connections</text>
-  <text class="sub" x="36" y="58">OLED on the right, same four wires as ir-capture. LED through 220 ohm on GP18. Button to GP19. 3.3 V only - never VBUS.</text>
+  <rect class="bg" width="1100" height="1760"/>
+  <text class="title" x="36" y="36">IR sender — connections</text>
+  <text class="sub" x="36" y="58">Three separate diagrams. Each shows the Pico plus one group. Unused Pico pins are grey. Hole names are in wiring.svg.</text>
 
-  <rect class="usb" x="198" y="78" width="100" height="28" rx="4"/>
-  <text class="mono" x="226" y="97">USB</text>
-  <rect class="pico" x="180" y="106" width="136" height="330" rx="8"/>
-  <text class="white" x="206" y="132">Pico 2 W</text>
-  <circle cx="248" cy="158" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
-  <text class="white" x="218" y="188">BOOTSEL</text>
-  <text class="white" x="216" y="416">antenna</text>
+  <!-- ========== 1. OLED ========== -->
+  <g transform="translate(28,76)">
+    <rect class="card" x="0" y="0" width="1044" height="520" rx="12"/>
+    <text class="head" x="24" y="32">1. OLED</text>
+    <text class="small" x="24" y="52">Same four wires as ir-capture. 3.3 V only — never VBUS. Typical header: VCC GND SCL SDA.</text>
 
-  <rect class="pin-bad" x="316" y="118" width="22" height="14"/>
-  <text class="mono" x="344" y="129">40 VBUS  leave empty</text>
-  <rect class="pin-use" x="316" y="154" width="22" height="14"/>
-  <text class="mono" x="344" y="165">38 GND</text>
-  <rect class="pin-use" x="316" y="190" width="22" height="14"/>
-  <text class="mono" x="344" y="201">36 3V3</text>
-  <rect class="pin-use" x="316" y="264" width="22" height="14"/>
-  <text class="mono" x="344" y="275">25 GP19  button</text>
-  <rect class="pin-use" x="316" y="300" width="22" height="14"/>
-  <text class="mono" x="344" y="311">24 GP18  IR LED</text>
-  <rect class="pin-use" x="316" y="336" width="22" height="14"/>
-  <text class="mono" x="344" y="347">22 GP17  SCL</text>
-  <rect class="pin-use" x="316" y="372" width="22" height="14"/>
-  <text class="mono" x="344" y="383">21 GP16  SDA</text>
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="318" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <circle cx="124" cy="170" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+    <text class="white" x="94" y="200">BOOTSEL</text>
+    <text class="white" x="92" y="418">antenna</text>
+    <rect class="pin-bad" x="192" y="130" width="22" height="14"/>
+    <text class="mono" x="220" y="128" style="fill:#b42318">40 VBUS  leave empty</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin-use" x="192" y="206" width="22" height="14"/>
+    <text class="mono" x="220" y="204">36 3V3</text>
+    <rect class="pin" x="192" y="286" width="22" height="14"/>
+    <rect class="pin" x="192" y="324" width="22" height="14"/>
+    <rect class="pin-use" x="192" y="362" width="22" height="14"/>
+    <text class="mono" x="220" y="360">22 GP17  SCL</text>
+    <rect class="pin-use" x="192" y="400" width="22" height="14"/>
+    <text class="mono" x="220" y="398">21 GP16  SDA</text>
 
-  <rect class="oled" x="820" y="78" width="200" height="110" rx="8"/>
-  <rect class="glass" x="832" y="88" width="176" height="62" rx="4"/>
-  <text class="ot" x="876" y="126">ready</text>
-  <g transform="translate(844,196)">
-    <rect class="pin-use" x="0" y="0" width="14" height="16"/>
-    <rect class="pin-use" x="48" y="0" width="14" height="16"/>
-    <rect class="pin-use" x="96" y="0" width="14" height="16"/>
-    <rect class="pin-use" x="144" y="0" width="14" height="16"/>
+    <rect class="oled" x="760" y="64" width="200" height="100" rx="8"/>
+    <rect class="glass" x="772" y="74" width="176" height="56" rx="4"/>
+    <text class="ot" x="816" y="108">ready</text>
+    <text class="mono" x="778" y="180">VCC</text>
+    <text class="mono" x="826" y="180">GND</text>
+    <text class="mono" x="874" y="180">SCL</text>
+    <text class="mono" x="922" y="180">SDA</text>
+    <g transform="translate(784,188)">
+      <rect class="pin-use" x="0" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="48" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="96" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="144" y="0" width="14" height="16"/>
+    </g>
+    <!-- wires start past the pin labels -->
+    <path class="w red" d="M214 213 H410 V250 H791 V204"/>
+    <path class="w blk" d="M214 175 H386 V270 H839 V204"/>
+    <path class="w blu" d="M214 369 H410 H887 V204"/>
+    <path class="w grn" d="M214 407 H430 H935 V204"/>
+
+    <text class="mono" x="24" y="488" style="fill:#d92d20">red  3V3 → VCC</text>
+    <text class="mono" x="220" y="488">black  GND → GND</text>
+    <text class="mono" x="430" y="488" style="fill:#1570ef">blue  GP17 → SCL</text>
+    <text class="mono" x="660" y="488" style="fill:#12b76a">green  GP16 → SDA</text>
   </g>
-  <text class="mono" x="838" y="230">VCC</text>
-  <text class="mono" x="886" y="230">GND</text>
-  <text class="mono" x="934" y="230">SCL</text>
-  <text class="mono" x="982" y="230">SDA</text>
-  <text class="small" x="820" y="250">OLED - same four wires as ir-capture</text>
 
-  <path class="part" d="M560 300 h10 l6-8 10 16 10-16 10 16 6-8 h10"/>
-  <text class="mono" x="588" y="288">220 ohm</text>
+  <!-- ========== 2. Button ========== -->
+  <g transform="translate(28,612)">
+    <rect class="card" x="0" y="0" width="1044" height="500" rx="12"/>
+    <text class="head" x="24" y="32">2. Button</text>
+    <text class="small" x="24" y="52">Internal pull-up on GP19. Press joins GP19 to GND. Release and the pin goes high again.</text>
 
-  <ellipse class="led" cx="780" cy="300" rx="22" ry="16"/>
-  <ellipse class="lens" cx="802" cy="300" rx="8" ry="12"/>
-  <text class="mono" x="758" y="304">A</text>
-  <text class="small" x="748" y="332">TSAL6200  long lead = A</text>
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="318" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <circle cx="124" cy="170" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+    <text class="white" x="94" y="200">BOOTSEL</text>
+    <text class="white" x="92" y="418">antenna</text>
+    <rect class="pin" x="192" y="130" width="22" height="14"/>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin" x="192" y="206" width="22" height="14"/>
+    <rect class="pin-use" x="192" y="286" width="22" height="14"/>
+    <text class="mono" x="220" y="284">25 GP19  button</text>
+    <rect class="pin" x="192" y="324" width="22" height="14"/>
+    <rect class="pin" x="192" y="362" width="22" height="14"/>
+    <rect class="pin" x="192" y="400" width="22" height="14"/>
 
-  <rect class="btn" x="820" y="268" width="88" height="56" rx="8"/>
-  <circle cx="864" cy="292" r="10" fill="#344054"/>
-  <text class="mono" x="838" y="336">button</text>
+    <rect class="btn" x="800" y="176" width="120" height="88" rx="10"/>
+    <circle cx="860" cy="220" r="16" fill="#344054"/>
+    <text class="mono" x="824" y="284">button</text>
+    <text class="small" x="786" y="306">four-leg tactile — two sides</text>
 
-  <circle class="dot" cx="500" cy="161" r="4"/>
-  <circle class="dot" cx="500" cy="197" r="4"/>
+    <path class="w pur" d="M214 293 H760 V220 H800"/>
+    <path class="w blk" d="M214 175 H386 V360 H860 V264"/>
 
-  <path class="w red" d="M338 197 H851 V204"/>
-  <path class="w blk" d="M338 161 H899 V204"/>
-  <path class="w blu" d="M338 343 H947 V212"/>
-  <path class="w grn" d="M338 379 H995 V212"/>
-  <path class="w org" d="M338 307 H560"/>
-  <path class="w org" d="M632 300 H758"/>
-  <path class="w blk" d="M802 300 H860 V161 H500"/>
-  <path class="w pur" d="M338 271 H864 V268"/>
-  <path class="w blk" d="M864 324 V400 H500 V161"/>
+    <text class="mono" x="24" y="468" style="fill:#9b51e0">purple  GP19 → one side of the button</text>
+    <text class="mono" x="480" y="468">black  other side → GND</text>
+  </g>
 
-  <rect class="card" x="36" y="450" width="1028" height="206" rx="10"/>
-  <text class="head" x="56" y="480">Wires</text>
-  <text class="mono" x="56" y="508" style="fill:#d92d20">red      3V3 pin 36   -&gt;  OLED VCC</text>
-  <text class="mono" x="56" y="530">black    GND pin 38   -&gt;  OLED GND, LED cathode, one side of the button</text>
-  <text class="mono" x="56" y="552" style="fill:#1570ef">blue     GP17 pin 22  -&gt;  OLED SCL</text>
-  <text class="mono" x="56" y="574" style="fill:#12b76a">green    GP16 pin 21  -&gt;  OLED SDA</text>
-  <text class="mono" x="56" y="596" style="fill:#dc6803">orange   GP18 pin 24  -&gt;  220 ohm  -&gt;  LED anode (long lead)</text>
-  <text class="mono" x="56" y="618" style="fill:#9b51e0">purple   GP19 pin 25  -&gt;  other side of the button</text>
-  <text class="text" x="56" y="644">220 ohm has no polarity. Do not substitute a 15 ohm resistor. GP18 is two pins above GP17 (a GND sits between them).</text>
+  <!-- ========== 3. TSAL driver ========== -->
+  <g transform="translate(28,1128)">
+    <rect class="card" x="0" y="0" width="1044" height="600" rx="12"/>
+    <text class="head" x="24" y="32">3. TSAL driver</text>
+    <text class="small" x="24" y="52">LED current comes from 3.3 V. GP18 only drives the transistor base through 220 Ω. Never put 15 Ω on the GPIO.</text>
+
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="318" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <circle cx="124" cy="170" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+    <text class="white" x="94" y="200">BOOTSEL</text>
+    <text class="white" x="92" y="418">antenna</text>
+    <rect class="pin-bad" x="192" y="130" width="22" height="14"/>
+    <text class="mono" x="220" y="128" style="fill:#b42318">40 VBUS  leave empty</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin-use" x="192" y="206" width="22" height="14"/>
+    <text class="mono" x="220" y="204">36 3V3</text>
+    <rect class="pin" x="192" y="286" width="22" height="14"/>
+    <rect class="pin-use" x="192" y="324" width="22" height="14"/>
+    <text class="mono" x="220" y="322">24 GP18  IR base</text>
+    <rect class="pin" x="192" y="362" width="22" height="14"/>
+    <rect class="pin" x="192" y="400" width="22" height="14"/>
+
+    <!-- 3V3 → 15 Ω → 15 Ω → LED anode -->
+    <text class="mono" x="488" y="118" style="fill:#d92d20">+3V3</text>
+    <circle class="dot" cx="520" cy="130" r="4"/>
+    <path class="w red" d="M214 213 H390 V130 H520"/>
+
+    <path class="part" d="M520 130 H528 l5-8 10 16 10-16 10 16 5-8 H610"/>
+    <text class="mono" x="544" y="118">15 Ω</text>
+    <path class="w red" d="M610 130 H630"/>
+    <path class="part" d="M630 130 H638 l5-8 10 16 10-16 10 16 5-8 H720"/>
+    <text class="mono" x="654" y="118">15 Ω</text>
+    <path class="w red" d="M720 130 H748"/>
+
+    <ellipse class="led" cx="776" cy="130" rx="22" ry="16"/>
+    <ellipse class="lens" cx="800" cy="130" rx="8" ry="12"/>
+    <text class="mono" x="752" y="126">A</text>
+    <text class="mono" x="780" y="152">K</text>
+    <text class="small" x="818" y="124">TSAL6200</text>
+    <text class="small" x="818" y="140">long lead = A</text>
+
+    <!-- BC337-40 as on the board: C B E left to right -->
+    <path class="to92" d="M748 168 h132 v44 h-132 z"/>
+    <text class="white" x="768" y="196">C</text>
+    <text class="white" x="804" y="196">B</text>
+    <text class="white" x="840" y="196">E</text>
+    <text class="small" x="888" y="184">BC337-40</text>
+    <text class="small" x="888" y="200">flat toward you</text>
+    <text class="small" x="888" y="216">C B E left to right</text>
+
+    <circle class="dot" cx="776" cy="228" r="3.5"/>
+    <circle class="dot" cx="816" cy="228" r="3.5"/>
+    <circle class="dot" cx="856" cy="228" r="3.5"/>
+    <path class="w blk" d="M776 228 V212"/>
+    <path class="w blk" d="M816 228 V212"/>
+    <path class="w blk" d="M856 228 V212"/>
+
+    <!-- cathode onto C only -->
+    <path class="w blk" d="M776 146 V168"/>
+
+    <!-- 220 Ω runs below C, then up into B. 10 kΩ leaves that same B node down to GND. -->
+    <path class="w org" d="M214 331 H410 V268 H700"/>
+    <path class="part" d="M700 268 H708 l5-8 10 16 10-16 10 16 5-8 H816"/>
+    <text class="mono" x="724" y="256">220 Ω</text>
+    <circle class="dot" cx="816" cy="268" r="4"/>
+    <path class="w org" d="M816 268 V228"/>
+
+    <path class="part" d="M816 268 V300 l-8 6 16 12 -16 12 8 6 V360"/>
+    <text class="mono" x="828" y="336">10 kΩ</text>
+    <path class="w blk" d="M816 360 V368"/>
+
+    <path class="w blk" d="M856 228 V368 H816"/>
+    <circle class="dot" cx="816" cy="368" r="4"/>
+    <path class="gnd" d="M804 368 H828 M808 374 H824 M812 380 H820"/>
+    <text class="mono" x="836" y="384">GND</text>
+    <path class="w blk" d="M214 175 H386 V368 H804"/>
+
+    <text class="mono" x="24" y="500" style="fill:#d92d20">red     3V3 → two 15 Ω → LED anode</text>
+    <text class="mono" x="24" y="522" style="fill:#dc6803">orange  GP18 → 220 Ω → B</text>
+    <text class="mono" x="24" y="544">black   LED cathode → C. E and the 10 kΩ (from B) go to GND.</text>
+    <text class="small" x="24" y="572">15 Ω brown-green-black (LED path only). 220 Ω red-red-brown (GPIO to base). About 58 mA in the LED, about 11 mA in GP18.</text>
+  </g>
 </svg>

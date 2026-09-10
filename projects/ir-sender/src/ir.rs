@@ -1,8 +1,8 @@
 //! Drive a 940 nm IR LED with a 38 kHz carrier and a NEC envelope.
 //!
-//! GP18 is a GPIO. Marks are a 38 kHz square wave timed from the CPU cycle
-//! counter; spaces are the pin held low. Wiring: GPIO → 220 Ω → anode,
-//! cathode → GND. Do not substitute a 15 Ω resistor.
+//! GP18 switches a BC337-40. The LED current comes from 3.3 V through two
+//! 15 Ω resistors (~58 mA), not from the GPIO. GP18 only feeds the base
+//! through 220 Ω. Idle is low (transistor off).
 //!
 //! NEC: 9000 µs mark, 4500 µs space, then 32 LSB-first bits (560 µs mark +
 //! 560 µs space = 0, 560 + 1690 = 1), then a 560 µs stop mark. Bytes are
@@ -51,7 +51,7 @@ impl IrLed {
     }
 
     /// 38 kHz for `ms`. Capture’s TSOP should pull its pin low for this whole
-    /// window (OLED title `L` or `stuck L`). DC-on does not do that.
+    /// window (OLED title `L` or `stuck L`).
     pub fn carrier_ms(&mut self, ms: u64) {
         self.mark(ms.saturating_mul(1000));
         self.idle();

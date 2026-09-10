@@ -54,6 +54,12 @@ this breadboard build.
 The game server runs on the computer during prototyping, so a Raspberry Pi
 server and dedicated router are not required yet.
 
+## Identify the parts
+
+Open [`parts.svg`](parts.svg) next to the bags. It shows every resistor with
+its colour bands, both capacitors, the IR LED, the TSOP receiver, the BC337,
+and the tactile button.
+
 ## Important assembly notes
 
 - Select **Pico 2 W with headers**, not a headerless board, so it plugs into
