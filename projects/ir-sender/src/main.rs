@@ -34,7 +34,7 @@ const CMD: u8 = 0x01;
 async fn main(_spawner: Spawner) {
     let p = embassy_rp::init(Default::default());
 
-    // GP18 → 220 Ω → TSAL6200 anode. Idle is low.
+    // GP18 → 220 Ω → BC337 base. LED current is from 3.3 V. Idle is low.
     let mut ir = ir::IrLed::new(p.PIN_18);
     // GP19 to GND through the tactile switch. Pull-up so open = high.
     let mut button = Input::new(p.PIN_19, Pull::Up);

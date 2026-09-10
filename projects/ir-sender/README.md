@@ -60,7 +60,7 @@ Looks like a clear or smoke-grey 5 mm LED:
 Small black TO-92, one flat face, three legs. For the Diotec part, with the
 **flat toward you** and the legs down, the order is **C-B-E** (left to right).
 On this breadboard, point the flat at the **trench** and use
-`c37` = C, `c36` = B, `c35` = E. All IR parts stay in rows `a`–`d`.
+`c26` = C, `c25` = B, `c24` = E. All IR parts stay in rows `a`–`d`.
 
 ### Assembly
 
@@ -99,8 +99,8 @@ shift every hole one column toward the Pico.
    |---|---|---|
    | red | `a60` | top `+` rail |
    | black | `a62` | top `−` rail |
-   | red | bottom `+` column 32 | top `+` column 32 |
-   | black | bottom `−` column 31 | top `−` column 31 |
+   | red | bottom `+` column 20 | top `+` column 20 |
+   | black | bottom `−` column 19 | top `−` column 19 |
 
 3. OLED pins in **`a42` `a41` `a40` `a39`**, from the Pico toward column 1.
    Typical Pi Hut order is `VCC`, `GND`, `SCL`, `SDA`. If your module prints a
@@ -114,29 +114,34 @@ shift every hole one column toward the Pico.
    | `SCL` | `c40` | `c46` (GP17) |
    | `SDA` | `d39` | `d45` (GP16) |
 
-4. IR driver on the **top** half (rows `a`–`d`). The 15 Ω pair sits in **row
-   `b`**, under the OLED pins. Unplug USB first.
+4. IR driver on the **top** half (rows `a`–`d`), **to the right of the OLED**.
+   Q1 needs three consecutive holes of its own. Unplug USB first. Pull the old
+   IR parts if they were in columns 37–32 — those holes stacked the LED on
+   top of Q1, so the middle leg (B) often never sat in its strip.
 
    | Part | Holes |
    |---|---|
-   | BC337-40, flat toward the trench | `c37` C, `c36` B, `c35` E |
-   | red jumper +3V3 → first 15 Ω | top `+` column 44 → `b44` |
-   | 15 Ω | `b44` – `b38` |
-   | 15 Ω | `b38` – `b33` |
-   | TSAL6200 anode / cathode | `c33` / `c37` (cathode shares C) |
-   | orange jumper GP18 → 220 Ω | `b48` → `d32` |
-   | 220 Ω (base) | `d32` – `d36` |
-   | 10 kΩ base pull-down | `a36` → top `−` rail |
-   | black jumper emitter → GND | `a35` → top `−` rail |
+   | BC337-40, flat toward the trench | `c26` C, `c25` B, `c24` E |
+   | red jumper +3V3 → first 15 Ω | top `+` column 37 → `b37` |
+   | 15 Ω | `b37` – `b32` |
+   | 15 Ω | `b32` – `b28` |
+   | TSAL6200 anode / cathode | `c28` / `c26` (cathode shares C) |
+   | orange jumper GP18 → 220 Ω | `b48` → `d21` |
+   | 220 Ω (base) | `d21` – `d25` |
+   | 10 kΩ base pull-down | `a25` → top `−` rail |
+   | black jumper emitter → GND | `a24` → top `−` rail |
 
-   Long LED lead in `c33`. Short lead and flat rim in `c37`.
+   Long LED lead in `c28`. Short lead and flat rim in `c26`.
+
+   A meter on **B** (`c25`) while GP18 is high must read about **0.7 V**. If
+   that hole is still **3.3 V**, the middle transistor leg is not in `c25`.
 
    Bands: 15 Ω is **brown-green-black**. 220 Ω is **red-red-brown**. 10 kΩ is
    **brown-black-orange**. A 15 Ω on GP18 can damage the Pico.
 
 5. Button across the trench so pressing it joins `e` to `j`. A four-leg switch
    has two permanently connected legs on each side. Keep it off column 32 —
-   that strip is the GP18 / 220 Ω node.
+   that strip is the 15 Ω midpoint.
 
    | Part | Holes |
    |---|---|
@@ -316,8 +321,10 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
 - After flash, OLED must say `aim TSOP` (otherwise this UF2 is not on the
   board). Point the LED at the capture TSOP: that screen should show `L` or
   `stuck L` while sender says `carrier ON`. Still nothing: Q1 flat toward the
-  trench (`c37` C, `c36` B, `c35` E), long LED lead in `c33`, orange
+  trench (`c26` C, `c25` B, `c24` E), long LED lead in `c28`, orange
   jumper from `b48` (GP18) not column 47, 15 Ω only in the 3.3 V LED path.
+  If GP18 is 3.3 V but **B (`c25`) is also 3.3 V**, the middle Q1 leg is not
+  in `c25` — a real base clamps at ~0.7 V.
 - Do **not** hold an iPhone (or any Face ID / LiDAR phone) near the capture
   TSOP. That illuminator is 940 nm and shows up as short `raw` junk. A TV
   remote is the right “capture still works” check.
@@ -326,9 +333,9 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
   not a protocol test: 38 kHz bursts are too short and too dim to trust.
 - The orange jumper must be column **48 on the top** (`b48`), the same strip
   as Pico `e48` / GP18. Column **47** on that row is GND — an easy miss.
-- Long LED lead is in `c33` (anode). Cathode must sit on the collector (`c37`),
+- Long LED lead is in `c28` (anode). Cathode must sit on the collector (`c26`),
   not on GND.
-- The 220 Ω is `d32`–`d36` (base). The 15 Ω pair is `b44`–`b38`–`b33`.
+- The 220 Ω is `d21`–`d25` (base). The 15 Ω pair is `b37`–`b32`–`b28`.
 - You flashed **this** folder (`projects/ir-sender`) onto the sender Pico, and
   ir-capture is still running on the other Pico.
 - Capture’s title shows **`H`** at rest. If it shows **`L`**, that board’s

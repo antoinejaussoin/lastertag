@@ -166,7 +166,8 @@
     <text class="mono" x="752" y="126">A</text>
     <text class="mono" x="780" y="152">K</text>
     <text class="small" x="818" y="124">TSAL6200</text>
-    <text class="small" x="818" y="140">long lead = A</text>
+    <text class="small" x="818" y="140">long lead = A = c28</text>
+    <text class="small" x="818" y="156">short lead = K = c26</text>
 
     <!-- BC337-40 as on the board: C B E left to right -->
     <path class="to92" d="M748 168 h132 v44 h-132 z"/>
@@ -176,6 +177,7 @@
     <text class="small" x="888" y="184">BC337-40</text>
     <text class="small" x="888" y="200">flat toward you</text>
     <text class="small" x="888" y="216">C B E left to right</text>
+    <text class="mono" x="888" y="236">c26  c25  c24</text>
 
     <circle class="dot" cx="776" cy="228" r="3.5"/>
     <circle class="dot" cx="816" cy="228" r="3.5"/>
@@ -207,6 +209,6 @@
     <text class="mono" x="24" y="500" style="fill:#d92d20">red     3V3 → two 15 Ω → LED anode</text>
     <text class="mono" x="24" y="522" style="fill:#dc6803">orange  GP18 → 220 Ω → B</text>
     <text class="mono" x="24" y="544">black   LED cathode → C. E and the 10 kΩ (from B) go to GND.</text>
-    <text class="small" x="24" y="572">15 Ω brown-green-black (LED path only). 220 Ω red-red-brown (GPIO to base). About 58 mA in the LED, about 11 mA in GP18.</text>
+    <text class="small" x="24" y="572">Q1 holes c26 C, c25 B, c24 E — do not stack the LED on B or E. 15 Ω brown-green-black. 220 Ω red-red-brown.</text>
   </g>
 </svg>
