@@ -188,6 +188,12 @@ pub enum Event {
 /// wait against the OLED tick. Combining them would let a timer cancel the
 /// capture mid-burst.
 pub fn capture_busy(pin: &Input<'_>) -> Frame {
+    // Wi-Fi/USB IRQs during this loop miss 560 µs edges or stretch them so
+    // NEC fails and `main` shows `raw`.
+    cortex_m::interrupt::free(|_| capture_busy_inner(pin))
+}
+
+fn capture_busy_inner(pin: &Input<'_>) -> Frame {
     // Empty list of pulse widths; capacity is `MAX_EDGES`, length starts at 0.
     let mut durations: Vec<u32, MAX_EDGES> = Vec::new();
     // Timestamp of the most recent edge (the falling edge we just waited for,
@@ -237,6 +243,11 @@ pub fn capture_busy(pin: &Input<'_>) -> Frame {
     Frame {
         durations_us: durations,
     }
+}
+
+/// NEC or Samsung — not the `Raw` fallback.
+pub fn is_structured(event: &Event) -> bool {
+    matches!(event, Event::Nec { .. } | Event::Samsung { .. })
 }
 
 /// Turn a captured burst into NEC, Samsung, or a `Raw` fallback.
@@ -289,8 +300,8 @@ fn last_samsung(last: Option<Event>) -> Option<(u16, u8)> {
 /// Strict-ish NEC parser. Returns `None` as soon as a timing is implausible.
 fn decode_nec(d: &[u32], last: Option<Event>) -> Option<Event> {
     // Every NEC frame — data or repeat — starts with an ~9 ms mark.
-    // 25% tolerance: 6750–11250 µs. Cheap remotes and distance stretch this.
-    if !near(d[0], 9000, 25) {
+    // 40% tolerance: AGC on a cold TSOP often clips the first leader.
+    if !near(d[0], 9000, 40) {
         return None;
     }
 
@@ -309,7 +320,7 @@ fn decode_nec(d: &[u32], last: Option<Event>) -> Option<Event> {
     }
 
     // Data frame: second pulse must be the ~4.5 ms leader space.
-    if !near(d[1], 4500, 25) {
+    if !near(d[1], 4500, 35) {
         return None;
     }
 
@@ -352,7 +363,8 @@ fn decode_samsung(d: &[u32], last: Option<Event>) -> Option<Event> {
 ///
 /// Bit 0 is the first bit received (NEC and Samsung32 are LSB first).
 fn decode_32_bits(d: &[u32]) -> Option<u32> {
-    // 2 leader samples + 64 bit samples (32 marks + 32 spaces).
+    // 2 leader samples + 64 bit samples (32 marks + 32 spaces). A missing
+    // stop mark is fine (that would be edge 67). 66 is a full payload.
     if d.len() < 66 {
         return None;
     }
@@ -365,7 +377,7 @@ fn decode_32_bits(d: &[u32]) -> Option<u32> {
         let space = data[i * 2 + 1];
         // ~55% window around 560 µs. Wider than the leader because short
         // pulses jitter more as a fraction of their length.
-        if !near(mark, 560, 55) {
+        if !near(mark, 560, 70) {
             return None;
         }
         // Classic NEC/Samsung: 0 ≈ 560 µs space, 1 ≈ 1690 µs space. A 1000 µs

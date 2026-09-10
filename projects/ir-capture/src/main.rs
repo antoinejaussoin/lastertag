@@ -93,7 +93,36 @@ async fn main(spawner: Spawner) {
                     continue;
                 }
 
-                let event = ir::decode(&frame, last);
+                let mut event = ir::decode(&frame, last);
+                // First copy after AGC, or a later copy caught mid-frame while
+                // we were drawing/POSTing, often fails as `raw`. The sender
+                // emits two more full frames ~40 ms apart — grab those.
+                for _ in 0..2 {
+                    if ir::is_structured(&event) {
+                        break;
+                    }
+                    match select(
+                        ir_pin.wait_for_falling_edge(),
+                        Timer::after_millis(100),
+                    )
+                    .await
+                    {
+                        Either::First(()) => {
+                            let retry = ir::capture_busy(&ir_pin);
+                            if retry.durations_us.len() >= 2 {
+                                let next = ir::decode(&retry, last);
+                                if ir::is_structured(&next) {
+                                    event = next;
+                                }
+                            }
+                        }
+                        Either::Second(()) => break,
+                    }
+                }
+                if ir::is_structured(&event) {
+                    // Swallow the rest of the sender's triple burst.
+                    Timer::after_millis(220).await;
+                }
                 // Remember address/command only for a full frame, never for a
                 // repeat (that would just write the same pair again).
                 match event {

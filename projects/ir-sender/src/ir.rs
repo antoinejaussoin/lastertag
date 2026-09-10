@@ -77,23 +77,26 @@ impl IrLed {
     }
 
     fn send_one(&mut self, addr: u8, cmd: u8) {
-        let bits = u32::from(addr)
-            | (u32::from(!addr) << 8)
-            | (u32::from(cmd) << 16)
-            | (u32::from(!cmd) << 24);
+        // USB/CYW43 IRQs stretch DWT waits and smear the envelope into `raw`.
+        cortex_m::interrupt::free(|_| {
+            let bits = u32::from(addr)
+                | (u32::from(!addr) << 8)
+                | (u32::from(cmd) << 16)
+                | (u32::from(!cmd) << 24);
 
-        self.mark(9000);
-        self.space(4500);
-        for i in 0..32 {
-            self.mark(MARK_US);
-            if (bits >> i) & 1 == 1 {
-                self.space(ONE_SPACE_US);
-            } else {
-                self.space(MARK_US);
+            self.mark(9000);
+            self.space(4500);
+            for i in 0..32 {
+                self.mark(MARK_US);
+                if (bits >> i) & 1 == 1 {
+                    self.space(ONE_SPACE_US);
+                } else {
+                    self.space(MARK_US);
+                }
             }
-        }
-        self.mark(MARK_US);
-        self.idle();
+            self.mark(MARK_US);
+            self.idle();
+        });
     }
 
     fn mark(&mut self, us: u64) {

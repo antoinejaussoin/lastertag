@@ -138,6 +138,9 @@ records mark/space times, and:
 - shows anything else as the first two pulse times in milliseconds;
 - treats a held Samsung or NEC button as a repeat (` r` on the OLED).
 
+If the first burst does not decode (TSOP AGC, or a copy caught mid-frame),
+the firmware waits for the sender’s extra copies before showing `raw`.
+
 The title ends with **`H`** or **`L`**: the receiver output is idle-high, so
 `H` means the pin looks healthy. `L` at rest means `OUT` is stuck low
 (wrong pin, swapped `OUT`/`VS`, or a short). The number at the top right
