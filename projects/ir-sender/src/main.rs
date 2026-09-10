@@ -14,6 +14,8 @@ use embassy_rp::block::ImageDef;
 use embassy_rp::flash::Flash;
 use embassy_rp::gpio::{Input, Pull};
 use embassy_rp::i2c::{self, I2c};
+use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
+use embassy_sync::channel::Channel;
 use embassy_time::{Duration, Timer};
 use panic_halt as _;
 
@@ -36,6 +38,9 @@ static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
 const ADDR: u8 = 0x42;
 const CMD: u8 = 0x01;
 
+/// Clicks from the button task. Capacity covers presses during a NEC send.
+static CLICKS: Channel<CriticalSectionRawMutex, (), 8> = Channel::new();
+
 enum DebugLed {
     AlwaysOn,
     Beacon,
@@ -53,6 +58,8 @@ async fn main(spawner: Spawner) {
     let mut ir = ir::IrLed::new(p.PIN_18);
     // GP19 to GND through the tactile switch. Pull-up so open = high.
     let mut button = Input::new(p.PIN_19, Pull::Up);
+    button.set_schmitt(true);
+    spawner.spawn(button_task(button).unwrap());
 
     let mut i2c_config = i2c::Config::default();
     i2c_config.frequency = 100_000;
@@ -62,10 +69,10 @@ async fn main(spawner: Spawner) {
 
     loop {
         if settings::snapshot().await.debug {
-            run_debug(&mut ir, &mut button, &mut screen, &mut presses).await;
+            run_debug(&mut ir, &mut screen, &mut presses).await;
             ir.idle();
         } else {
-            run_normal(&mut ir, &mut button, &mut screen, &mut presses).await;
+            run_normal(&mut ir, &mut screen, &mut presses).await;
             ir.idle();
         }
     }
@@ -74,18 +81,17 @@ async fn main(spawner: Spawner) {
 /// Button click sends one NEC burst. USB `debug on` + `save` leaves this loop.
 async fn run_normal(
     ir: &mut ir::IrLed,
-    button: &mut Input<'_>,
     screen: &mut display::Screen,
     presses: &mut u32,
 ) {
+    drain_clicks();
     screen.show("ready", "press btn", *presses);
     loop {
-        match select(wait_click(button), settings::wait_change()).await {
+        match select(CLICKS.receive(), settings::wait_change()).await {
             Either::First(()) => {
                 *presses = presses.saturating_add(1);
-                screen.show("sent 42:01", "sending", *presses);
-                ir.send_nec(ADDR, CMD);
                 screen.show("sent 42:01", "press btn", *presses);
+                ir.send_nec(ADDR, CMD).await;
             }
             Either::Second(()) => return,
         }
@@ -95,10 +101,10 @@ async fn run_normal(
 /// Button toggles LED DC on vs NEC every 1 s. USB `debug off` + `save` leaves.
 async fn run_debug(
     ir: &mut ir::IrLed,
-    button: &mut Input<'_>,
     screen: &mut display::Screen,
     presses: &mut u32,
 ) {
+    drain_clicks();
     let mut mode = DebugLed::AlwaysOn;
     loop {
         if !settings::snapshot().await.debug {
@@ -108,7 +114,7 @@ async fn run_debug(
             DebugLed::AlwaysOn => {
                 ir.dc_on();
                 screen.show("always on", "debug DC", *presses);
-                match select(wait_click(button), settings::wait_change()).await {
+                match select(CLICKS.receive(), settings::wait_change()).await {
                     Either::First(()) => {
                         ir.idle();
                         *presses = presses.saturating_add(1);
@@ -130,10 +136,10 @@ async fn run_debug(
                         return;
                     }
                     screen.show("every 1s", "sending", *presses);
-                    ir.send_nec(ADDR, CMD);
+                    ir.send_nec(ADDR, CMD).await;
                     screen.show("every 1s", "debug NEC", *presses);
                     match select3(
-                        wait_click(button),
+                        CLICKS.receive(),
                         Timer::after(Duration::from_secs(1)),
                         settings::wait_change(),
                     )
@@ -159,9 +165,30 @@ async fn run_debug(
     }
 }
 
+fn drain_clicks() {
+    while CLICKS.try_receive().is_ok() {}
+}
+
+/// Own task so a press is latched even while `send_nec` busy-waits a frame.
+#[embassy_executor::task]
+async fn button_task(mut button: Input<'static>) {
+    loop {
+        wait_click(&mut button).await;
+        let _ = CLICKS.try_send(());
+    }
+}
+
 async fn wait_click(button: &mut Input<'_>) {
-    button.wait_for_high().await;
-    Timer::after_millis(40).await;
-    button.wait_for_falling_edge().await;
-    Timer::after_millis(40).await;
+    loop {
+        while button.is_low() {
+            button.wait_for_high().await;
+        }
+        // Level wait, not falling-edge: a press during the previous send is
+        // already low, and `wait_for_falling_edge` would ignore it.
+        button.wait_for_low().await;
+        Timer::after_millis(20).await;
+        if button.is_low() {
+            return;
+        }
+    }
 }

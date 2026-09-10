@@ -15,7 +15,7 @@ use embassy_rp::clocks::clk_sys_freq;
 use embassy_rp::gpio::{Drive, Level, Output, SlewRate};
 use embassy_rp::peripherals::PIN_18;
 use embassy_rp::Peri;
-use embassy_time::{block_for, Duration, Instant};
+use embassy_time::{block_for, Duration, Instant, Timer};
 
 const CARRIER_HZ: u32 = 38_000;
 const MARK_US: u64 = 560;
@@ -64,11 +64,14 @@ impl IrLed {
     }
 
     /// Three NEC frames. Capture should print `42:01` for addr `0x42`, cmd `0x01`.
-    pub fn send_nec(&mut self, addr: u8, cmd: u8) {
+    ///
+    /// Yields between copies so the button task can run; each frame itself is
+    /// still a busy-wait (38 kHz timing).
+    pub async fn send_nec(&mut self, addr: u8, cmd: u8) {
         self.send_one(addr, cmd);
-        block_for(Duration::from_millis(INTER_FRAME_MS));
+        Timer::after(Duration::from_millis(INTER_FRAME_MS)).await;
         self.send_one(addr, cmd);
-        block_for(Duration::from_millis(INTER_FRAME_MS));
+        Timer::after(Duration::from_millis(INTER_FRAME_MS)).await;
         self.send_one(addr, cmd);
         self.idle();
     }
