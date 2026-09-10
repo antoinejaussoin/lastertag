@@ -2,7 +2,7 @@
 
 A standalone hardware test, separate from the laser-tag firmware. It sits on
 the **second** Pico 2 W. Press a button and it blinks the infrared LED with a
-NEC remote code. The [`ir-capture`](../ir-capture/) board should show `42:01`.
+NEC remote code. The [`ir-capture`](../ir-capture/) board should show `42:01`–`42:0A`.
 
 Leave ir-capture assembled. Do not unplug that breadboard.
 
@@ -157,13 +157,17 @@ connected to Pico GP18 in `e48`.
 
 GP18 is a GPIO into the BC337 base. Marks are a 38 kHz square wave on that
 pin; spaces are the pin low (transistor off). The LED itself runs from 3.3 V
-at about 58 mA. On each button press the program sends three **NEC** frames:
-address `0x42`, command `0x01`. ir-capture already understands that encoding,
-so its OLED should show `42:01` and its HTTP POST looks like:
+at about 58 mA. On each button press the program sends three **NEC** frames: address
+`0x42` and a **command rolled at random from 1 to 10**. ir-capture already
+understands that encoding, so its OLED should show `42:01` … `42:0A` and
+its HTTP POST looks like:
 
 ```json
-{"proto":"nec","addr":66,"cmd":1,"rep":false}
+{"proto":"nec","addr":66,"cmd":7,"rep":false}
 ```
+
+(`cmd` is decimal 1–10.) The Pico’s onboard LED lights for half a second
+on each press (that LED is on the wireless chip, not the IR LED).
 
 A held button does not repeat. Release and press again for another burst.
 
@@ -176,7 +180,7 @@ save
 ```
 
 Then the button toggles **`always on`** (LED DC, ~58 mA, TSOP ignores it) and
-**`every 1s`** (NEC `42:01` once a second). `debug off` then `save` returns to
+**`every 1s`** (a random NEC `42:01`–`42:0A` once a second). `debug off` then `save` returns to
 one NEC per click. `show` / `clear` work like capture. After `save`, the flag
 survives reboot.
 
@@ -271,13 +275,15 @@ IR sender
 press btn
 ```
 
-Press the button. The line changes to `sent 42:01`.
+Press the button. The onboard LED lights for 0.5 s and the line changes to
+`sent 42:07` (command is random 1–10, shown in hex). The number in the top
+right is how many times you have pressed.
 
 On the **capture** Pico, pointed at this LED from a short distance:
 
 ```text
-IR capture    H
-  42:01
+IR capture  H          1
+  42:07
 wifi ok  post ok
 ```
 
@@ -310,7 +316,7 @@ save
 
 `save` writes flash and applies now. The OLED switches to `always on` (LED
 DC, ~58 mA — the capture TSOP ignores DC). Press the button to toggle
-`every 1s` (NEC `42:01` once a second). Press again to go back to DC.
+`every 1s` (a random NEC `42:01`–`42:0A` once a second). Press again to go back to DC.
 
 ```text
 debug off
@@ -352,10 +358,11 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
   change the `0x3C` passed to `Oled::new` to `0x3D`.
 - The plastic film on a new OLED can make it look dim; peel it off.
 
-## If capture shows nothing, or raw times instead of `42:01`
+## If capture shows nothing, or raw times instead of `42:xx`
 
 - After flash, OLED must say `ready` (otherwise this UF2 is not on the board).
-  Point the LED at the capture TSOP and press: you should get `42:01`. For a
+  Point the LED at the capture TSOP and press: you should get `42:01`–`42:0A`.
+  The capture title’s right-hand number should increment once per press. For a
   meter, USB serial `debug on` then `save` — OLED `always on` is DC (capture
   will not show `L`). Button then toggles `every 1s`. Still nothing: Q1 flat
   toward the trench (`c26` C, `c25` B, `c24` E), long LED lead in `c28`, orange

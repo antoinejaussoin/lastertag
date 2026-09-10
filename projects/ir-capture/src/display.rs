@@ -33,13 +33,13 @@ impl Screen {
         }
     }
 
-    pub fn show(&mut self, main_line: &str, status: &str, pin_high: bool) {
+    pub fn show(&mut self, main_line: &str, status: &str, pin_high: bool, count: u32) {
         self.display.clear_buffer();
         Text::with_baseline(
             if pin_high {
-                "IR capture    H"
+                "IR capture  H"
             } else {
-                "IR capture    L"
+                "IR capture  L"
             },
             Point::new(0, 4),
             self.title,
@@ -47,6 +47,12 @@ impl Screen {
         )
         .draw(&mut self.display)
         .unwrap();
+        let mut count_buf = [0u8; 10];
+        let count = u32_str(count, &mut count_buf);
+        let count_x = 128 - 6 * count.len() as i32;
+        Text::with_baseline(count, Point::new(count_x, 4), self.title, Baseline::Top)
+            .draw(&mut self.display)
+            .unwrap();
         Text::with_baseline(main_line, Point::new(8, 24), self.value, Baseline::Top)
             .draw(&mut self.display)
             .unwrap();
@@ -55,4 +61,19 @@ impl Screen {
             .unwrap();
         self.display.flush().ok();
     }
+}
+
+fn u32_str(n: u32, buf: &mut [u8; 10]) -> &str {
+    if n == 0 {
+        buf[0] = b'0';
+        return core::str::from_utf8(&buf[..1]).unwrap();
+    }
+    let mut i = buf.len();
+    let mut rest = n;
+    while rest > 0 {
+        i -= 1;
+        buf[i] = b'0' + (rest % 10) as u8;
+        rest /= 10;
+    }
+    core::str::from_utf8(&buf[i..]).unwrap()
 }

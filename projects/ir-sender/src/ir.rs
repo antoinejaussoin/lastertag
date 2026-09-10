@@ -63,7 +63,7 @@ impl IrLed {
         self.idle();
     }
 
-    /// Three NEC frames. Capture should print `42:01` for addr `0x42`, cmd `0x01`.
+    /// Three NEC frames. Capture prints `42:01`…`42:0A` for addr `0x42`, cmd `1`…`10`.
     ///
     /// Yields between copies so the button task can run; each frame itself is
     /// still a busy-wait (38 kHz timing).

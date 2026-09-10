@@ -11,8 +11,10 @@ embassy-executor = { version = "0.10.0", features = [
     "platform-cortex-m",
     "executor-thread",
 ] }
+cyw43 = "0.7.0"
+cyw43-pio = "0.10.0"
 embassy-futures = "0.1.2"
-# Pico 2 W: RP2350. No Wi-Fi crate; this sandbox only blinks an IR LED.
+# Pico 2 W: RP2350. CYW43 is the onboard LED only (no Wi-Fi join).
 embassy-rp = { version = "0.10.0", features = [
     "rp235xa",
     "time-driver",

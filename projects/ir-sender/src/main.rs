@@ -3,20 +3,25 @@
 #![no_std]
 #![no_main]
 
+mod board;
 mod cli;
 mod display;
 mod ir;
+mod led;
 mod settings;
 
+use core::fmt::Write as _;
 use embassy_executor::Spawner;
 use embassy_futures::select::{Either, Either3, select, select3};
 use embassy_rp::block::ImageDef;
+use embassy_rp::clocks::RoscRng;
 use embassy_rp::flash::Flash;
 use embassy_rp::gpio::{Input, Pull};
 use embassy_rp::i2c::{self, I2c};
 use embassy_sync::blocking_mutex::raw::CriticalSectionRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_time::{Duration, Timer};
+use heapless::String;
 use panic_halt as _;
 
 use crate::settings::ConfigFlash;
@@ -34,9 +39,8 @@ static PICOTOOL_ENTRIES: [embassy_rp::binary_info::EntryAddr; 4] = [
     embassy_rp::binary_info::rp_program_build_attribute!(),
 ];
 
-/// Classic NEC pair that ir-capture prints as `42:01`.
+/// NEC address. Command is rolled 1..=10 on each send.
 const ADDR: u8 = 0x42;
-const CMD: u8 = 0x01;
 
 /// Clicks from the button task. Capacity covers presses during a NEC send.
 static CLICKS: Channel<CriticalSectionRawMutex, (), 8> = Channel::new();
@@ -52,6 +56,10 @@ async fn main(spawner: Spawner) {
 
     let mut flash: ConfigFlash = Flash::new_blocking(p.FLASH);
     settings::replace(settings::load_flash(&mut flash)).await;
+    led::start(
+        spawner, p.PIN_23, p.PIN_25, p.PIN_24, p.PIN_29, p.PIO0, p.DMA_CH0,
+    )
+    .await;
     cli::start(spawner, p.USB, flash);
 
     // GP18 → 220 Ω → BC337 base. LED current is from 3.3 V. Idle is low.
@@ -90,8 +98,10 @@ async fn run_normal(
         match select(CLICKS.receive(), settings::wait_change()).await {
             Either::First(()) => {
                 *presses = presses.saturating_add(1);
-                screen.show("sent 42:01", "press btn", *presses);
-                ir.send_nec(ADDR, CMD).await;
+                let cmd = random_cmd();
+                let line = sent_line(cmd);
+                screen.show(line.as_str(), "press btn", *presses);
+                ir.send_nec(ADDR, cmd).await;
             }
             Either::Second(()) => return,
         }
@@ -135,8 +145,9 @@ async fn run_debug(
                         ir.idle();
                         return;
                     }
+                    let cmd = random_cmd();
                     screen.show("every 1s", "sending", *presses);
-                    ir.send_nec(ADDR, CMD).await;
+                    ir.send_nec(ADDR, cmd).await;
                     screen.show("every 1s", "debug NEC", *presses);
                     match select3(
                         CLICKS.receive(),
@@ -174,8 +185,19 @@ fn drain_clicks() {
 async fn button_task(mut button: Input<'static>) {
     loop {
         wait_click(&mut button).await;
+        led::flash();
         let _ = CLICKS.try_send(());
     }
+}
+
+fn random_cmd() -> u8 {
+    (RoscRng::next_u8() % 10) + 1
+}
+
+fn sent_line(cmd: u8) -> String<12> {
+    let mut line = String::new();
+    let _ = write!(line, "sent 42:{cmd:02X}");
+    line
 }
 
 async fn wait_click(button: &mut Input<'_>) {

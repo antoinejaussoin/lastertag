@@ -16,7 +16,7 @@ use embassy_rp::block::ImageDef;
 use embassy_rp::flash::Flash;
 use embassy_rp::gpio::{Input, Pull};
 use embassy_rp::i2c::{self, I2c};
-use embassy_time::Timer;
+use embassy_time::{Duration, Instant, Timer};
 use panic_halt as _;
 
 use crate::settings::ConfigFlash;
@@ -65,9 +65,12 @@ async fn main(spawner: Spawner) {
     // (button held) do not contain those bytes, so decode() reuses this
     // event. `None` until the first non-repeat success.
     let mut last: Option<ir::Event> = None;
+    let mut received: u32 = 0;
+    let mut last_count_key: Option<(u8, u16, u8)> = None;
+    let mut last_count_at = Instant::from_ticks(0);
     let mut main_line = heapless::String::<16>::new();
     let _ = main_line.push_str("ready");
-    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high(), received);
 
     loop {
         // Race the IR *wait* against a 300 ms tick — not the capture itself.
@@ -85,7 +88,7 @@ async fn main(spawner: Spawner) {
                 // Falling edge then almost no further edges: pin went low and
                 // stayed there (short, swapped VS/OUT, etc.).
                 if frame.durations_us.len() < 2 {
-                    screen.show("stuck L", wifi::status_line(), ir_pin.is_high());
+                    screen.show("stuck L", wifi::status_line(), ir_pin.is_high(), received);
                     Timer::after_millis(200).await;
                     continue;
                 }
@@ -104,8 +107,9 @@ async fn main(spawner: Spawner) {
                     }
                     _ => {}
                 }
+                count_event(&event, &mut received, &mut last_count_key, &mut last_count_at);
                 main_line = ir::oled_line(&event);
-                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high(), received);
 
                 // Skip POSTing tiny noise bursts. Structured NEC/Samsung
                 // always go out; `Raw` only if it looks like a real frame.
@@ -119,13 +123,54 @@ async fn main(spawner: Spawner) {
                     // `post ok`.
                     wifi::post_json(stack, ir::json_body(&event).as_str()).await;
                     // POST may have changed `wifi::status_line()` (`post ok` / fail).
-                    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+                    screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high(), received);
                 }
             }
             Either::Second(()) => {
                 // Idle tick: keep the bottom status row and pin H/L current.
-                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high());
+                screen.show(main_line.as_str(), wifi::status_line(), ir_pin.is_high(), received);
             }
         }
     }
+}
+
+/// One increment per logical shot. Sender emits three full NEC copies; those
+/// must not add 3. Held-remote repeats (` r`) do not count either.
+fn count_event(
+    event: &ir::Event,
+    received: &mut u32,
+    last_key: &mut Option<(u8, u16, u8)>,
+    last_at: &mut Instant,
+) {
+    const COALESCE_MS: u64 = 400;
+    let key = match *event {
+        ir::Event::Nec {
+            addr,
+            cmd,
+            repeat: false,
+        } => (0, addr, cmd),
+        ir::Event::Samsung {
+            addr,
+            cmd,
+            repeat: false,
+        } => (1, addr, cmd),
+        ir::Event::Nec { repeat: true, .. } | ir::Event::Samsung { repeat: true, .. } => {
+            return;
+        }
+        ir::Event::Raw { count, d0, .. } => {
+            if count >= 8 && d0 >= 800 {
+                *received = received.saturating_add(1);
+                *last_key = None;
+                *last_at = Instant::now();
+            }
+            return;
+        }
+    };
+    let now = Instant::now();
+    if *last_key == Some(key) && now.duration_since(*last_at) < Duration::from_millis(COALESCE_MS) {
+        return;
+    }
+    *received = received.saturating_add(1);
+    *last_key = Some(key);
+    *last_at = now;
 }

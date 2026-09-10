@@ -140,7 +140,9 @@ records mark/space times, and:
 
 The title ends with **`H`** or **`L`**: the receiver output is idle-high, so
 `H` means the pin looks healthy. `L` at rest means `OUT` is stuck low
-(wrong pin, swapped `OUT`/`VS`, or a short).
+(wrong pin, swapped `OUT`/`VS`, or a short). The number at the top right
+counts each logical message (a held remote ` r` does not add another; the
+sender’s three NEC copies count as one).
 
 Wi-Fi SSID, password, and the HTTP POST URL are **not** compiled in. You type
 them over USB serial; `save` stores them in flash. After a reboot they are
@@ -246,7 +248,7 @@ make uf2     # ELF plus ir-capture.uf2
 Text on the OLED, similar to:
 
 ```text
-IR capture    H
+IR capture  H          0
   ready
 USB: wifi/save
 ```
@@ -255,7 +257,7 @@ Point a TV remote at the TSOP lens and press a button. A Samsung TV remote
 usually looks like this (address is often `E0E0`):
 
 ```text
-IR capture    H
+IR capture  H          1
   S E0E0:1A
 wifi ok  post ok
 ```
@@ -263,7 +265,7 @@ wifi ok  post ok
 A typical NEC remote shows address and command without the `S`:
 
 ```text
-IR capture    H
+IR capture  H          2
   20:0D
 wifi ok  post ok
 ```

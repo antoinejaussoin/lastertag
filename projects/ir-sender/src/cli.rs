@@ -3,19 +3,15 @@
 use core::fmt::Write as _;
 use embassy_executor::Spawner;
 use embassy_rp::Peri;
-use embassy_rp::bind_interrupts;
 use embassy_rp::peripherals::USB;
-use embassy_rp::usb::{Driver, InterruptHandler as UsbInterruptHandler};
+use embassy_rp::usb::Driver;
 use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
 use embassy_usb::{Builder, Config, UsbDevice};
 use heapless::String;
 use static_cell::StaticCell;
 
+use crate::board::Irqs;
 use crate::settings::{self, ConfigFlash};
-
-bind_interrupts!(struct Irqs {
-    USBCTRL_IRQ => UsbInterruptHandler<USB>;
-});
 
 type UsbDriver = Driver<'static, USB>;
 
