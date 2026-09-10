@@ -11,6 +11,7 @@ embassy-executor = { version = "0.10.0", features = [
     "platform-cortex-m",
     "executor-thread",
 ] }
+embassy-futures = "0.1.2"
 # Pico 2 W: RP2350. No Wi-Fi crate; this sandbox only blinks an IR LED.
 embassy-rp = { version = "0.10.0", features = [
     "rp235xa",
@@ -18,11 +19,15 @@ embassy-rp = { version = "0.10.0", features = [
     "critical-section-impl",
     "binary-info",
 ] }
+embassy-sync = "0.8.0"
 embassy-time = "0.5.1"
+embassy-usb = "0.6.0"
 embedded-graphics = "0.8.1"
+heapless = "0.8.0"
 oled-i2c = { version = "0.3.0", features = ["embedded-graphics"] }
 panic-halt = "1.0.0"
 portable-atomic = { version = "1.11.0", features = ["critical-section"] }
+static_cell = "2.1.1"
 
 [profile.release]
 lto = true

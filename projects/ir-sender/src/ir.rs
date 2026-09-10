@@ -50,8 +50,14 @@ impl IrLed {
         self.pin.set_low();
     }
 
+    /// Hold the transistor on (DC through the LED). Meter / wiring debug only.
+    pub fn dc_on(&mut self) {
+        self.pin.set_high();
+    }
+
     /// 38 kHz for `ms`. Capture’s TSOP should pull its pin low for this whole
     /// window (OLED title `L` or `stuck L`).
+    #[allow(dead_code)]
     pub fn carrier_ms(&mut self, ms: u64) {
         self.mark(ms.saturating_mul(1000));
         self.idle();

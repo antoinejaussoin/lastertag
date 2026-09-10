@@ -167,19 +167,22 @@ so its OLED should show `42:01` and its HTTP POST looks like:
 
 A held button does not repeat. Release and press again for another burst.
 
-Right after you flash, the sender OLED shows `aim TSOP` and the LED blinks a
-38 kHz carrier about once a second. A phone camera may now show a faint
-purple blink; the capture TSOP is still the real test. Point the LED at that
-lens from a few centimetres. Capture should flip to `L` / `stuck L` in time
-with `carrier ON`. Then it sends NEC once and sits at `ready`. After a press
-it shows `sent 42:01`.
+Boot starts at `ready`. There is no Wi-Fi on this board. A USB serial CLI
+(same idea as capture’s Wi-Fi setup) can turn on a **debug** mode for a meter:
+
+```text
+debug on
+save
+```
+
+Then the button toggles **`always on`** (LED DC, ~58 mA, TSOP ignores it) and
+**`every 1s`** (NEC `42:01` once a second). `debug off` then `save` returns to
+one NEC per click. `show` / `clear` work like capture. After `save`, the flag
+survives reboot.
 
 Keep phones **away from the capture TSOP**. An iPhone’s Face ID / LiDAR
 illuminator is also 940 nm; that chip will report short garbled `raw` bursts
 that have nothing to do with this LED.
-
-There is no Wi-Fi on this board. Capture still POSTs what it hears if you
-already set that up.
 
 ## Install the software tools (once)
 
@@ -260,8 +263,7 @@ make uf2     # ELF plus ir-sender.uf2
 
 ## What you should see
 
-Right after flash, the **sender** OLED shows `aim TSOP` and `carrier ON` /
-`carrier off`. Point it at capture. Then:
+Right after flash, the **sender** OLED shows:
 
 ```text
 IR sender
@@ -283,6 +285,40 @@ wifi ok  post ok
 
 On a dual-colour 0.96" panel the top band is yellow and the rest is blue.
 The title sits in the yellow band. That is the glass, not a wiring fault.
+
+## USB serial debug setup
+
+Debug mode is **off** by default. Leave it off for the real test: one button
+click sends one NEC burst and stops.
+
+Flash the sender, wait until the OLED shows `ready`, then open a serial
+terminal. On macOS:
+
+```bash
+ls /dev/cu.usbmodem*
+screen /dev/cu.usbmodem* 115200
+```
+
+Capture and sender both appear as `usbmodem` devices. Try each until the
+banner says `Pico 2 W IR sender`. Type `help`. Leave `screen` with `Ctrl-A`
+then `K`, then `Y`.
+
+```text
+debug on
+save
+```
+
+`save` writes flash and applies now. The OLED switches to `always on` (LED
+DC, ~58 mA — the capture TSOP ignores DC). Press the button to toggle
+`every 1s` (NEC `42:01` once a second). Press again to go back to DC.
+
+```text
+debug off
+save
+```
+
+That returns to one NEC per click. `show` prints the RAM copy. `clear` wipes
+the saved flag. After `save`, the setting survives reboot.
 
 Range is tens of centimetres, not metres. Point the LED at the TSOP **lens**.
 The LED does not light visibly; infrared is outside human vision.
@@ -318,10 +354,11 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
 
 ## If capture shows nothing, or raw times instead of `42:01`
 
-- After flash, OLED must say `aim TSOP` (otherwise this UF2 is not on the
-  board). Point the LED at the capture TSOP: that screen should show `L` or
-  `stuck L` while sender says `carrier ON`. Still nothing: Q1 flat toward the
-  trench (`c26` C, `c25` B, `c24` E), long LED lead in `c28`, orange
+- After flash, OLED must say `ready` (otherwise this UF2 is not on the board).
+  Point the LED at the capture TSOP and press: you should get `42:01`. For a
+  meter, USB serial `debug on` then `save` — OLED `always on` is DC (capture
+  will not show `L`). Button then toggles `every 1s`. Still nothing: Q1 flat
+  toward the trench (`c26` C, `c25` B, `c24` E), long LED lead in `c28`, orange
   jumper from `b48` (GP18) not column 47, 15 Ω only in the 3.3 V LED path.
   If GP18 is 3.3 V but **B (`c25`) is also 3.3 V**, the middle Q1 leg is not
   in `c25` — a real base clamps at ~0.7 V.
