@@ -139,15 +139,22 @@ shift every hole one column toward the Pico.
    Bands: 15 Ω is **brown-green-black**. 220 Ω is **red-red-brown**. 10 kΩ is
    **brown-black-orange**. A 15 Ω on GP18 can damage the Pico.
 
-5. Button across the trench so pressing it joins `e` to `j`. A four-leg switch
-   has two permanently connected legs on each side. Keep it off column 32 —
-   that strip is the 15 Ω midpoint.
+5. Button across the trench (legs in `e` and `j`). On this 6×6 part the
+   **6.5 mm** pins are already joined inside the switch. Those pins are the
+   ones that span the trench, so `e31` is permanently connected to `j31`.
+   Ground must **not** be on `j31` — that holds GP19 low forever.
+
+   GP19 and GND both sit on the **top** half, two columns apart. Press joins
+   column 31 to column 29.
 
    | Part | Holes |
    |---|---|
    | button legs | `e31` `e29` `j31` `j29` |
    | purple jumper GP19 | `d49` → `d31` |
-   | black jumper to GND | `j31` → bottom `−` rail |
+   | black jumper to GND | `d29` → top `−` rail |
+
+   Leave `j31` without a GND wire. Keep the switch off column 32 (15 Ω
+   midpoint).
 
 Rows `a`–`e` in one numbered column are already joined. Rows `j`–`f` in that
 column are a second, separate strip. That is why a jumper in `b48` is already
@@ -270,10 +277,14 @@ make uf2     # ELF plus ir-sender.uf2
 Right after flash, the **sender** OLED shows:
 
 ```text
-IR sender
+IR sender    H
   ready
 press btn
 ```
+
+The title must end in **`H`** at rest. Hold the button: it should switch to
+**`L`** for as long as you hold. If it is **`L` at rest**, the black GND
+jumper is still on `j31` — move it to **`d29` → top −**. Do not ground `j31`.
 
 Press the button. The onboard LED lights for 0.5 s and the line changes to
 `sent 42:07` (command is random 1–10, shown in hex). The number in the top
@@ -357,6 +368,25 @@ bar appears on the **right** instead, change `with_column_offset(0)` in
 - Some modules use I²C address `0x3D` instead of `0x3C`. In `src/display.rs`,
   change the `0x3C` passed to `Oled::new` to `0x3D`.
 - The plastic film on a new OLED can make it look dim; peel it off.
+
+## If the OLED stays on `L` / `btn down`
+
+GP19 is shorted to GND. On this switch the legs that cross the trench are
+already joined inside the part, so a GND wire on **`j31`** holds the pin low
+even when you are not pressing.
+
+1. Unplug the black jumper from `j31`. The title should become **`H`**.
+2. Plug that black jumper **`d29` → top −** (same half of the board as
+   purple, one column toward the LED). Leave `j31` empty of GND.
+3. Rest = `H`. Hold = `L`. Then a press sends IR.
+
+## If the button only works rarely
+
+Watch the title **`H` / `L`** while you press. Rest must be **`H`**.
+
+1. Rest is `L`: follow the section above (`d29`, not `j31`).
+2. Rest is `H` but a hold stays `H`: push all four legs in, reseat purple
+   `d49`–`d31` and black `d29`.
 
 ## If capture shows nothing, or raw times instead of `42:xx`
 

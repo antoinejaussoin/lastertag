@@ -11,8 +11,9 @@ mod led;
 mod settings;
 
 use core::fmt::Write as _;
+use core::sync::atomic::{AtomicBool, Ordering};
 use embassy_executor::Spawner;
-use embassy_futures::select::{Either, Either3, select, select3};
+use embassy_futures::select::{Either3, select3};
 use embassy_rp::block::ImageDef;
 use embassy_rp::clocks::RoscRng;
 use embassy_rp::flash::Flash;
@@ -44,6 +45,8 @@ const ADDR: u8 = 0x42;
 
 /// Clicks from the button task. Capacity covers presses during a NEC send.
 static CLICKS: Channel<CriticalSectionRawMutex, (), 8> = Channel::new();
+/// `true` while GP19 is low (button closed or wired as a dead short).
+static BTN_HELD: AtomicBool = AtomicBool::new(false);
 
 enum DebugLed {
     AlwaysOn,
@@ -66,7 +69,8 @@ async fn main(spawner: Spawner) {
     let mut ir = ir::IrLed::new(p.PIN_18);
     // GP19 to GND through the tactile switch. Pull-up so open = high.
     let mut button = Input::new(p.PIN_19, Pull::Up);
-    button.set_schmitt(true);
+    // Schmitt rejects weak/slow breadboard contacts. Off so a brief press counts.
+    button.set_schmitt(false);
     spawner.spawn(button_task(button).unwrap());
 
     let mut i2c_config = i2c::Config::default();
@@ -93,17 +97,30 @@ async fn run_normal(
     presses: &mut u32,
 ) {
     drain_clicks();
-    screen.show("ready", "press btn", *presses);
+    let mut line = idle_line();
+    screen.show(line.as_str(), btn_status(), *presses, btn_high());
     loop {
-        match select(CLICKS.receive(), settings::wait_change()).await {
-            Either::First(()) => {
+        match select3(
+            CLICKS.receive(),
+            settings::wait_change(),
+            Timer::after_millis(200),
+        )
+        .await
+        {
+            Either3::First(()) => {
                 *presses = presses.saturating_add(1);
                 let cmd = random_cmd();
-                let line = sent_line(cmd);
-                screen.show(line.as_str(), "press btn", *presses);
+                line = sent_line(cmd);
+                screen.show(line.as_str(), btn_status(), *presses, btn_high());
                 ir.send_nec(ADDR, cmd).await;
             }
-            Either::Second(()) => return,
+            Either3::Second(()) => return,
+            Either3::Third(()) => {
+                if line.as_str() == "ready" || line.as_str() == "unplug j31" {
+                    line = idle_line();
+                }
+                screen.show(line.as_str(), btn_status(), *presses, btn_high());
+            }
         }
     }
 }
@@ -123,32 +140,41 @@ async fn run_debug(
         match mode {
             DebugLed::AlwaysOn => {
                 ir.dc_on();
-                screen.show("always on", "debug DC", *presses);
-                match select(CLICKS.receive(), settings::wait_change()).await {
-                    Either::First(()) => {
+                screen.show("always on", "debug DC", *presses, btn_high());
+                match select3(
+                    CLICKS.receive(),
+                    settings::wait_change(),
+                    Timer::after_millis(200),
+                )
+                .await
+                {
+                    Either3::First(()) => {
                         ir.idle();
                         *presses = presses.saturating_add(1);
                         mode = DebugLed::Beacon;
                     }
-                    Either::Second(()) => {
+                    Either3::Second(()) => {
                         if !settings::snapshot().await.debug {
                             ir.idle();
                             return;
                         }
                     }
+                    Either3::Third(()) => {
+                        screen.show("always on", "debug DC", *presses, btn_high());
+                    }
                 }
             }
             DebugLed::Beacon => {
-                screen.show("every 1s", "debug NEC", *presses);
+                screen.show("every 1s", "debug NEC", *presses, btn_high());
                 loop {
                     if !settings::snapshot().await.debug {
                         ir.idle();
                         return;
                     }
                     let cmd = random_cmd();
-                    screen.show("every 1s", "sending", *presses);
+                    screen.show("every 1s", "sending", *presses, btn_high());
                     ir.send_nec(ADDR, cmd).await;
-                    screen.show("every 1s", "debug NEC", *presses);
+                    screen.show("every 1s", "debug NEC", *presses, btn_high());
                     match select3(
                         CLICKS.receive(),
                         Timer::after(Duration::from_secs(1)),
@@ -180,14 +206,40 @@ fn drain_clicks() {
     while CLICKS.try_receive().is_ok() {}
 }
 
-/// Own task so a press is latched even while `send_nec` busy-waits a frame.
+/// GPIO interrupt on low. Do not require the pin to stay low for tens of
+/// milliseconds — a tactile contact on a breadboard is often shorter than that.
 #[embassy_executor::task]
 async fn button_task(mut button: Input<'static>) {
     loop {
-        wait_click(&mut button).await;
+        while button.is_low() {
+            BTN_HELD.store(true, Ordering::Relaxed);
+            Timer::after_millis(10).await;
+        }
+        BTN_HELD.store(false, Ordering::Relaxed);
+        button.wait_for_low().await;
+        BTN_HELD.store(true, Ordering::Relaxed);
         led::flash();
         let _ = CLICKS.try_send(());
+        Timer::after_millis(30).await;
     }
+}
+
+fn btn_high() -> bool {
+    !BTN_HELD.load(Ordering::Relaxed)
+}
+
+fn btn_status() -> &'static str {
+    if btn_high() {
+        "press btn"
+    } else {
+        "GND is d29"
+    }
+}
+
+fn idle_line() -> String<12> {
+    let mut line = String::new();
+    let _ = line.push_str(if btn_high() { "ready" } else { "unplug j31" });
+    line
 }
 
 fn random_cmd() -> u8 {
@@ -198,19 +250,4 @@ fn sent_line(cmd: u8) -> String<12> {
     let mut line = String::new();
     let _ = write!(line, "sent 42:{cmd:02X}");
     line
-}
-
-async fn wait_click(button: &mut Input<'_>) {
-    loop {
-        while button.is_low() {
-            button.wait_for_high().await;
-        }
-        // Level wait, not falling-edge: a press during the previous send is
-        // already low, and `wait_for_falling_edge` would ignore it.
-        button.wait_for_low().await;
-        Timer::after_millis(20).await;
-        if button.is_low() {
-            return;
-        }
-    }
 }

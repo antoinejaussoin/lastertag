@@ -93,7 +93,7 @@
   <g transform="translate(28,612)">
     <rect class="card" x="0" y="0" width="1044" height="500" rx="12"/>
     <text class="head" x="24" y="32">2. Button</text>
-    <text class="small" x="24" y="52">Internal pull-up on GP19. Press joins GP19 to GND. Release and the pin goes high again.</text>
+    <text class="small" x="24" y="52">Internal pull-up on GP19. The 6.5 mm pins (across the trench) are already joined inside the switch. GND must share the GP19 side of the trench, other column — not the far side.</text>
 
     <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
     <text class="mono" x="102" y="109">USB</text>
@@ -120,8 +120,8 @@
     <path class="w pur" d="M214 293 H760 V220 H800"/>
     <path class="w blk" d="M214 175 H386 V360 H860 V264"/>
 
-    <text class="mono" x="24" y="468" style="fill:#9b51e0">purple  GP19 → one side of the button</text>
-    <text class="mono" x="480" y="468">black  other side → GND</text>
+    <text class="mono" x="24" y="468" style="fill:#9b51e0">purple  GP19 → one column of the button (top half)</text>
+    <text class="mono" x="480" y="468">black  next column, same half → GND</text>
   </g>
 
   <!-- ========== 3. TSAL driver ========== -->

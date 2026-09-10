@@ -206,7 +206,7 @@
 <circle class="hole" cx="970.0" cy="262.0" r="3.4"/>
 <circle class="hole" cx="970.0" cy="286.0" r="3.4"/>
 <circle class="hole" cx="970.0" cy="310.0" r="3.4"/>
-<circle class="hole" cx="970.0" cy="334.0" r="3.4"/>
+<circle class="hole-used" cx="970.0" cy="334.0" r="4.4"/>
 <circle class="hole-used" cx="970.0" cy="358.0" r="4.4"/>
 <circle class="hole-used" cx="970.0" cy="420.0" r="4.4"/>
 <circle class="hole" cx="970.0" cy="444.0" r="3.4"/>
@@ -214,7 +214,7 @@
 <circle class="hole" cx="970.0" cy="492.0" r="3.4"/>
 <circle class="hole" cx="970.0" cy="516.0" r="3.4"/>
 <circle class="hole" cx="970.0" cy="196.0" r="3.1"/>
-<circle class="hole" cx="970.0" cy="220.0" r="3.1"/>
+<circle class="hole-used" cx="970.0" cy="220.0" r="4.2"/>
 <circle class="hole" cx="970.0" cy="549.0" r="3.1"/>
 <circle class="hole" cx="970.0" cy="573.0" r="3.1"/>
 <circle class="hole" cx="946.0" cy="262.0" r="3.4"/>
@@ -244,7 +244,7 @@
 <circle class="hole" cx="922.0" cy="196.0" r="3.1"/>
 <circle class="hole" cx="922.0" cy="220.0" r="3.1"/>
 <circle class="hole" cx="922.0" cy="549.0" r="3.1"/>
-<circle class="hole-used" cx="922.0" cy="573.0" r="4.2"/>
+<circle class="hole" cx="922.0" cy="573.0" r="3.1"/>
 <circle class="hole" cx="898.0" cy="262.0" r="3.4"/>
 <circle class="hole-used" cx="898.0" cy="286.0" r="4.4"/>
 <circle class="hole" cx="898.0" cy="310.0" r="3.4"/>
@@ -760,7 +760,7 @@
 <path class="wire w-orange" d="M514.0 286 V274 H1162.0 V334"/>
 <path class="wire w-black" d="M1090.0 262 V220"/>
 <path class="wire w-purple" d="M490.0 334 H922.0"/>
-<path class="wire w-black" d="M922.0 420 V573"/>
+<path class="wire w-black" d="M970.0 334 V220"/>
 <text class="tiny" x="504.0" y="278">b48</text>
 <text class="tiny" x="1152.0" y="348">d21</text>
 <text class="tiny" x="480.0" y="328">d49</text>
@@ -782,7 +782,7 @@
 <text class="tiny" x="1032.0" y="348">c26 C</text>
 <text class="tiny" x="1056.0" y="366">c25 B</text>
 <text class="tiny" x="1080.0" y="384">c24 E</text>
-<text class="tiny" x="912.0" y="432">j31</text>
+<text class="tiny" x="960.0" y="328">d29</text>
 <rect class="card2" x="52" y="646" width="480" height="500" rx="10"/>
 <text class="head" x="68" y="674">1. Pico and power</text>
 <text class="text" x="68" y="698">USB on the left, at printed column 64. Pico in row e</text>
@@ -822,7 +822,9 @@
 <text class="head" x="564" y="1018">4. Button — across e and j</text>
 <text class="mono" x="564" y="1040">legs  e31 e29 j31 j29</text>
 <text class="mono" x="564" y="1060" style="fill:#9b51e0">GP19  d49 → d31</text>
-<text class="mono" x="564" y="1080" style="fill:#101828">GND   j31 → bottom − rail</text>
+<text class="mono" x="564" y="1080" style="fill:#101828">GND   d29 → top − rail</text>
+<text class="text" x="564" y="1104">Do not put GND on j31. Those legs are</text>
+<text class="text" x="564" y="1124">already joined to e31 inside the switch.</text>
 <rect class="card3" x="1024" y="646" width="444" height="500" rx="10"/>
 <text class="head" x="1040" y="674">Colour key</text>
 <text class="mono" x="1040" y="702" style="fill:#d92d20">red      +3.3 V</text>

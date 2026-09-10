@@ -33,11 +33,20 @@ impl Screen {
         }
     }
 
-    pub fn show(&mut self, main_line: &str, status: &str, presses: u32) {
+    pub fn show(&mut self, main_line: &str, status: &str, presses: u32, btn_high: bool) {
         self.display.clear_buffer();
-        Text::with_baseline("IR sender", Point::new(0, 4), self.title, Baseline::Top)
-            .draw(&mut self.display)
-            .unwrap();
+        Text::with_baseline(
+            if btn_high {
+                "IR sender    H"
+            } else {
+                "IR sender    L"
+            },
+            Point::new(0, 4),
+            self.title,
+            Baseline::Top,
+        )
+        .draw(&mut self.display)
+        .unwrap();
         let mut count_buf = [0u8; 10];
         let count = u32_str(presses, &mut count_buf);
         let count_x = 128 - 6 * count.len() as i32;

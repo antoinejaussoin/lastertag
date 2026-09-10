@@ -196,12 +196,12 @@
   <line class="lead" x1="732" y1="1150" x2="732" y2="1134"/>
   <line class="lead" x1="676" y1="1238" x2="676" y2="1254"/>
   <line class="lead" x1="732" y1="1238" x2="732" y2="1254"/>
-  <text class="text" x="780" y="1172">Four legs. Two on each side are</text>
-  <text class="text" x="780" y="1194">already joined inside the switch.</text>
-  <text class="text" x="780" y="1216">Press connects one side to the other.</text>
-  <text class="text" x="780" y="1238">Trigger / reload / menu; also the</text>
-  <text class="text" x="780" y="1260">IR-sender test button.</text>
-  <text class="small" x="628" y="1324">Not polarised. Orient so the legs straddle the breadboard trench.</text>
+  <text class="text" x="780" y="1172">Four legs. The 6.5 mm pair (the ones</text>
+  <text class="text" x="780" y="1194">that span a breadboard trench) are</text>
+  <text class="text" x="780" y="1216">already joined. Press joins the 4.5 mm</text>
+  <text class="text" x="780" y="1238">pair — two columns on the same half.</text>
+  <text class="text" x="780" y="1260">GPIO and GND both on the Pico side.</text>
+  <text class="small" x="628" y="1324">Do not put GND on the far side of the trench. That shorts the GPIO at rest.</text>
 
   <!-- footer -->
   <text class="small" x="40" y="1388">Not drawn: Pico 2 W, PiCowbell, LiPo, OLED, breadboards, jumper kit, USB cables — those have printed names on the part.</text>
