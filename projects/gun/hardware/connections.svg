@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2280" viewBox="0 0 1100 2280" role="img" aria-label="Gun soldered connections: OLED, trigger, TSAL driver, and battery to VSYS">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 26px system-ui, sans-serif; fill: #101828; }
+      .sub { font: 14px system-ui, sans-serif; fill: #344054; }
+      .head { font: 700 17px system-ui, sans-serif; fill: #101828; }
+      .small { font: 12px system-ui, sans-serif; fill: #475467; }
+      .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
+      .white { font: 700 12px system-ui, sans-serif; fill: #ffffff; }
+      .pico { fill: #175cd3; stroke: #0b4ea2; stroke-width: 2; }
+      .usb { fill: #98a2b3; stroke: #344054; stroke-width: 1.5; }
+      .oled { fill: #101828; stroke: #000; stroke-width: 2; }
+      .glass { fill: #0d0d0d; }
+      .ot { font: 700 16px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f5f5f5; }
+      .led { fill: #98a2b3; stroke: #344054; stroke-width: 1.6; }
+      .lens { fill: #d0d5dd; stroke: #101828; stroke-width: 1.2; }
+      .btn { fill: #f2f4f7; stroke: #344054; stroke-width: 1.6; }
+      .to92 { fill: #1d2939; stroke: #101828; stroke-width: 1.4; }
+      .pin { fill: #e4e7ec; stroke: #98a2b3; stroke-width: 1; }
+      .pin-use { fill: #fef0c7; stroke: #b54708; stroke-width: 1.4; }
+      .pin-bad { fill: #fda29b; stroke: #b42318; stroke-width: 1.4; }
+      .part { fill: none; stroke: #7a2e0e; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .dot { fill: #101828; }
+      .w { fill: none; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+      .red { stroke: #d92d20; }
+      .blk { stroke: #101828; }
+      .blu { stroke: #1570ef; }
+      .grn { stroke: #12b76a; }
+      .org { stroke: #dc6803; }
+      .pur { stroke: #9b51e0; }
+      .card { fill: #f8fafc; stroke: #d0d5dd; stroke-width: 1.6; }
+      .gnd { fill: none; stroke: #101828; stroke-width: 2.2; stroke-linecap: round; }
+      .warn { fill: #fffaeb; stroke: #dc6803; stroke-width: 1.6; }
+      .bat { fill: #12b76a; stroke: #027a48; stroke-width: 1.5; }
+      .diode { fill: #101828; }
+      .text { font: 14px system-ui, sans-serif; fill: #101828; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1100" height="2280"/>
+  <text class="title" x="36" y="36">Gun - soldered connections (no breadboard)</text>
+  <text class="sub" x="36" y="58">Four diagrams. Same nets as ir-sender plus battery to Schottky to VSYS. Solder wires to Pico header pins.</text>
+
+  <!-- 1. OLED -->
+  <g transform="translate(28,76)">
+    <rect class="card" x="0" y="0" width="1044" height="480" rx="12"/>
+    <text class="head" x="24" y="32">1. OLED</text>
+    <text class="small" x="24" y="52">3.3 V only - never VBUS. Confirm silk order on your module (typical: VCC GND SCL SDA).</text>
+
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="300" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <circle cx="124" cy="170" r="9" fill="#f2f4f7" stroke="#0b4ea2" stroke-width="2"/>
+    <text class="white" x="94" y="200">BOOTSEL</text>
+    <text class="white" x="92" y="390">antenna</text>
+    <rect class="pin-bad" x="192" y="130" width="22" height="14"/>
+    <text class="mono" x="220" y="128" style="fill:#b42318">40 VBUS  leave empty</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin-use" x="192" y="206" width="22" height="14"/>
+    <text class="mono" x="220" y="204">36 3V3</text>
+    <rect class="pin-use" x="192" y="330" width="22" height="14"/>
+    <text class="mono" x="220" y="328">22 GP17  SCL</text>
+    <rect class="pin-use" x="192" y="368" width="22" height="14"/>
+    <text class="mono" x="220" y="366">21 GP16  SDA</text>
+
+    <rect class="oled" x="760" y="100" width="200" height="100" rx="8"/>
+    <rect class="glass" x="772" y="110" width="176" height="56" rx="4"/>
+    <text class="ot" x="820" y="144">ready</text>
+    <text class="mono" x="778" y="220">VCC</text>
+    <text class="mono" x="826" y="220">GND</text>
+    <text class="mono" x="874" y="220">SCL</text>
+    <text class="mono" x="922" y="220">SDA</text>
+    <g transform="translate(784,228)">
+      <rect class="pin-use" x="0" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="48" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="96" y="0" width="14" height="16"/>
+      <rect class="pin-use" x="144" y="0" width="14" height="16"/>
+    </g>
+    <path class="w red" d="M214 213 H410 V250 H791 V244"/>
+    <path class="w blk" d="M214 175 H386 V280 H839 V244"/>
+    <path class="w blu" d="M214 337 H410 H887 V244"/>
+    <path class="w grn" d="M214 375 H430 H935 V244"/>
+
+    <text class="mono" x="24" y="450" style="fill:#d92d20">red  3V3 to VCC</text>
+    <text class="mono" x="220" y="450">black  GND to GND</text>
+    <text class="mono" x="430" y="450" style="fill:#1570ef">blue  GP17 to SCL</text>
+    <text class="mono" x="660" y="450" style="fill:#12b76a">green  GP16 to SDA</text>
+  </g>
+
+  <!-- 2. Trigger -->
+  <g transform="translate(28,572)">
+    <rect class="card" x="0" y="0" width="1044" height="420" rx="12"/>
+    <text class="head" x="24" y="32">2. Trigger (DTS-644K)</text>
+    <text class="small" x="24" y="52">Internal pull-up on GP19. Use the 4.5 mm pair only. The 6.5 mm pair is already joined - do not ground both sides.</text>
+
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="240" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin-use" x="192" y="250" width="22" height="14"/>
+    <text class="mono" x="220" y="248">25 GP19  button</text>
+
+    <rect class="btn" x="800" y="160" width="120" height="88" rx="10"/>
+    <circle cx="860" cy="204" r="16" fill="#344054"/>
+    <text class="mono" x="820" y="280">trigger</text>
+    <text class="small" x="786" y="300">solder to 4.5 mm pair</text>
+
+    <path class="w pur" d="M214 257 H760 V204 H800"/>
+    <path class="w blk" d="M214 175 H386 V320 H860 V248"/>
+
+    <text class="mono" x="24" y="380" style="fill:#9b51e0">purple  GP19 to one switch terminal</text>
+    <text class="mono" x="480" y="380">black  other terminal (same pair) to GND</text>
+  </g>
+
+  <!-- 3. IR nest -->
+  <g transform="translate(28,1008)">
+    <rect class="card" x="0" y="0" width="1044" height="560" rx="12"/>
+    <text class="head" x="24" y="32">3. IR nest (muzzle)</text>
+    <text class="small" x="24" y="52">LED current from 3.3 V. GP18 only drives the base through 220 ohm. Add 100 nF + 4.7 uF at the nest.</text>
+
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="280" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <rect class="pin-bad" x="192" y="130" width="22" height="14"/>
+    <text class="mono" x="220" y="128" style="fill:#b42318">40 VBUS  leave empty</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">38 GND</text>
+    <rect class="pin-use" x="192" y="206" width="22" height="14"/>
+    <text class="mono" x="220" y="204">36 3V3</text>
+    <rect class="pin-use" x="192" y="286" width="22" height="14"/>
+    <text class="mono" x="220" y="284">24 GP18  IR base</text>
+
+    <text class="mono" x="488" y="118" style="fill:#d92d20">+3V3</text>
+    <circle class="dot" cx="520" cy="130" r="4"/>
+    <path class="w red" d="M214 213 H390 V130 H520"/>
+
+    <path class="part" d="M520 130 H528 l5-8 10 16 10-16 10 16 5-8 H610"/>
+    <text class="mono" x="544" y="118">15 ohm</text>
+    <path class="w red" d="M610 130 H630"/>
+    <path class="part" d="M630 130 H638 l5-8 10 16 10-16 10 16 5-8 H720"/>
+    <text class="mono" x="654" y="118">15 ohm</text>
+    <path class="w red" d="M720 130 H748"/>
+
+    <ellipse class="led" cx="776" cy="130" rx="22" ry="16"/>
+    <ellipse class="lens" cx="800" cy="130" rx="8" ry="12"/>
+    <text class="mono" x="752" y="126">A</text>
+    <text class="mono" x="780" y="152">K</text>
+    <text class="small" x="818" y="124">TSAL6200</text>
+    <text class="small" x="818" y="140">long = A / short = K</text>
+
+    <path class="to92" d="M748 168 h132 v44 h-132 z"/>
+    <text class="white" x="768" y="196">C</text>
+    <text class="white" x="804" y="196">B</text>
+    <text class="white" x="840" y="196">E</text>
+    <text class="small" x="888" y="184">BC337-40</text>
+    <text class="small" x="888" y="200">flat toward you</text>
+    <text class="small" x="888" y="216">C B E</text>
+
+    <circle class="dot" cx="776" cy="228" r="3.5"/>
+    <circle class="dot" cx="816" cy="228" r="3.5"/>
+    <circle class="dot" cx="856" cy="228" r="3.5"/>
+    <path class="w blk" d="M776 228 V212"/>
+    <path class="w blk" d="M816 228 V212"/>
+    <path class="w blk" d="M856 228 V212"/>
+    <path class="w blk" d="M776 146 V168"/>
+
+    <path class="w org" d="M214 293 H410 V268 H700"/>
+    <path class="part" d="M700 268 H708 l5-8 10 16 10-16 10 16 5-8 H816"/>
+    <text class="mono" x="724" y="256">220 ohm</text>
+    <circle class="dot" cx="816" cy="268" r="4"/>
+    <path class="w org" d="M816 268 V228"/>
+
+    <path class="part" d="M816 268 V300 l-8 6 16 12 -16 12 8 6 V360"/>
+    <text class="mono" x="828" y="336">10k ohm</text>
+    <path class="w blk" d="M816 360 V368"/>
+    <path class="w blk" d="M856 228 V368 H816"/>
+    <circle class="dot" cx="816" cy="368" r="4"/>
+    <path class="gnd" d="M804 368 H828 M808 374 H824 M812 380 H820"/>
+    <text class="mono" x="836" y="384">GND</text>
+    <path class="w blk" d="M214 175 H386 V368 H804"/>
+
+    <text class="mono" x="480" y="420">100 nF + 4.7 uF (stripe = minus) from local 3V3 to GND at the LED</text>
+
+    <text class="mono" x="24" y="470" style="fill:#d92d20">red     3V3 to two 15 ohm to LED anode</text>
+    <text class="mono" x="24" y="492" style="fill:#dc6803">orange  GP18 to 220 ohm to B</text>
+    <text class="mono" x="24" y="514">black   cathode to C; E and 10k ohm to GND</text>
+    <text class="small" x="24" y="540">Never put 15 ohm on GP18. About 58 mA from 3.3 V with 30 ohm series.</text>
+  </g>
+
+  <!-- 4. Battery -->
+  <g transform="translate(28,1584)">
+    <rect class="card" x="0" y="0" width="1044" height="640" rx="12"/>
+    <text class="head" x="24" y="32">4. Battery (dummy magazine) to VSYS</text>
+    <text class="small" x="24" y="52">PiCowbell is the charger, not in the gun. Mag out = power out. Remove mag before plugging Micro-USB.</text>
+
+    <rect class="usb" x="74" y="90" width="100" height="28" rx="4"/>
+    <text class="mono" x="102" y="109">USB</text>
+    <rect class="pico" x="56" y="118" width="136" height="280" rx="8"/>
+    <text class="white" x="82" y="144">Pico 2 W</text>
+    <text class="white" x="78" y="360">heel USB</text>
+    <rect class="pin-bad" x="192" y="130" width="22" height="14"/>
+    <text class="mono" x="220" y="128" style="fill:#b42318">40 VBUS  leave empty</text>
+    <rect class="pin-use" x="192" y="168" width="22" height="14"/>
+    <text class="mono" x="220" y="166">39 VSYS</text>
+    <rect class="pin-use" x="192" y="206" width="22" height="14"/>
+    <text class="mono" x="220" y="204">38 GND</text>
+
+    <rect class="bat" x="720" y="120" width="200" height="100" rx="10"/>
+    <text class="white" x="760" y="160">500 mAh LiPo</text>
+    <text class="white" x="748" y="184">in dummy mag</text>
+    <text class="mono" x="740" y="250">JST-PH male on cell</text>
+    <text class="mono" x="740" y="270">female pigtail in frame</text>
+
+    <path class="w red" d="M214 175 H420"/>
+    <circle class="dot" cx="420" cy="175" r="4"/>
+    <polygon class="diode" points="480,175 450,155 450,195"/>
+    <line x1="480" y1="155" x2="480" y2="195" stroke="#101828" stroke-width="3"/>
+    <text class="mono" x="430" y="140">1N5817</text>
+    <text class="small" x="430" y="220">anode &lt;- battery +</text>
+    <text class="small" x="430" y="238">cathode -&gt; VSYS</text>
+    <path class="w red" d="M480 175 H700 V170"/>
+    <path class="w blk" d="M214 213 H386 V300 H820 V220"/>
+
+    <rect class="warn" x="48" y="360" width="948" height="240" rx="8"/>
+    <text class="head" x="68" y="392">Charging dock (PiCowbell on the bench)</text>
+    <text class="text" x="68" y="424">1. Pull the magazine (gun loses battery power).</text>
+    <text class="text" x="68" y="448">2. Unplug the cell JST from the gun female pigtail.</text>
+    <text class="text" x="68" y="472">3. Plug the cell into the PiCowbell (red to +). Charge from that Pico USB.</text>
+    <text class="text" x="68" y="496">4. Never charge a swollen, bent, punctured, or hot LiPo.</text>
+    <text class="mono" x="68" y="540">bench: USB-only then battery-only then shell fit</text>
+    <text class="small" x="68" y="570">Schottky blocks USB-to-battery; still remove the mag before plugging Micro-USB into the gun.</text>
+  </g>
+</svg>

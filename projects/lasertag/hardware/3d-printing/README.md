@@ -1,14 +1,14 @@
 # 3D-printing placeholder
 
-No enclosure geometry is fixed yet. This directory will eventually contain
-editable CAD sources, drawings, and exported print files for:
+No enclosure geometry lived here yet. The first printable gun shell is now in
+[`projects/gun/cad/`](../../../gun/cad/): Glock 17–proportioned OpenSCAD sources,
+STLs, and print notes for the Pico / OLED / mag-battery / IR LED packing.
 
-- gun body, grip, removable service cover, and trigger;
-- IR emitter/optics mount and protective muzzle;
-- OLED bezel and control-button mounts;
+This directory will still collect later shared parts:
+
 - body receiver pods with a clear IR field of view;
-- Pico 2 W controller and battery enclosures;
-- cable routing, strain relief, and harness clips.
+- wearable harness clips and strain relief;
+- revised gun revisions after field testing.
 
 ## Requirements to capture before CAD
 
