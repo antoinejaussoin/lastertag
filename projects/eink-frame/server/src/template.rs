@@ -51,5 +51,7 @@ mod tests {
         assert!(html.contains("wx-sun"));
         assert!(html.contains("18°"));
         assert!(html.contains("Tomorrow"));
+        assert!(html.contains("icon-house"));
+        assert!(html.contains("icon-today"));
     }
 }

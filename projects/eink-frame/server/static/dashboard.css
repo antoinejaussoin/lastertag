@@ -84,12 +84,22 @@ h1 {
 }
 
 h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0 0 14px;
   font-size: 26px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border-bottom: 4px solid var(--black);
   padding-bottom: 8px;
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: block;
 }
 
 .rooms h2,
@@ -103,6 +113,8 @@ h2 {
   width: 0;
   height: 0;
   overflow: hidden;
+  grid-area: mast;
+  pointer-events: none;
 }
 
 .weather-days {
@@ -117,10 +129,19 @@ h2 {
 }
 
 .weather-day h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 4px;
   font-size: 22px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.weather-day .section-icon {
+  width: 34px;
+  height: 34px;
+  flex-basis: 34px;
 }
 
 .slots {
