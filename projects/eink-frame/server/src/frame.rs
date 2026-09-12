@@ -70,9 +70,20 @@ impl FrameCache {
         &self.cfg
     }
 
+    pub fn layout_hash(&self, dash: &Dashboard) -> Result<String> {
+        let html = self.templates.render_dashboard(dash)?;
+        let css_path =
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("static/dashboard.css");
+        let css = std::fs::read(css_path).unwrap_or_default();
+        let mut bytes = dash.content_bytes();
+        bytes.extend_from_slice(html.as_bytes());
+        bytes.extend_from_slice(&css);
+        Ok(sha256_hex(&bytes))
+    }
+
     pub async fn current(&self) -> Result<Frame> {
         let dash = sources::load_dashboard(&self.cfg).await?;
-        let content_hash = sha256_hex(&dash.content_bytes());
+        let content_hash = self.layout_hash(&dash)?;
         {
             let guard = self.inner.lock().await;
             if let Some(cached) = guard.as_ref() {
