@@ -125,6 +125,8 @@ impl FrameCache {
             bytes = bin.len(),
             "rendered Spectra 6 frame"
         );
+        #[cfg(debug_assertions)]
+        dump_debug_images(&png, &preview_png);
         Ok(Frame {
             bin,
             png,
@@ -135,6 +137,30 @@ impl FrameCache {
             dashboard: dash,
         })
     }
+}
+
+#[cfg(debug_assertions)]
+fn dump_debug_images(png: &[u8], preview_png: &[u8]) {
+    let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("out");
+    if let Err(err) = std::fs::create_dir_all(&dir) {
+        tracing::warn!(%err, "could not create debug image dir");
+        return;
+    }
+    let chrome = dir.join("frame.png");
+    let dither = dir.join("frame-dither.png");
+    if let Err(err) = std::fs::write(&chrome, png) {
+        tracing::warn!(%err, path = %chrome.display(), "could not write debug screenshot");
+        return;
+    }
+    if let Err(err) = std::fs::write(&dither, preview_png) {
+        tracing::warn!(%err, path = %dither.display(), "could not write debug dither");
+        return;
+    }
+    info!(
+        chrome = %chrome.display(),
+        dither = %dither.display(),
+        "wrote debug frame images"
+    );
 }
 
 fn ensure_panel_size(png: &[u8]) -> Result<Vec<u8>> {

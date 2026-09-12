@@ -8,7 +8,7 @@ family_name = "Family"
 refresh_minutes = 60
 
 # Optional Chromium / Chrome binary. Leave empty to auto-detect
-# google-chrome, chromium, or chromium-browser.
+# google-chrome / chromium on PATH, or the usual macOS .app paths.
 chrome_path = ""
 
 [icloud]

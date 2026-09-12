@@ -21,7 +21,7 @@ A flat pouch cell hides behind an A4-sized panel (the Inky PCB is
 | | 1 | Bigger flat LiPo (optional) | [Adafruit 3.7 V 6600 mAh pack, Adafruit](https://www.adafruit.com/product/353) | Closer to 5–6 weeks. 18 mm thick — only if the frame is deep. |
 | | 1 | USB-C LiPo charger | [Pimoroni LiPo Amigo **Pro**, Pimoroni](https://shop.pimoroni.com/products/lipo-amigo) | Charge the pouch, switch power, feed `VSYS` at 3.0–4.2 V. Do **not** use a 5 V boost pack that stays on all day. |
 | | 1 | USB-C data cable | [USB-A to USB-C, The Pi Hut](https://thepihut.com/products/usb-a-to-usb-c-cable-black) | The Plus 2 W is USB-C, not Micro-USB. Charge-only cables will not flash firmware. |
-| | 1 | Deep box frame | A4 / 30 × 21 cm landscape, **at least 20 mm internal depth** (IKEA SANNAHED / RIBBA box, or a custom A3 with an A4 window) | Hides the Pico, adapter, charger, and pouch behind the glass. The Inky PCB is exactly A4. |
+| | 1 | Deep box frame | See **Frame** below. Do not buy a standard A4 photo frame. | PCB is 297 × 210 mm. Electronics need ~35 mm behind the header. |
 | | 1 pack | M2 standoffs + screws | [M2 brass standoff kit, The Pi Hut](https://thepihut.com/products/brass-m2-standoff-kit) | Inky already ships some; extras keep the pouch off the PCB. |
 | | 1 | JST-PH 2-pin pigtail | [JST-PH battery extension, The Pi Hut](https://thepihut.com/products/jst-ph-2-pin-cable) | LiPo Amigo Pro → Pico `VSYS` / `GND` if you do not solder to the adapter. |
 
@@ -48,7 +48,7 @@ Do **not** buy the non-XL [Pico LiPo 2](https://shop.pimoroni.com/products/pimor
 | | 1 | Flat LiPo | [Adafruit 3.7 V 2500 mAh pouch, The Pi Hut](https://thepihut.com/products/lithium-ion-polymer-battery-3-7v-2500mah) | Plugs straight into the XL W JST-PH. Charge is only 215 mA (overnight). |
 | | 1 | Bigger flat LiPo (optional) | [Adafruit 3.7 V 6600 mAh pack, Adafruit](https://www.adafruit.com/product/353) | Same as list A. 18 mm thick. Still charges on the XL W; just slower. |
 | | 1 | USB-C data cable | [USB-A to USB-C, The Pi Hut](https://thepihut.com/products/usb-a-to-usb-c-cable-black) | Flash **and** charge. Charge-only cables will not flash. |
-| | 1 | Deep box frame | A4 / 30 × 21 cm landscape, **at least 20 mm internal depth** (IKEA SANNAHED / RIBBA box, or a custom A3 with an A4 window) | Same as list A. No Amigo in the stack, but the XL W is 24 mm longer. |
+| | 1 | Deep box frame | Same as list A — see **Frame** below. | XL W sits on the HAT on the Inky’s back, not off the edge. Depth still rules. |
 | | 1 pack | M2 standoffs + screws | [M2 brass standoff kit, The Pi Hut](https://thepihut.com/products/brass-m2-standoff-kit) | Same as list A. |
 | | 1 | JST-PH 2-pin extension (optional) | [JST-PH battery extension, The Pi Hut](https://thepihut.com/products/jst-ph-2-pin-cable) | Only if the pouch lead will not lie flat. Not required for power — the XL W already has the socket. |
 
@@ -87,6 +87,61 @@ That is optional. The HAT still only mates with the USB-end 20.
 6. Stack: frame glass → Inky → Pico-to-Pi HAT H → XL W (USB end) → pouch in the JST.
 7. Run the server simulator in [`server/`](server/) and lock the HTML layout **before** writing Pico firmware.
 
+## Frame
+
+The Inky 13.3 (PIM774) is **not** “A4 plus a bit”. The PCB **is** A4:
+**297 × 210 mm** (one forum measurement is 296.7 × 210). The glass you
+see is **270.4 × 202.8 mm**. So you need a rebate that swallows the full
+board, and a lip that can hide the ~7 mm / ~4 mm PCB border.
+
+A consumer “A4 box frame” is usually too small. Example: a typical Amazon
+A4 shadow box lists an inner well of **285 × 200 × 30 mm**. The 200 mm
+side is 10 mm short of the PCB. Do not buy those.
+
+### How deep
+
+The HAT and Pico stack on the **40-pin edge**, not under the whole glass.
+
+| Layer | Typical |
+|---|---|
+| Inky glass + PCB | ~3 mm |
+| 40-pin header + Pico-to-Pi HAT | ~10–16 mm |
+| Plus 2 W or LiPo 2 XL W | ~9–10 mm |
+| 2500 mAh pouch (beside the Pico, not under it) | 7.3 mm thick, 50 × 60 mm |
+| List A Amigo Pro | extra ~8–10 mm if you stack it |
+
+Budget **~30–35 mm** at the header end. A builder on the Pimoroni forum
+used a **20 mm** printed frame and had to strip the header plastic; they
+would use **25 mm** next time, and that was a Pi Zero, not a HAT + Pico
+Plus / XL W. Treat **20 mm as too tight**. Aim for **≥ 35 mm usable**
+with the back off (IKEA’s 6 cm SANNAHED is about **40 mm** inside).
+
+The 6600 mAh pouch is **18 mm** thick. Only if the cavity is honestly
+40 mm+ and the cell lies flat, padded, and cannot be pinched.
+
+### What fits in the UK (September 2026)
+
+Take a **297 × 210 mm** paper cutout to the shop. It must drop into the
+**rebate** (the shelf behind the glass), not merely show through the
+window.
+
+| Buy? | Frame | Why |
+|---|---|---|
+| **Yes — first choice** | [IKEA SANNAHED 35 × 35 cm](https://www.ikea.com/gb/en/p/sannahed-frame-white-20459115/) (~£15, also black / oak) | Deep box: **6 cm** outside, ~**40 mm** usable. Picture size **350 × 350 mm**, so the A4 PCB fits with margin. Square frame, landscape panel, side borders. Confirm in store that the inner tray is ≥ 302 × 214 mm. |
+| Yes — more margin | [IKEA SANNAHED 50 × 50 cm](https://www.ikea.com/gb/en/p/sannahed-frame-white-80528168/) (~£19) | Same 6 cm box, bigger square. Looks like a poster. |
+| Yes — if you measure | [Hobbycraft 40 × 40 cm deep box](https://www.hobbycraft.co.uk/white-deep-box-frame-40cm-x-40cm/6620521000.html) (~£9–18, wood + real glass) | Opening is large enough. Their “30 mm” boxes often have only ~20 mm you can fill — open one and measure from glass to backboard. |
+| Yes — if you want a rectangle | Custom box, glass **310 × 230 mm**, inner depth **40 mm**, mount opening ~**268 × 200 mm** ([eFrame](https://www.eframe.co.uk/picture-frames/30x40cm/) or a local framer, ~£40–70) | Tightest look. Do not order 30 × 40 “glass size” without +few mm on the 297 side. |
+| No | IKEA [RÖDALM 21 × 30](https://www.ikea.com/gb/en/p/roedalm-frame-black-00548882/) | Only **3 cm** overall. 210 mm picture size is a friction fit. Too shallow for the HAT. |
+| No | IKEA EDSBRUK (30 × 40 / 40 × 50) | **2.5 cm** overall. Photo frame, not a box. |
+| No | IKEA SANNAHED 25 × 25 | Tray is 250 mm — PCB is 297 mm. |
+| No | Amazon / eBay “A4 3D box” (~285 × 200 mm well) | Will not take the PCB. |
+| No | Old IKEA RIBBA | UK SANNAHED is the deep box now, and it is **square only**. RIBBA-style ribs are ~18 mm and too thin. |
+
+SANNAHED 35 × 35 is the practical buy: cheap, in stock, deep enough for
+list A or B, and the 2500 mAh cell can sit beside the Pico on the Inky
+back. Cut a black card mat to **~268 × 200 mm** if you want the PCB
+edge hidden; the stock 24 × 24 cm SANNAHED mount is too small and square.
+
 ## Already required but not purchased here
 
 - a **2.4 GHz** Wi-Fi network (the Pico cannot join 5 GHz-only access points);
@@ -104,6 +159,8 @@ That is optional. The HAT still only mates with the USB-end 20.
 - Pimoroni Pico LiPo 2 (**not** XL W) — charging, no Wi-Fi.
 - LiPo Amigo Pro if you chose list B — the XL W already charges on USB-C.
 - Stacking or short-plug Pico headers on list B — buy the standard male Pico set above.
+- A4 photo frames and A4 “3D box” frames whose inner well is ~200 mm — the PCB is 210 mm.
+- IKEA RÖDALM / EDSBRUK for this project — not deep enough.
 - The laser-tag PiCowbell / 500 mAh cells / OLEDs — wrong shape and capacity for a wall frame.
 
 ## Safety

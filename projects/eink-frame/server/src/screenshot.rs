@@ -30,6 +30,19 @@ pub fn detect_chrome(configured: &str) -> Option<PathBuf> {
             }
         }
     }
+    // macOS installs Chrome as an .app; it is not on PATH.
+    for path in [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta",
+        "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+        "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    ] {
+        let p = PathBuf::from(path);
+        if p.exists() {
+            return Some(p);
+        }
+    }
     None
 }
 
@@ -40,13 +53,16 @@ pub async fn capture_dashboard(chrome: &std::path::Path, url: &str) -> Result<Ve
     std::fs::create_dir_all(&user_data)?;
 
     info!(%url, chrome = %chrome.display(), "capturing dashboard");
+    // --single-process / --no-zygote SIGSEGV current Chrome on macOS.
     let mut child = Command::new(chrome)
         .arg("--headless=new")
         .arg("--disable-gpu")
         .arg("--no-sandbox")
         .arg("--disable-dev-shm-usage")
-        .arg("--single-process")
-        .arg("--no-zygote")
+        .arg("--no-first-run")
+        .arg("--disable-background-networking")
+        .arg("--disable-component-update")
+        .arg("--disable-extensions")
         .arg("--hide-scrollbars")
         .arg("--force-device-scale-factor=1")
         .arg("--default-background-color=FFFFFFFF")
@@ -61,6 +77,13 @@ pub async fn capture_dashboard(chrome: &std::path::Path, url: &str) -> Result<Ve
         .kill_on_drop(true)
         .spawn()
         .with_context(|| format!("spawning {}", chrome.display()))?;
+
+    let mut stderr = child.stderr.take().expect("piped stderr");
+    let stderr_task = tokio::spawn(async move {
+        let mut buf = Vec::new();
+        let _ = tokio::io::AsyncReadExt::read_to_end(&mut stderr, &mut buf).await;
+        buf
+    });
 
     let deadline = Instant::now() + Duration::from_secs(25);
     loop {
@@ -77,7 +100,10 @@ pub async fn capture_dashboard(chrome: &std::path::Path, url: &str) -> Result<Ve
             if png_path.exists() {
                 return Ok(std::fs::read(&png_path)?);
             }
-            bail!("chrome exited with {status} and wrote no screenshot");
+            bail!(
+                "chrome exited with {status} and wrote no screenshot{}",
+                chrome_stderr_suffix(stderr_task.await.unwrap_or_default())
+            );
         }
         if Instant::now() > deadline {
             let _ = child.start_kill();
@@ -85,8 +111,22 @@ pub async fn capture_dashboard(chrome: &std::path::Path, url: &str) -> Result<Ve
             if png_path.exists() {
                 return Ok(std::fs::read(&png_path)?);
             }
-            bail!("chrome timed out writing {}", png_path.display());
+            bail!(
+                "chrome timed out writing {}{}",
+                png_path.display(),
+                chrome_stderr_suffix(stderr_task.await.unwrap_or_default())
+            );
         }
         tokio::time::sleep(Duration::from_millis(200)).await;
     }
+}
+
+fn chrome_stderr_suffix(bytes: Vec<u8>) -> String {
+    let log = String::from_utf8_lossy(&bytes);
+    let t = log.trim();
+    if t.is_empty() {
+        return String::new();
+    }
+    let t = if t.len() > 400 { &t[t.len() - 400..] } else { t };
+    format!("; chrome stderr: {t}")
 }
