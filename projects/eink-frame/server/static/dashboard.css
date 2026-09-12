@@ -23,6 +23,8 @@ body {
   color: var(--black);
   font-family: "Noto Sans", "Noto Sans Display", Arial, Helvetica, sans-serif;
   font-kerning: none;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
   letter-spacing: 0;
   word-spacing: 0.08em;
 }
