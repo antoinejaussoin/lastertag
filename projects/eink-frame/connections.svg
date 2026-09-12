@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="640" viewBox="0 0 1180 640" role="img" aria-label="Electrical connections for the e-ink frame">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { font: 700 26px system-ui, sans-serif; fill: #101828; }
+      .sub { font: 14px system-ui, sans-serif; fill: #344054; }
+      .head { font: 700 15px system-ui, sans-serif; fill: #101828; }
+      .text { font: 13px system-ui, sans-serif; fill: #101828; }
+      .mono { font: 700 12px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #101828; }
+      .white { font: 700 13px system-ui, sans-serif; fill: #ffffff; }
+      .box { stroke-width: 2; }
+      .lipo { fill: #fef0c7; stroke: #dc6803; }
+      .amigo { fill: #f79009; stroke: #b54708; }
+      .pico { fill: #175cd3; stroke: #0b4ea2; }
+      .hat { fill: #12b76a; stroke: #027a48; }
+      .inky { fill: #111827; stroke: #000; }
+      .w { fill: none; stroke-width: 3.2; stroke-linecap: round; }
+      .red { stroke: #d92d20; }
+      .blk { stroke: #101828; }
+      .blu { stroke: #1570ef; }
+      .pin-bad { fill: #fda29b; stroke: #b42318; stroke-width: 1.4; }
+      .card { fill: #f8fafc; stroke: #667085; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1180" height="640"/>
+  <text class="title" x="36" y="36">E-ink frame  connections</text>
+  <text class="sub" x="36" y="58">One power chain. SPI stays on the 40-pin header. Never feed the Pico or Inky from VBUS / 5 V while the LiPo is the intended supply.</text>
+
+  <rect class="box lipo" x="40" y="120" width="160" height="90" rx="8"/>
+  <text class="head" x="56" y="150">LiPo pouch</text>
+  <text class="mono" x="56" y="176">3.7 V  25006600 mAh</text>
+  <text class="mono" x="56" y="196">JST-PH  red = +</text>
+
+  <rect class="box amigo" x="280" y="110" width="200" height="110" rx="8"/>
+  <text class="white" x="296" y="140">LiPo Amigo Pro</text>
+  <text class="mono" x="296" y="166">USB-C charge</text>
+  <text class="mono" x="296" y="186">JST in  ∑  JST out</text>
+  <text class="mono" x="296" y="206">power switch</text>
+
+  <rect class="box pico" x="580" y="100" width="220" height="130" rx="8"/>
+  <text class="white" x="596" y="130">Pico Plus 2 W</text>
+  <text class="mono" x="596" y="156">VSYS  ê battery +</text>
+  <text class="mono" x="596" y="176">GND   ê battery </text>
+  <text class="mono" x="596" y="196">USB-C  flash only</text>
+  <text class="mono" x="596" y="216">2.4 GHz Wi-Fi</text>
+
+  <rect class="box hat" x="580" y="280" width="220" height="90" rx="8"/>
+  <text class="white" x="596" y="310">Pico to Pi HAT</text>
+  <text class="mono" x="596" y="336">40-pin  ∑  check SCLK/MOSI</text>
+  <text class="mono" x="596" y="356">3V3 and GND through-header</text>
+
+  <rect class="box inky" x="880" y="250" width="260" height="150" rx="8"/>
+  <text class="white" x="896" y="284">Inky Impression 13.3</text>
+  <text class="mono" x="896" y="312">SPI + dual CS</text>
+  <text class="mono" x="896" y="332">3V3 from Pico via HAT</text>
+  <text class="mono" x="896" y="352">image holds with power off</text>
+  <text class="mono" x="896" y="372">no extra 5 V</text>
+
+  <path class="w red" d="M200 150 H280"/>
+  <path class="w blk" d="M200 180 H280"/>
+  <text class="mono" x="214" y="140">+</text>
+  <text class="mono" x="214" y="204">GND</text>
+
+  <path class="w red" d="M480 150 H580"/>
+  <path class="w blk" d="M480 180 H580"/>
+  <text class="mono" x="500" y="140">VSYS</text>
+  <text class="mono" x="500" y="204">GND</text>
+
+  <path class="w blu" d="M690 230 V280"/>
+  <path class="w blu" d="M800 325 H880"/>
+  <text class="mono" x="820" y="318">SPI + 3V3</text>
+
+  <rect class="pin-bad" x="40" y="420" width="22" height="16"/>
+  <text class="mono" x="72" y="433">Do not use Pico VBUS (5 V USB) as the battery feed.</text>
+
+  <rect class="card" x="40" y="460" width="1100" height="150" rx="8"/>
+  <text class="head" x="60" y="490">Server (this repo) lives on the LAN, not on the Pico</text>
+  <text class="text" x="60" y="518">Pico hourly:  GET http://&lt;server&gt;:8765/frame.bin?checksum=&lt;etag&gt;</text>
+  <text class="text" x="60" y="542">304 Not Modified  í  skip Inky refresh.   200  í  960000-byte Spectra 6 frame.</text>
+  <text class="text" x="60" y="566">Layout: HTML/CSS on the server. Chromium screenshots /dashboard at 1600◊1200.</text>
+  <text class="text" x="60" y="590">iCloud Family calendar is CalDAV on the server. The Pico never sees Apple passwords.</text>
+</svg>

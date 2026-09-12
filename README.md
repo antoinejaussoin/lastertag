@@ -20,6 +20,7 @@ persists match history.
 - [`projects/lasertag/hardware/`](projects/lasertag/hardware/) — electronics notes and future 3D-printable parts
 - [`projects/temperature-display/`](projects/temperature-display/) — first hardware sandbox: Pico 2 W temperature on the OLED
 - [`projects/ir-capture/`](projects/ir-capture/) — TSOP38238 sandbox: TV-remote capture on the OLED and HTTP POST
+- [`projects/eink-frame/`](projects/eink-frame/) — 13.3″ family wall frame: Pico Plus 2 W + Rust HTML/CSS server (own shopping list)
 - [`docs/`](docs/) — architecture, project plan, and purchasing guide
 
 Start with the [high-level plan](docs/high-level-plan.md), then use the

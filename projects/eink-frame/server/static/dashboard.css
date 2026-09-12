@@ -1,0 +1,139 @@
+/* Spectra 6 only: black, white, yellow, red, blue, green.
+   Keep this file as the layout source of truth. The server screenshots
+   /dashboard at 1600×1200 — do not add clocks or checksums here or every
+   render will look "new" to the Pico. */
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --yellow: #ffff00;
+  --red: #ff0000;
+  --blue: #0000ff;
+  --green: #00ff00;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 1600px;
+  height: 1200px;
+  overflow: hidden;
+  background: var(--white);
+  color: var(--black);
+  font-family: "Liberation Serif", "Nimbus Roman", Georgia, "Times New Roman", serif;
+}
+
+.panel {
+  box-sizing: border-box;
+  width: 1600px;
+  height: 1200px;
+  padding: 48px 56px 40px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  grid-template-rows: auto 1fr 1fr;
+  grid-template-areas:
+    "mast mast"
+    "today todos"
+    "week shopping";
+  gap: 28px 48px;
+}
+
+.mast { grid-area: mast; display: flex; align-items: baseline; gap: 28px; border-bottom: 10px solid var(--black); padding-bottom: 18px; }
+.today { grid-area: today; }
+.week { grid-area: week; }
+.todos { grid-area: todos; }
+.shopping { grid-area: shopping; }
+
+.kicker {
+  margin: 0;
+  font-family: "Liberation Sans", "Nimbus Sans", Helvetica, Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+h1 {
+  margin: 0;
+  font-size: 86px;
+  line-height: 0.9;
+  font-weight: 700;
+}
+
+.date {
+  margin: 0 0 0 auto;
+  font-size: 36px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-family: "Liberation Sans", "Nimbus Sans", Helvetica, Arial, sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 4px solid var(--black);
+  padding-bottom: 8px;
+}
+
+.shopping h2 { color: var(--green); border-bottom-color: var(--green); }
+.todos h2 { color: var(--blue); border-bottom-color: var(--blue); }
+
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 2px solid var(--black);
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.todos li,
+.shopping li {
+  grid-template-columns: 1fr auto;
+}
+
+.todos li::before {
+  content: "□";
+  margin-right: 12px;
+  color: var(--blue);
+}
+
+.todos li.done {
+  text-decoration: line-through;
+}
+
+.when {
+  font-family: "Liberation Sans", "Nimbus Sans", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+}
+
+.who,
+.qty {
+  font-family: "Liberation Sans", "Nimbus Sans", Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  color: var(--red);
+}
+
+.empty {
+  font-size: 30px;
+  margin: 24px 0 0;
+}
+
+.today li:first-child .when {
+  background: var(--yellow);
+  color: var(--black);
+  padding: 2px 8px;
+}

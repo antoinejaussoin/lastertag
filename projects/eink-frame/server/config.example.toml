@@ -1,0 +1,33 @@
+# Copy to config.toml (gitignored) or point EINK_CONFIG at another file.
+
+bind = "0.0.0.0:8765"
+timezone = "Europe/London"
+family_name = "Family"
+# How often the Pico should poll. The server re-renders when data changes
+# or this interval has elapsed since the last successful render.
+refresh_minutes = 60
+
+# Optional Chromium / Chrome binary. Leave empty to auto-detect
+# google-chrome, chromium, or chromium-browser.
+chrome_path = ""
+
+[icloud]
+# Apple Account email + an *app-specific* password from
+# https://account.apple.com (not your normal Apple ID password).
+# Leave both empty to use the built-in demo calendar / lists.
+apple_id = ""
+app_password = ""
+# Display names as they appear in Calendar.app / Reminders.
+# Family Sharing calendars show up over CalDAV like any other calendar.
+calendars = ["Family"]
+todo_list = "Family"
+shopping_list = "Shopping"
+
+[sources]
+# Extra public/webcal ICS URLs (no password). Useful if you publish the
+# family calendar as a read-only link instead of using CalDAV.
+ics_urls = []
+# Local JSON fallbacks / overrides. Paths are relative to this file
+# unless they are absolute.
+shopping_file = "fixtures/shopping.json"
+todos_file = "fixtures/todos.json"
