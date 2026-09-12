@@ -2,8 +2,8 @@
 
 A 13.3″ Spectra 6 panel in a picture frame. A **Pimoroni Pico Plus 2 W**
 wakes once an hour, downloads a packed image, and sleeps. A **Rust server**
-on the LAN builds that image from HTML/CSS plus the family calendar and
-lists.
+on the LAN builds that image from HTML/CSS plus the family calendar,
+to-dos, and house temperatures.
 
 This folder is separate from the laser-tag prototype. Hardware to buy is
 in [`shopping.md`](shopping.md), not [`docs/shopping-list.md`](../../docs/shopping-list.md).
@@ -68,7 +68,14 @@ retiring that path), keep using:
 
 or publish a read-only webcal URL in `sources.ics_urls`.
 
-Never commit `config.toml` — it is gitignored.
+The shopping column is now **house temperatures**. Meross MS100
+thermometer/hygrometers have no Wi-Fi of their own: they talk through the
+Meross hub. Local HTTP to that hub is signed with the account key, so put
+the Meross app email and password in `config.toml` (`[meross]`). The
+server logs in once, caches `meross-creds.json`, and reads
+`Appliance.Hub.Sensor.All` over MQTT (or LAN if you set `hub_hosts`).
+
+Never commit `config.toml` or `meross-creds.json` — they are gitignored.
 
 ## Pico side
 

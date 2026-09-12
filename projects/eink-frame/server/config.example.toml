@@ -23,8 +23,26 @@ calendars = ["Family"]
 todo_list = "Family"
 shopping_list = "Shopping"
 
+[meross]
+# Meross app email + password. The MS100 sensors report through the hub;
+# the server signs in to get the account key, then reads temperatures.
+email = ""
+password = ""
+# Leave empty unless the Meross app asks for a one-time code.
+mfa_code = ""
+api_base_url = "https://iotx-eu.meross.com"
+country_code = "GB"
+# Optional LAN IPs of the hub (tried before MQTT).
+hub_hosts = []
+# Optional display order / filter (Meross name or label). Empty = all sensors.
+rooms = []
+
+# [meross.labels]
+# "Sensor living room" = "Living room"
+
 [sources]
-# Extra public/webcal ICS URLs (no password). Useful if you publish the
+# Extra public ICS URLs (no password). Calendar.app’s webcal:// links
+# are fine — they are fetched as https://. Useful if you publish the
 # family calendar as a read-only link instead of using CalDAV.
 ics_urls = []
 # Local JSON fallbacks / overrides. Paths are relative to this file

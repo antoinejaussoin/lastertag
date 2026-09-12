@@ -59,19 +59,20 @@
       {% endif %}
     </section>
 
-    <section class="shopping">
-      <h2>Shopping</h2>
-      {% if shopping %}
+    <section class="rooms">
+      <h2>House</h2>
+      {% if rooms %}
       <ul>
-        {% for item in shopping %}
-        <li>
-          <span class="what">{{ item.name }}</span>
-          {% if item.qty %}<span class="qty">{{ item.qty }}</span>{% endif %}
+        {% for room in rooms %}
+        <li class="{% if not room.online %}offline{% endif %}">
+          <span class="what">{{ room.name }}</span>
+          <span class="temp">{{ room.temperature }}</span>
+          <span class="humidity">{{ room.humidity }}</span>
         </li>
         {% endfor %}
       </ul>
       {% else %}
-      <p class="empty">Shopping list is empty.</p>
+      <p class="empty">No thermometer readings yet.</p>
       {% endif %}
     </section>
   </main>

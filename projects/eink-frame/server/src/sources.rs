@@ -6,7 +6,8 @@ use tracing::{info, warn};
 use crate::caldav::{self, CalDav};
 use crate::config::Config;
 use crate::ics;
-use crate::model::{Dashboard, FileShopping, FileTodo, ShoppingItem, TodoItem};
+use crate::meross;
+use crate::model::{Dashboard, FileTodo, TodoItem};
 
 pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
     let tz: Tz = cfg
@@ -18,12 +19,24 @@ pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
     let mut notes: Vec<String> = Vec::new();
 
     dash.todos = read_todo_file(&cfg.resolve(&cfg.sources.todos_file))?;
-    dash.shopping = read_shopping_file(&cfg.resolve(&cfg.sources.shopping_file))?;
     if !dash.todos.is_empty() {
         notes.push("local todos".into());
     }
-    if !dash.shopping.is_empty() {
-        notes.push("local shopping list".into());
+    if cfg.meross_enabled() {
+        match meross::load_rooms(&cfg.meross, &cfg.meross_creds_path()).await {
+            Ok(rooms) if !rooms.is_empty() => {
+                dash.rooms = rooms;
+                notes.push("Meross sensors".into());
+            }
+            Ok(_) => {
+                warn!("Meross login worked but no thermometer readings came back");
+                notes.push("Meross: no sensor readings".into());
+            }
+            Err(err) => {
+                warn!(%err, "Meross failed; keeping empty rooms");
+                notes.push("Meross unavailable".into());
+            }
+        }
     }
 
     for url in &cfg.sources.ics_urls {
@@ -40,7 +53,7 @@ pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
 
     if cfg.icloud_enabled() {
         match load_icloud(cfg, tz, today).await {
-            Ok((events, todos, shopping, icloud_notes)) => {
+            Ok((events, todos, icloud_notes)) => {
                 if !events.is_empty() {
                     dash.events_today.clear();
                     dash.events_week.clear();
@@ -48,9 +61,6 @@ pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
                 }
                 if !todos.is_empty() {
                     dash.todos = todos;
-                }
-                if !shopping.is_empty() {
-                    dash.shopping = shopping;
                 }
                 notes.extend(icloud_notes);
             }
@@ -64,10 +74,12 @@ pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
         if dash.todos.is_empty() {
             dash.todos = demo_todos();
         }
-        if dash.shopping.is_empty() {
-            dash.shopping = demo_shopping();
-        }
         notes.push("demo data (no iCloud credentials)".into());
+    }
+
+    if dash.rooms.is_empty() && !cfg.meross_enabled() {
+        dash.rooms = meross::demo_rooms();
+        notes.push("demo rooms (no Meross credentials)".into());
     }
 
     dash.source_note = notes.join(" · ");
@@ -81,7 +93,6 @@ async fn load_icloud(
 ) -> Result<(
     Vec<crate::model::CalendarEvent>,
     Vec<TodoItem>,
-    Vec<ShoppingItem>,
     Vec<String>,
 )> {
     let client = CalDav::new(&cfg.icloud)?;
@@ -121,19 +132,7 @@ async fn load_icloud(
         notes.push(format!("iCloud list “{}”", cfg.icloud.todo_list));
     }
 
-    let shopping_todos = fetch_named_todos(&client, &calendars, &cfg.icloud.shopping_list).await?;
-    let shopping = shopping_todos
-        .into_iter()
-        .map(|t| ShoppingItem {
-            name: t.title,
-            qty: String::new(),
-        })
-        .collect::<Vec<_>>();
-    if !shopping.is_empty() {
-        notes.push(format!("iCloud shopping “{}”", cfg.icloud.shopping_list));
-    }
-
-    Ok((events, todos, shopping, notes))
+    Ok((events, todos, notes))
 }
 
 async fn fetch_named_todos(
@@ -157,9 +156,22 @@ async fn fetch_named_todos(
     Ok(out)
 }
 
+/// Calendar.app copies `webcal://…`. That is just HTTPS with a scheme
+/// HTTP clients do not speak.
+fn http_ics_url(url: &str) -> String {
+    let Some((scheme, rest)) = url.split_once("://") else {
+        return url.to_string();
+    };
+    match scheme.to_ascii_lowercase().as_str() {
+        "webcal" | "webcals" => format!("https://{rest}"),
+        _ => url.to_string(),
+    }
+}
+
 async fn fetch_ics(url: &str) -> Result<String> {
+    let url = http_ics_url(url);
     let text = reqwest::Client::new()
-        .get(url)
+        .get(&url)
         .timeout(std::time::Duration::from_secs(20))
         .send()
         .await?
@@ -190,21 +202,6 @@ fn read_todo_file(path: &std::path::Path) -> Result<Vec<TodoItem>> {
         .map(|t| TodoItem {
             title: t.title,
             done: t.done,
-        })
-        .collect())
-}
-
-fn read_shopping_file(path: &std::path::Path) -> Result<Vec<ShoppingItem>> {
-    if !path.exists() {
-        return Ok(Vec::new());
-    }
-    let text = std::fs::read_to_string(path)?;
-    let items: Vec<FileShopping> = serde_json::from_str(&text)?;
-    Ok(items
-        .into_iter()
-        .map(|t| ShoppingItem {
-            name: t.name,
-            qty: t.qty,
         })
         .collect())
 }
@@ -260,23 +257,23 @@ fn demo_todos() -> Vec<TodoItem> {
     ]
 }
 
-fn demo_shopping() -> Vec<ShoppingItem> {
-    vec![
-        ShoppingItem {
-            name: "Milk".into(),
-            qty: "2".into(),
-        },
-        ShoppingItem {
-            name: "Sourdough".into(),
-            qty: "".into(),
-        },
-        ShoppingItem {
-            name: "Apples".into(),
-            qty: "6".into(),
-        },
-        ShoppingItem {
-            name: "Dishwasher tablets".into(),
-            qty: "".into(),
-        },
-    ]
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn webcal_becomes_https() {
+        assert_eq!(
+            http_ics_url("webcal://p01-caldav.icloud.com/published/2/abc"),
+            "https://p01-caldav.icloud.com/published/2/abc"
+        );
+        assert_eq!(
+            http_ics_url("WEBCALS://example.com/cal.ics"),
+            "https://example.com/cal.ics"
+        );
+        assert_eq!(
+            http_ics_url("https://example.com/cal.ics"),
+            "https://example.com/cal.ics"
+        );
+    }
 }

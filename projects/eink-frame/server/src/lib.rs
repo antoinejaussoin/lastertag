@@ -8,6 +8,7 @@ pub mod config;
 pub mod frame;
 pub mod http;
 pub mod ics;
+pub mod meross;
 pub mod model;
 pub mod pack;
 pub mod screenshot;

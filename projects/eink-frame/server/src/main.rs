@@ -72,6 +72,9 @@ async fn serve(config: Option<PathBuf>, bind: Option<String>) -> Result<()> {
     if !cfg.icloud_enabled() {
         warn!("no iCloud credentials — serving demo / local JSON lists");
     }
+    if !cfg.meross_enabled() {
+        warn!("no Meross credentials — house temperatures will be demo rooms");
+    }
     axum::serve(listener, app).await?;
     Ok(())
 }

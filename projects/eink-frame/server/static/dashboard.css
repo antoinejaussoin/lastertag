@@ -38,7 +38,7 @@ body {
   grid-template-areas:
     "mast mast"
     "today todos"
-    "week shopping";
+    "week rooms";
   gap: 24px 40px;
 }
 
@@ -53,7 +53,7 @@ body {
 .today { grid-area: today; min-width: 0; }
 .week { grid-area: week; min-width: 0; }
 .todos { grid-area: todos; min-width: 0; }
-.shopping { grid-area: shopping; min-width: 0; }
+.rooms { grid-area: rooms; min-width: 0; }
 
 .kicker {
   margin: 0;
@@ -86,7 +86,7 @@ h2 {
   padding-bottom: 8px;
 }
 
-.shopping h2 { color: var(--green); border-bottom-color: var(--green); }
+.rooms h2 { color: var(--green); border-bottom-color: var(--green); }
 .todos h2 { color: var(--blue); border-bottom-color: var(--blue); }
 
 ol,
@@ -114,11 +114,29 @@ li {
 
 .what { flex: 1 1 auto; min-width: 0; }
 .who,
-.qty {
+.temp,
+.humidity {
   flex: 0 0 auto;
   font-size: 22px;
   font-weight: 700;
+}
+.temp {
   color: var(--red);
+  font-size: 32px;
+  min-width: 3.2ch;
+  text-align: right;
+}
+.humidity {
+  color: var(--blue);
+  min-width: 3.4ch;
+  text-align: right;
+}
+.rooms li.offline .what {
+  color: var(--black);
+}
+.rooms li.offline .temp,
+.rooms li.offline .humidity {
+  color: var(--black);
 }
 
 .todos li::before {

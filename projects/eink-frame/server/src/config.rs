@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
@@ -12,6 +13,7 @@ pub struct Config {
     pub refresh_minutes: u64,
     pub chrome_path: String,
     pub icloud: IcloudConfig,
+    pub meross: MerossConfig,
     pub sources: SourcesConfig,
     #[serde(skip)]
     pub config_dir: PathBuf,
@@ -25,6 +27,19 @@ pub struct IcloudConfig {
     pub calendars: Vec<String>,
     pub todo_list: String,
     pub shopping_list: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
+pub struct MerossConfig {
+    pub email: String,
+    pub password: String,
+    pub mfa_code: String,
+    pub api_base_url: String,
+    pub country_code: String,
+    pub hub_hosts: Vec<String>,
+    pub rooms: Vec<String>,
+    pub labels: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -44,6 +59,7 @@ impl Default for Config {
             refresh_minutes: 60,
             chrome_path: String::new(),
             icloud: IcloudConfig::default(),
+            meross: MerossConfig::default(),
             sources: SourcesConfig::default(),
             config_dir: PathBuf::from("."),
         }
@@ -58,6 +74,21 @@ impl Default for IcloudConfig {
             calendars: vec!["Family".into()],
             todo_list: "Family".into(),
             shopping_list: "Shopping".into(),
+        }
+    }
+}
+
+impl Default for MerossConfig {
+    fn default() -> Self {
+        Self {
+            email: String::new(),
+            password: String::new(),
+            mfa_code: String::new(),
+            api_base_url: "https://iotx-eu.meross.com".into(),
+            country_code: "GB".into(),
+            hub_hosts: Vec::new(),
+            rooms: Vec::new(),
+            labels: HashMap::new(),
         }
     }
 }
@@ -109,6 +140,14 @@ impl Config {
         !self.icloud.apple_id.trim().is_empty() && !self.icloud.app_password.trim().is_empty()
     }
 
+    pub fn meross_enabled(&self) -> bool {
+        !self.meross.email.trim().is_empty() && !self.meross.password.trim().is_empty()
+    }
+
+    pub fn meross_creds_path(&self) -> PathBuf {
+        self.config_dir.join("meross-creds.json")
+    }
+
     pub fn resolve(&self, relative: &str) -> PathBuf {
         let p = Path::new(relative);
         if p.is_absolute() {
@@ -130,5 +169,7 @@ mod tests {
         assert_eq!(cfg.family_name, "Family");
         assert_eq!(cfg.refresh_minutes, 60);
         assert_eq!(cfg.icloud.shopping_list, "Shopping");
+        assert_eq!(cfg.meross.api_base_url, "https://iotx-eu.meross.com");
+        assert!(!cfg.meross_enabled());
     }
 }

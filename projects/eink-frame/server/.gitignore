@@ -1,5 +1,6 @@
 /target
 /config.toml
+/meross-creds.json
 /out
 .DS_Store
 *.bin

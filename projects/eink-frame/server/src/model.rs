@@ -17,9 +17,11 @@ pub struct TodoItem {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct ShoppingItem {
+pub struct RoomClimate {
     pub name: String,
-    pub qty: String,
+    pub temperature: String,
+    pub humidity: String,
+    pub online: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -31,7 +33,7 @@ pub struct Dashboard {
     pub events_today: Vec<CalendarEvent>,
     pub events_week: Vec<CalendarEvent>,
     pub todos: Vec<TodoItem>,
-    pub shopping: Vec<ShoppingItem>,
+    pub rooms: Vec<RoomClimate>,
     pub source_note: String,
 }
 
@@ -45,7 +47,7 @@ impl Dashboard {
             events_today: Vec::new(),
             events_week: Vec::new(),
             todos: Vec::new(),
-            shopping: Vec::new(),
+            rooms: Vec::new(),
             source_note: String::new(),
         }
     }
@@ -73,9 +75,3 @@ pub struct FileTodo {
     pub done: bool,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct FileShopping {
-    pub name: String,
-    #[serde(default)]
-    pub qty: String,
-}
