@@ -1,0 +1,7 @@
+/target
+/config.toml
+/out
+.DS_Store
+*.bin
+*.png
+!fixtures/**
