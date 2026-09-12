@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>{{ family_name }} frame</title>
-  <link rel="stylesheet" href="/static/dashboard.css">
+  <link rel="stylesheet" href="/static/dashboard.css?v=top-weather">
 </head>
 <body>
   <main class="panel">
@@ -13,8 +13,7 @@
       <p class="date">{{ date_long }}</p>
     </header>
 
-    <section class="weather">
-      <h2>Weather{% if weather.location %} · {{ weather.location }}{% endif %}</h2>
+    <section class="weather" aria-label="Forecast">
       <svg class="wx-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
           <symbol id="wx-sun" viewBox="0 0 64 64">

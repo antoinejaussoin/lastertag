@@ -42,7 +42,7 @@ pub fn router(state: AppState) -> Router {
 async fn preview(State(state): State<AppState>) -> impl IntoResponse {
     match sources::load_dashboard(state.cache.config()).await {
         Ok(dash) => match state.cache.templates().render_preview(&dash) {
-            Ok(html) => Html(html).into_response(),
+            Ok(html) => no_store_html(html),
             Err(err) => error_response(err),
         },
         Err(err) => error_response(err),
@@ -52,7 +52,7 @@ async fn preview(State(state): State<AppState>) -> impl IntoResponse {
 async fn dashboard(State(state): State<AppState>) -> impl IntoResponse {
     match sources::load_dashboard(state.cache.config()).await {
         Ok(dash) => match state.cache.templates().render_dashboard(&dash) {
-            Ok(html) => Html(html).into_response(),
+            Ok(html) => no_store_html(html),
             Err(err) => error_response(err),
         },
         Err(err) => error_response(err),
@@ -121,6 +121,12 @@ async fn frame_json(State(state): State<AppState>) -> impl IntoResponse {
 
 async fn health() -> impl IntoResponse {
     axum::Json(serde_json::json!({ "ok": true }))
+}
+
+fn no_store_html(html: String) -> Response {
+    let mut headers = HeaderMap::new();
+    headers.insert(header::CACHE_CONTROL, "no-store".parse().unwrap());
+    (headers, Html(html)).into_response()
 }
 
 fn offered_checksum<'a>(headers: &'a HeaderMap, q: &'a FrameQuery) -> Option<&'a str> {
