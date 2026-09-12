@@ -12,7 +12,7 @@ in [`shopping.md`](shopping.md), not [`docs/shopping-list.md`](../../docs/shoppi
 
 | Piece | Where |
 |---|---|
-| Hardware shopping list | [`shopping.md`](shopping.md) |
+| Hardware shopping list | [`shopping.md`](shopping.md) (list A: Plus 2 W, or list B: LiPo 2 XL W) |
 | Wiring / stack | [`wiring.svg`](wiring.svg), [`connections.svg`](connections.svg) |
 | Pico protocol | [`firmware/PROTOCOL.md`](firmware/PROTOCOL.md) |
 | Rust server + layout simulator | [`server/`](server/) |
