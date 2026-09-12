@@ -14,6 +14,7 @@ pub mod pack;
 pub mod screenshot;
 pub mod sources;
 pub mod template;
+pub mod weather;
 
 pub use config::Config;
 pub use frame::{Frame, FrameCache};

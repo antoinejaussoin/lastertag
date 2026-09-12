@@ -34,12 +34,13 @@ body {
   padding: 44px 52px 36px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 460px;
-  grid-template-rows: auto 1fr 1fr;
+  grid-template-rows: auto auto 1fr 1fr;
   grid-template-areas:
     "mast mast"
+    "weather weather"
     "today todos"
     "week rooms";
-  gap: 24px 40px;
+  gap: 20px 40px;
 }
 
 .mast {
@@ -54,6 +55,7 @@ body {
 .week { grid-area: week; min-width: 0; }
 .todos { grid-area: todos; min-width: 0; }
 .rooms { grid-area: rooms; min-width: 0; }
+.weather { grid-area: weather; min-width: 0; position: relative; }
 
 .kicker {
   margin: 0;
@@ -88,6 +90,70 @@ h2 {
 
 .rooms h2 { color: var(--green); border-bottom-color: var(--green); }
 .todos h2 { color: var(--blue); border-bottom-color: var(--blue); }
+.weather h2 { color: var(--black); border-bottom-color: var(--yellow); }
+
+.wx-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.weather-days {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 36px;
+}
+
+.weather-day + .weather-day {
+  border-left: 4px solid var(--black);
+  padding-left: 36px;
+}
+
+.weather-day h3 {
+  margin: 10px 0 4px;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 8px 0 4px;
+  border-bottom: 0;
+  font-size: inherit;
+  line-height: 1;
+}
+
+.slot .period {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.wx-icon {
+  width: 96px;
+  height: 96px;
+  display: block;
+}
+
+.slot .degrees {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--red);
+  line-height: 1;
+}
 
 ol,
 ul {

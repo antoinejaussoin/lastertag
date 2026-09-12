@@ -32,3 +32,24 @@ impl Templates {
         Ok(tmpl.render(dash)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDate;
+
+    use super::*;
+    use crate::weather;
+
+    #[test]
+    fn dashboard_includes_weather_slots() {
+        let mut dash = Dashboard::empty("Family", NaiveDate::from_ymd_opt(2026, 9, 12).unwrap());
+        dash.weather = weather::demo_weather();
+        let html = Templates::load().unwrap().render_dashboard(&dash).unwrap();
+        assert!(html.contains("Morning"));
+        assert!(html.contains("Afternoon"));
+        assert!(html.contains("Evening"));
+        assert!(html.contains("wx-sun"));
+        assert!(html.contains("18°"));
+        assert!(html.contains("Tomorrow"));
+    }
+}

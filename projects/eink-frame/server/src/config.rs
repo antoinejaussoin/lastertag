@@ -14,6 +14,7 @@ pub struct Config {
     pub chrome_path: String,
     pub icloud: IcloudConfig,
     pub meross: MerossConfig,
+    pub weather: WeatherConfig,
     pub sources: SourcesConfig,
     #[serde(skip)]
     pub config_dir: PathBuf,
@@ -44,6 +45,14 @@ pub struct MerossConfig {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(default)]
+pub struct WeatherConfig {
+    /// GeoNames id from `https://www.bbc.co.uk/weather/<id>`.
+    /// Empty disables the live BBC fetch and shows demo weather.
+    pub location_id: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(default)]
 pub struct SourcesConfig {
     pub ics_urls: Vec<String>,
     pub shopping_file: String,
@@ -60,6 +69,7 @@ impl Default for Config {
             chrome_path: String::new(),
             icloud: IcloudConfig::default(),
             meross: MerossConfig::default(),
+            weather: WeatherConfig::default(),
             sources: SourcesConfig::default(),
             config_dir: PathBuf::from("."),
         }
@@ -89,6 +99,14 @@ impl Default for MerossConfig {
             hub_hosts: Vec::new(),
             rooms: Vec::new(),
             labels: HashMap::new(),
+        }
+    }
+}
+
+impl Default for WeatherConfig {
+    fn default() -> Self {
+        Self {
+            location_id: "2643743".into(),
         }
     }
 }
@@ -148,6 +166,14 @@ impl Config {
         self.config_dir.join("meross-creds.json")
     }
 
+    pub fn weather_enabled(&self) -> bool {
+        !self.weather.location_id.trim().is_empty()
+    }
+
+    pub fn weather_cache_path(&self) -> PathBuf {
+        self.config_dir.join("weather-cache.json")
+    }
+
     pub fn resolve(&self, relative: &str) -> PathBuf {
         let p = Path::new(relative);
         if p.is_absolute() {
@@ -171,5 +197,7 @@ mod tests {
         assert_eq!(cfg.icloud.shopping_list, "Shopping");
         assert_eq!(cfg.meross.api_base_url, "https://iotx-eu.meross.com");
         assert!(!cfg.meross_enabled());
+        assert_eq!(cfg.weather.location_id, "2643743");
+        assert!(cfg.weather_enabled());
     }
 }

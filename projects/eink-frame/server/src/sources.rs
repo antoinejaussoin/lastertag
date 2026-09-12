@@ -8,6 +8,7 @@ use crate::config::Config;
 use crate::ics;
 use crate::meross;
 use crate::model::{Dashboard, FileTodo, TodoItem};
+use crate::weather;
 
 pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
     let tz: Tz = cfg
@@ -80,6 +81,28 @@ pub async fn load_dashboard(cfg: &Config) -> Result<Dashboard> {
     if dash.rooms.is_empty() && !cfg.meross_enabled() {
         dash.rooms = meross::demo_rooms();
         notes.push("demo rooms (no Meross credentials)".into());
+    }
+
+    if cfg.weather_enabled() {
+        match weather::load_forecast(&cfg.weather, &cfg.weather_cache_path(), today).await {
+            Ok(forecast) if !forecast.days.is_empty() => {
+                notes.push(format!("BBC weather “{}”", forecast.location));
+                dash.weather = forecast;
+            }
+            Ok(_) => {
+                warn!("BBC weather returned no days");
+                dash.weather = weather::demo_weather();
+                notes.push("BBC weather empty — demo forecast".into());
+            }
+            Err(err) => {
+                warn!(%err, "BBC weather failed; using demo forecast");
+                dash.weather = weather::demo_weather();
+                notes.push("BBC weather unavailable".into());
+            }
+        }
+    } else {
+        dash.weather = weather::demo_weather();
+        notes.push("demo weather (no BBC location)".into());
     }
 
     dash.source_note = notes.join(" · ");

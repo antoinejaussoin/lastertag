@@ -3,7 +3,7 @@
 A 13.3″ Spectra 6 panel in a picture frame. A **Pimoroni Pico Plus 2 W**
 wakes once an hour, downloads a packed image, and sleeps. A **Rust server**
 on the LAN builds that image from HTML/CSS plus the family calendar,
-to-dos, and house temperatures.
+to-dos, house temperatures, and a BBC weather strip.
 
 This folder is separate from the laser-tag prototype. Hardware to buy is
 in [`shopping.md`](shopping.md), not [`docs/shopping-list.md`](../../docs/shopping-list.md).
@@ -76,6 +76,16 @@ server logs in once, caches `meross-creds.json`, and reads
 `Appliance.Hub.Sensor.All` over MQTT (or LAN if you set `hub_hosts`).
 
 Never commit `config.toml` or `meross-creds.json` — they are gitignored.
+
+## Weather
+
+The dashboard shows **today and tomorrow**, each with morning (09:00),
+afternoon (15:00), and evening (21:00) from [BBC Weather](https://www.bbc.co.uk/weather).
+Set `weather.location_id` to the number in the location’s BBC URL
+(`https://www.bbc.co.uk/weather/2643743` is London). Leave it empty for
+demo icons. Past slots from earlier in the day are kept in `weather-cache.json`.
+If the server starts after BBC has dropped those hours, morning uses
+the day’s low and afternoon the high.
 
 ## Pico side
 

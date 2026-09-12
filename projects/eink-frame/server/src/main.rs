@@ -75,6 +75,9 @@ async fn serve(config: Option<PathBuf>, bind: Option<String>) -> Result<()> {
     if !cfg.meross_enabled() {
         warn!("no Meross credentials — house temperatures will be demo rooms");
     }
+    if !cfg.weather_enabled() {
+        warn!("no BBC weather location_id — serving demo forecast");
+    }
     axum::serve(listener, app).await?;
     Ok(())
 }

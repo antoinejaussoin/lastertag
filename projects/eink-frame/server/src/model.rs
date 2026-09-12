@@ -25,6 +25,26 @@ pub struct RoomClimate {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct WeatherSlot {
+    pub period: String,
+    pub icon: String,
+    pub temperature: String,
+    pub summary: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct WeatherDay {
+    pub label: String,
+    pub slots: Vec<WeatherSlot>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct Weather {
+    pub location: String,
+    pub days: Vec<WeatherDay>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Dashboard {
     pub family_name: String,
     pub weekday: String,
@@ -34,6 +54,7 @@ pub struct Dashboard {
     pub events_week: Vec<CalendarEvent>,
     pub todos: Vec<TodoItem>,
     pub rooms: Vec<RoomClimate>,
+    pub weather: Weather,
     pub source_note: String,
 }
 
@@ -48,6 +69,7 @@ impl Dashboard {
             events_week: Vec::new(),
             todos: Vec::new(),
             rooms: Vec::new(),
+            weather: Weather::default(),
             source_note: String::new(),
         }
     }
